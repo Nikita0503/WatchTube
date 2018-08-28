@@ -5,7 +5,7 @@ package com.example.watchtube;
  */
 
 public interface Contract {
-    interface View {
+    public interface View {
         //public void showMessage(String result);
     }
 

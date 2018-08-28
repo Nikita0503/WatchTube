@@ -1,5 +1,10 @@
-package com.example.watchtube;
+package com.example.watchtube.UI;
 
+import com.example.watchtube.Contract;
+import com.example.watchtube.MainPresenter;
+import com.example.watchtube.R;
+import com.example.watchtube.ViewPagerAdapter;
+import com.example.watchtube.model.data.SubscriptionData;
 import com.google.api.services.youtube.YouTubeScopes;
 
 import com.mikepenz.materialdrawer.Drawer;
@@ -7,22 +12,15 @@ import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 
-import android.accounts.AccountManager;
 import android.app.Dialog;
         import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
         import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -32,14 +30,14 @@ import io.reactivex.disposables.CompositeDisposable;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, Contract.View {
-    static final int REQUEST_ACCOUNT_PICKER = 1000;
-    static final int REQUEST_AUTHORIZATION = 1001;
-    static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
-    static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
+    public static final int REQUEST_ACCOUNT_PICKER = 1000;
+    public static final int REQUEST_AUTHORIZATION = 1001;
+    public static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
+    public static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
     public static final String BUTTON_TEXT = "Call YouTube Data API";
     public static final String PREF_ACCOUNT_NAME = "accountName";
     public static final String[] SCOPES = { YouTubeScopes.YOUTUBE_READONLY };
-    public MainPresenter mMainPresenter;
+    public MainPresenter mPresenter;
     public CompositeDisposable disposables;
     private Drawer.Result drawerResult;
     public TextView mOutputText;
@@ -65,11 +63,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(mViewPager);
 
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         mTabLayout.setupWithViewPager(mViewPager);
-        setupTabIcons();
+        //setupTabIcons();
 
         disposables = new CompositeDisposable();
 
@@ -85,9 +82,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                                 .withIdentifier(1),
                         new DividerDrawerItem())
                 .build();
-        mMainPresenter = new MainPresenter(this);
-        mMainPresenter.onStart();
+        mPresenter = new MainPresenter(this);
+        mPresenter.onStart();
         checkDemands();
+        mPresenter.makePagerAdapter();
     }
 
     @Override
@@ -112,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     case REQUEST_ACCOUNT_PICKER:
                         if (resultCode == RESULT_OK && data != null &&
                                  data.getExtras() != null) {
-                             mMainPresenter.checkAccountName(data);
+                            mPresenter.checkAccountName(data);
                         }else{
                             hideProgress();
                         }
@@ -126,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             }
 
     public void checkDemands(){
-        mMainPresenter.checkDemands();
+        mPresenter.checkDemands();
         showProgress();
     }
 
@@ -137,15 +135,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     }
 
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new OneFragment(), "Home");
-        adapter.addFragment(new OneFragment(), "Trending");
-        adapter.addFragment(new OneFragment(), "Subscriptions");
-        viewPager.setAdapter(adapter);
+    public void setupPagerAdapter(ViewPagerAdapter adapter) {
+        mViewPager.setAdapter(adapter);
     }
 
-     public void setupNavigationDrawer(ArrayList<SomeSubscriptionData> someSubscriptionData){
+     public void setupNavigationDrawer(ArrayList<SubscriptionData> someSubscriptionData){
 
          for(int i = 1; i < someSubscriptionData.size(); i++){
              drawerResult.addItem(new SecondaryDrawerItem()
@@ -190,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     public void onStop(){
         super.onStop();
-        mMainPresenter.onStop();
+        mPresenter.onStop();
     }
 
 

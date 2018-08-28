@@ -1,14 +1,14 @@
 package com.example.watchtube;
 
-import android.Manifest;
 import android.accounts.AccountManager;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.util.Log;
 
-import com.example.watchtube.APIUtils.YouTubeAPIUtils;
+import com.example.watchtube.model.APIUtils.YouTubeAPIUtils;
+import com.example.watchtube.UI.MainActivity;
+import com.example.watchtube.UI.VideoListFragment;
+import com.example.watchtube.model.DemandsChecker;
+import com.example.watchtube.model.data.SubscriptionData;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.util.ExponentialBackOff;
@@ -22,7 +22,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.EasyPermissions;
 
 /**
  * Created by Nikita on 22.08.2018.
@@ -33,7 +32,7 @@ public class MainPresenter implements Contract.Presenter{
     private MainActivity mMainActivity;
     private CompositeDisposable mDisposables;
     private YouTubeAPIUtils mYouTubeAPIUtils;
-    private GoogleAccountCredential mCredential;
+    public GoogleAccountCredential mCredential;
     private DemandsChecker mDemandsChecker;
 
     public MainPresenter(MainActivity mainActivity){
@@ -66,11 +65,14 @@ public class MainPresenter implements Contract.Presenter{
         setText("");
         Disposable disposable = mYouTubeAPIUtils.getSubscriptionsInfo.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<ArrayList<SomeSubscriptionData>>() {
+                .subscribeWith(new DisposableSingleObserver<ArrayList<SubscriptionData>>() {
                     @Override
-                    public void onSuccess(ArrayList<SomeSubscriptionData> subscriptions) {
+                    public void onSuccess(ArrayList<SubscriptionData> subscriptions) {
                             //loadImageFromUrl(defaultObject.get(0).URL);
                         mMainActivity.setupNavigationDrawer(subscriptions);
+                        if(mYouTubeAPIUtils.pageToken != null){
+                            getResultsFromApi();
+                        }
                         hideProgress();
                     }
                     @Override
@@ -80,6 +82,8 @@ public class MainPresenter implements Contract.Presenter{
                 });
         mDisposables.add(disposable);
     }
+
+
 
     public void checkAccountName(Intent data){
         String accountName =
@@ -115,6 +119,16 @@ public class MainPresenter implements Contract.Presenter{
                 connectionStatusCode,
                 DemandsChecker.REQUEST_GOOGLE_PLAY_SERVICES);
         mMainActivity.showDialog(dialog);
+    }
+
+    public void makePagerAdapter(){
+        ViewPagerAdapter adapter = new ViewPagerAdapter(mMainActivity.getSupportFragmentManager());
+        VideoListFragment recommendedVideoListFragment = new VideoListFragment();
+        recommendedVideoListFragment.setCredentials(mCredential);
+        adapter.addFragment(recommendedVideoListFragment, "Home");
+        adapter.addFragment(new VideoListFragment(), "Trending");
+        adapter.addFragment(new VideoListFragment(), "Subscriptions");
+        mMainActivity.setupPagerAdapter(adapter);
     }
 
     public void showProgress(){

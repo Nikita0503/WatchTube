@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.watchtube.MainActivity">
+    tools:context="com.example.watchtube.UI.MainActivity">
 
 
     <TextView
@@ -45,7 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_constraintBottom_toBottomOf="@id/appBarLayout"
+        app:layout_constraintBottom_toTopOf="@id/appBarLayout"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
 
