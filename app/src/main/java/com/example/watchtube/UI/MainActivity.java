@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
-
+        mViewPager.setOffscreenPageLimit(2);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         mTabLayout.setupWithViewPager(mViewPager);
         //setupTabIcons();
@@ -151,11 +151,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
      }
 
     public void showProgress(){
-        mProgress.show();
+        //mProgress.show();
     }
 
     public void hideProgress(){
-        mProgress.hide();
+        //mProgress.hide();
     }
 
     @Override

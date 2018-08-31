@@ -3,6 +3,7 @@ package com.example.watchtube;
 import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.content.Intent;
+import android.util.Log;
 
 import com.example.watchtube.model.APIUtils.YouTubeAPIUtils;
 import com.example.watchtube.UI.MainActivity;
@@ -15,6 +16,7 @@ import com.google.api.client.util.ExponentialBackOff;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -40,7 +42,8 @@ public class MainPresenter implements Contract.Presenter{
         mCredential = GoogleAccountCredential.usingOAuth2(
                 mMainActivity.getApplicationContext(), Arrays.asList(MainActivity.SCOPES))
                 .setBackOff(new ExponentialBackOff());
-        mYouTubeAPIUtils = new YouTubeAPIUtils(mMainActivity.getApplicationContext(),this, mCredential);
+        mYouTubeAPIUtils = new YouTubeAPIUtils(mMainActivity.getApplicationContext(),
+                this, mCredential);
     }
 
     @Override
@@ -62,6 +65,7 @@ public class MainPresenter implements Contract.Presenter{
     }
 
     private void getResultsFromApi() {
+        //String lCode = Locale.getDefault().getCountry();
         setText("");
         Disposable disposable = mYouTubeAPIUtils.getSubscriptionsInfo.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -73,10 +77,10 @@ public class MainPresenter implements Contract.Presenter{
                         if(mYouTubeAPIUtils.pageToken != null){
                             getResultsFromApi();
                         }
-                        hideProgress();
                     }
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         setText("Error");
                     }
                 });
@@ -125,10 +129,11 @@ public class MainPresenter implements Contract.Presenter{
         ViewPagerAdapter adapter = new ViewPagerAdapter(mMainActivity.getSupportFragmentManager());
         VideoListFragment recommendedVideoListFragment = new VideoListFragment();
         recommendedVideoListFragment.setCredentials(mCredential);
-        adapter.addFragment(recommendedVideoListFragment, "Home");
-        adapter.addFragment(new VideoListFragment(), "Trending");
-        adapter.addFragment(new VideoListFragment(), "Subscriptions");
+        adapter.addFragment(recommendedVideoListFragment, "Trending");
+        adapter.addFragment(new VideoListFragment(), "Search");
+        adapter.addFragment(new VideoListFragment(), "Settings");
         mMainActivity.setupPagerAdapter(adapter);
+        hideProgress();
     }
 
     public void showProgress(){

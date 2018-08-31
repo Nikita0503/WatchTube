@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.example.watchtube.UI.VideoListFragment;
 import com.example.watchtube.model.data.VideoPreviewData;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import java.util.ArrayList;
 
@@ -41,10 +40,13 @@ public class VideoListCustomAdapter extends RecyclerView.Adapter<VideoListCustom
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.textViewVideoTitle.setText(mList.get(position).videoTitle);
-        holder.imageView.setImageDrawable(mList.get(position).image);
+        holder.textViewVideoTitle.setText(position+": "+mList.get(position).videoTitle);
+        holder.imageView.setImageDrawable(mList.get(position).videoImage);
+        holder.textViewChannelTitle.setText(mList.get(position).channelTitle);
+        holder.imageViewChannel.setImageDrawable(mList.get(position).channelImage);
+        holder.textViewPublishedAt.setText(mList.get(position).publishedAt);
         Log.d("Queue", "= " + position);
-        if(position == mList.size()-1){
+        if(position == mList.size() - 3){
             mFragment.fetchVideoListData();
         }
     }
@@ -62,10 +64,17 @@ public class VideoListCustomAdapter extends RecyclerView.Adapter<VideoListCustom
     public static class ViewHolder extends RecyclerView.ViewHolder{
         TextView textViewVideoTitle;
         ImageView imageView;
+        TextView textViewChannelTitle;
+        ImageView imageViewChannel;
+        TextView textViewPublishedAt;
+
         public ViewHolder(View itemView){
             super(itemView);
-            textViewVideoTitle = (TextView) itemView.findViewById(R.id.textView2);
-            imageView = (ImageView) itemView.findViewById(R.id.imageView);
+            imageView = (ImageView) itemView.findViewById(R.id.imageViewVideo);
+            textViewVideoTitle = (TextView) itemView.findViewById(R.id.textViewVideoTitle);
+            textViewChannelTitle = (TextView) itemView.findViewById(R.id.textViewChannelTitle);
+            imageViewChannel = (ImageView) itemView.findViewById(R.id.imageViewChannel);
+            textViewPublishedAt = (TextView) itemView.findViewById(R.id.textViewPublishedAt);
         }
     }
 }
