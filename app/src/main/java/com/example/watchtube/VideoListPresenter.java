@@ -34,13 +34,13 @@ public class VideoListPresenter implements Contract.Presenter {
         mYouTubeAPIUtils = new YouTubeAPIUtils(mFragment.getContext(), this, mCredential);
     }
 
-    public void fetchVideoListData(){
+    public void fetchVideoList(){
         Disposable disposable = mYouTubeAPIUtils.getVideoPreviewData.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableSingleObserver<ArrayList<VideoPreviewData>>() {
                     @Override
                     public void onSuccess(ArrayList<VideoPreviewData> subscriptions) {
-                        mFragment.updateData(subscriptions);
+                        mFragment.addVideosToList(subscriptions);
                     }
                     @Override
                     public void onError(Throwable e) {

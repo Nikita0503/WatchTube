@@ -8,10 +8,12 @@ import android.graphics.drawable.Drawable;
 
 public class SubscriptionData {
 
+    public String channelId;
     public String title;
     public Drawable image;
 
-    public SubscriptionData(String title, Drawable image){
+    public SubscriptionData(String channelId, String title, Drawable image){
+        this.channelId = channelId;
         this.title = title;
         this.image = image;
     }

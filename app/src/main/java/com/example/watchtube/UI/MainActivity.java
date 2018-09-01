@@ -11,6 +11,7 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import android.app.Dialog;
         import android.app.ProgressDialog;
@@ -21,6 +22,9 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -66,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         mViewPager.setOffscreenPageLimit(2);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
         mTabLayout.setupWithViewPager(mViewPager);
-        //setupTabIcons();
+
 
         disposables = new CompositeDisposable();
 
@@ -81,6 +85,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                                 .withIcon(R.drawable.home)
                                 .withIdentifier(1),
                         new DividerDrawerItem())
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
+                        if(position!=0){
+                            mPresenter.fetchSelectedChannelData(position-1);
+                            mViewPager.setCurrentItem(1);
+                        }
+                        Log.d("POSITION", position+"");
+                    }
+                })
                 .build();
         mPresenter = new MainPresenter(this);
         mPresenter.onStart();
@@ -128,10 +142,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         showProgress();
     }
 
-    private void setupTabIcons() {
-        mTabLayout.getTabAt(0).setIcon(R.drawable.tab_home);
+    public void setupTabIcons() {
+        mTabLayout.getTabAt(0).setIcon(R.drawable.tab_trending);
         mTabLayout.getTabAt(1).setIcon(R.drawable.tab_subscriptions);
-        mTabLayout.getTabAt(2).setIcon(R.drawable.tab_trending);
+        mTabLayout.getTabAt(2).setIcon(R.drawable.tab_home);
 
     }
 
@@ -140,14 +154,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
      public void setupNavigationDrawer(ArrayList<SubscriptionData> someSubscriptionData){
-
          for(int i = 1; i < someSubscriptionData.size(); i++){
              drawerResult.addItem(new SecondaryDrawerItem()
                 .withName(someSubscriptionData.get(i).title)
                 .withIcon(someSubscriptionData.get(i).image));
          }
-
-
      }
 
     public void showProgress(){

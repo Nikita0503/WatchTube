@@ -45,6 +45,8 @@ public class VideoListCustomAdapter extends RecyclerView.Adapter<VideoListCustom
         holder.textViewChannelTitle.setText(mList.get(position).channelTitle);
         holder.imageViewChannel.setImageDrawable(mList.get(position).channelImage);
         holder.textViewPublishedAt.setText(mList.get(position).publishedAt);
+        holder.textViewViewCount.setText(String.valueOf(mList.get(position).viewsCount) + " views");
+        holder.textViewDuration.setText(mList.get(position).duration);
         Log.d("Queue", "= " + position);
         if(position == mList.size() - 3){
             mFragment.fetchVideoListData();
@@ -56,7 +58,7 @@ public class VideoListCustomAdapter extends RecyclerView.Adapter<VideoListCustom
         return mList.size();
     }
 
-    public void updateData(ArrayList<VideoPreviewData> list){
+    public void addVideosToList(ArrayList<VideoPreviewData> list){
         mList.addAll(list);
         notifyDataSetChanged();
     }
@@ -67,7 +69,8 @@ public class VideoListCustomAdapter extends RecyclerView.Adapter<VideoListCustom
         TextView textViewChannelTitle;
         ImageView imageViewChannel;
         TextView textViewPublishedAt;
-
+        TextView textViewViewCount;
+        TextView textViewDuration;
         public ViewHolder(View itemView){
             super(itemView);
             imageView = (ImageView) itemView.findViewById(R.id.imageViewVideo);
@@ -75,6 +78,8 @@ public class VideoListCustomAdapter extends RecyclerView.Adapter<VideoListCustom
             textViewChannelTitle = (TextView) itemView.findViewById(R.id.textViewChannelTitle);
             imageViewChannel = (ImageView) itemView.findViewById(R.id.imageViewChannel);
             textViewPublishedAt = (TextView) itemView.findViewById(R.id.textViewPublishedAt);
+            textViewViewCount = (TextView) itemView.findViewById(R.id.textViewViewCount);
+            textViewDuration = (TextView) itemView.findViewById(R.id.textViewDuration);
         }
     }
 }

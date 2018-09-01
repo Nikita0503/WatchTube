@@ -3,8 +3,8 @@ package com.example.watchtube;
 import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.content.Intent;
-import android.util.Log;
 
+import com.example.watchtube.UI.ChannelFragment;
 import com.example.watchtube.model.APIUtils.YouTubeAPIUtils;
 import com.example.watchtube.UI.MainActivity;
 import com.example.watchtube.UI.VideoListFragment;
@@ -16,7 +16,7 @@ import com.google.api.client.util.ExponentialBackOff;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Locale;
+import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -31,18 +31,20 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 
 public class MainPresenter implements Contract.Presenter{
 
-    private MainActivity mMainActivity;
+    private List<SubscriptionData> mSubscriptions;
+    private MainActivity mActivity;
+    private ChannelFragment mChannelFragment;
     private CompositeDisposable mDisposables;
     private YouTubeAPIUtils mYouTubeAPIUtils;
     public GoogleAccountCredential mCredential;
     private DemandsChecker mDemandsChecker;
 
     public MainPresenter(MainActivity mainActivity){
-        mMainActivity = mainActivity;
+        mActivity = mainActivity;
         mCredential = GoogleAccountCredential.usingOAuth2(
-                mMainActivity.getApplicationContext(), Arrays.asList(MainActivity.SCOPES))
+                mActivity.getApplicationContext(), Arrays.asList(MainActivity.SCOPES))
                 .setBackOff(new ExponentialBackOff());
-        mYouTubeAPIUtils = new YouTubeAPIUtils(mMainActivity.getApplicationContext(),
+        mYouTubeAPIUtils = new YouTubeAPIUtils(mActivity.getApplicationContext(),
                 this, mCredential);
     }
 
@@ -52,7 +54,7 @@ public class MainPresenter implements Contract.Presenter{
     }
 
     public void checkDemands(){
-         mDemandsChecker = new DemandsChecker(mMainActivity, this);
+         mDemandsChecker = new DemandsChecker(mActivity, this);
         if (!mDemandsChecker.isGooglePlayServicesAvailable()) {
             mDemandsChecker.acquireGooglePlayServices();
         } else if (mCredential.getSelectedAccountName() == null) {
@@ -60,12 +62,11 @@ public class MainPresenter implements Contract.Presenter{
         } else if (!mDemandsChecker.isDeviceOnline()) {
             setText("No network connection available.");
         } else {
-            getResultsFromApi();
+            fetchSubscribesList();
         }
     }
 
-    private void getResultsFromApi() {
-        //String lCode = Locale.getDefault().getCountry();
+    private void fetchSubscribesList() {
         setText("");
         Disposable disposable = mYouTubeAPIUtils.getSubscriptionsInfo.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -73,9 +74,11 @@ public class MainPresenter implements Contract.Presenter{
                     @Override
                     public void onSuccess(ArrayList<SubscriptionData> subscriptions) {
                             //loadImageFromUrl(defaultObject.get(0).URL);
-                        mMainActivity.setupNavigationDrawer(subscriptions);
+
+                        mActivity.setupNavigationDrawer(subscriptions);
+                        mSubscriptions = subscriptions;
                         if(mYouTubeAPIUtils.pageToken != null){
-                            getResultsFromApi();
+                            fetchSubscribesList();
                         }
                     }
                     @Override
@@ -87,7 +90,13 @@ public class MainPresenter implements Contract.Presenter{
         mDisposables.add(disposable);
     }
 
-
+    public void fetchSelectedChannelData(int position){
+        mChannelFragment.setCredential(mCredential);
+        mChannelFragment.setChannelId(mSubscriptions.get(position).channelId);
+        mChannelFragment.fetchChannelData();
+        //mActivity.startActivity(intent);
+        //startActivity(Intent) channelActivity
+    }
 
     public void checkAccountName(Intent data){
         String accountName =
@@ -110,7 +119,7 @@ public class MainPresenter implements Contract.Presenter{
                 mCredential.setSelectedAccountName(accountName);
                 checkDemands();
             } else {
-                mMainActivity.startActivityForResult(
+                mActivity.startActivityForResult(
                         mCredential.newChooseAccountIntent(),
                         MainActivity.REQUEST_ACCOUNT_PICKER);
         }
@@ -119,33 +128,35 @@ public class MainPresenter implements Contract.Presenter{
     public void makeGooglePlayServicesAvailabilityErrorDialog(GoogleApiAvailability apiAvailability,
             final int connectionStatusCode) {
         Dialog dialog = apiAvailability.getErrorDialog(
-                mMainActivity,
+                mActivity,
                 connectionStatusCode,
                 DemandsChecker.REQUEST_GOOGLE_PLAY_SERVICES);
-        mMainActivity.showDialog(dialog);
+        mActivity.showDialog(dialog);
     }
 
     public void makePagerAdapter(){
-        ViewPagerAdapter adapter = new ViewPagerAdapter(mMainActivity.getSupportFragmentManager());
+        ViewPagerAdapter adapter = new ViewPagerAdapter(mActivity.getSupportFragmentManager());
         VideoListFragment recommendedVideoListFragment = new VideoListFragment();
         recommendedVideoListFragment.setCredentials(mCredential);
         adapter.addFragment(recommendedVideoListFragment, "Trending");
-        adapter.addFragment(new VideoListFragment(), "Search");
+        mChannelFragment = new ChannelFragment();
+        adapter.addFragment(mChannelFragment, "Subscribe");
         adapter.addFragment(new VideoListFragment(), "Settings");
-        mMainActivity.setupPagerAdapter(adapter);
+        mActivity.setupPagerAdapter(adapter);
+        mActivity.setupTabIcons();
         hideProgress();
     }
 
     public void showProgress(){
-        mMainActivity.showProgress();
+        mActivity.showProgress();
     }
 
     public void hideProgress(){
-        mMainActivity.hideProgress();
+        mActivity.hideProgress();
     }
 
     public void setText(String text){
-        mMainActivity.mOutputText.setText(text);
+        mActivity.mOutputText.setText(text);
     }
 
     @Override

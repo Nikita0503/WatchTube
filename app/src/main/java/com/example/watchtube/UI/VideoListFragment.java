@@ -36,13 +36,13 @@ public class VideoListFragment extends Fragment implements Contract.View {
         super.onCreate(savedInstanceState);
         mPresenter = new VideoListPresenter(this, mCredential);
         mPresenter.onStart();
-        mPresenter.fetchVideoListData();
+        mPresenter.fetchVideoList();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_one, container, false);
+        View v = inflater.inflate(R.layout.fragment_video_preview, container, false);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -52,12 +52,12 @@ public class VideoListFragment extends Fragment implements Contract.View {
         return v;
     }
 
-    public void updateData(ArrayList<VideoPreviewData> data){
-        mAdapter.updateData(data);
+    public void addVideosToList(ArrayList<VideoPreviewData> data){
+        mAdapter.addVideosToList(data);
     }
 
     public void fetchVideoListData(){
-        mPresenter.fetchVideoListData();
+        mPresenter.fetchVideoList();
     }
 
     @Override

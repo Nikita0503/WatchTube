@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_margin="5dp"
-    android:layout_height="285dp">
+    android:layout_height="270dp">
 
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -19,53 +19,56 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="285dp">
+            android:layout_height="270dp">
 
             <TextView
                 android:id="@+id/textViewVideoTitle"
                 android:layout_width="282dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="TextView"
-                android:maxLines="2"
+                android:layout_marginTop="2dp"
                 android:ellipsize="end"
+                android:maxLines="2"
+                android:text="videoTitle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageViewVideo" />
 
-    <ImageView
-        android:id="@+id/imageViewVideo"
-        android:layout_width="match_parent"
-        android:layout_height="213dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/googleg_standard_color_18" />
+            <ImageView
+                android:id="@+id/imageViewVideo"
+                android:layout_width="match_parent"
+                android:layout_height="190dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/googleg_standard_color_18" />
 
             <TextView
                 android:id="@+id/textViewChannelTitle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
+                android:layout_height="15dp"
                 android:layout_marginStart="8dp"
-                android:text="TextView"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="5dp"
+                android:text="channelTitle"
                 android:textSize="12dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintBottom_toTopOf="@+id/textViewViewCount"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewVideoTitle" />
 
-    <ImageView
-        android:id="@+id/imageViewChannel"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewVideo"
-        app:srcCompat="@android:drawable/btn_star_big_on" />
+            <ImageView
+                android:id="@+id/imageViewChannel"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="6dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageViewVideo"
+                app:srcCompat="@android:drawable/btn_star_big_on" />
 
             <TextView
                 android:id="@+id/textViewPublishedAt"
@@ -73,10 +76,33 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="2dp"
                 android:layout_marginEnd="8dp"
-                android:text="TextView"
+                android:text="publishedAt"
                 android:textSize="12dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/textViewViewCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginStart="8dp"
+                android:text="viewCount"
+                android:textSize="12dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/textViewDuration"
+                android:background="@color/md_black_1000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="2dp"
+                android:paddingRight="3dp"
+                android:text="duration"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewVideo"
+                android:layout_marginRight="3dp"
+                app:layout_constraintEnd_toEndOf="@+id/imageViewVideo" />
 
         </android.support.constraint.ConstraintLayout>
 

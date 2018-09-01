@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.google.api.client.util.DateTime;
 
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -16,20 +17,23 @@ public class VideoPreviewData {
 
     public String videoId;
     public String channelId;
+    public BigInteger viewsCount;
     public String videoTitle;
     public String channelTitle;
     public String publishedAt;
+    public String duration;
     public Drawable videoImage;
     public Drawable channelImage;
 
-
-    public VideoPreviewData(String videoId, String videoTitle, Drawable videoImage, String channelId, String channelTitle, Drawable channelImage, String publishedAt) {
+    public VideoPreviewData(String videoId, String videoTitle, BigInteger viewsCount, Drawable videoImage, String channelId, String channelTitle, Drawable channelImage, String publishedAt, String duration) {
         this.videoId = videoId;
         this.channelId = channelId;
+        this.viewsCount = viewsCount;
         this.videoTitle = videoTitle;
         this.channelTitle = channelTitle;
         this.publishedAt = publishedAt;
         this.videoImage = videoImage;
         this.channelImage = channelImage;
+        this.duration = duration;
     }
 }
