@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import com.example.watchtube.Contract;
 import com.example.watchtube.R;
 import com.example.watchtube.VideoListPresenter;
-import com.example.watchtube.VideoListCustomAdapter;
+import com.example.watchtube.model.VideoListCustomAdapter;
 import com.example.watchtube.model.data.VideoPreviewData;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 

@@ -11,16 +11,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.watchtube.ChannelPresenter;
+import com.example.watchtube.ChannelDescriptionPresenter;
 import com.example.watchtube.Contract;
 import com.example.watchtube.R;
 import com.example.watchtube.model.data.ChannelData;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
-public class ChannelFragment extends Fragment implements Contract.View {
+public class ChannelDescriptionFragment extends Fragment implements Contract.View {
 
     private String mChannelId;
-    private ChannelPresenter mPresenter;
+    private ChannelDescriptionPresenter mPresenter;
     private GoogleAccountCredential mCredential;
     private TextView mTextViewTitle;
     private TextView mTextViewKind;
@@ -32,7 +32,7 @@ public class ChannelFragment extends Fragment implements Contract.View {
 
     public void setChannelId(String channelId){
         mChannelId = channelId;
-        mPresenter = new ChannelPresenter(this, mCredential, mChannelId);
+        mPresenter = new ChannelDescriptionPresenter(this, mCredential, mChannelId);
         mPresenter.onStart();
     }
 
@@ -50,7 +50,7 @@ public class ChannelFragment extends Fragment implements Contract.View {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_channel, container, false);
+        View v = inflater.inflate(R.layout.fragment_channel_descripiton, container, false);
         mTextViewTitle = v.findViewById(R.id.textViewTitle);
         mTextViewKind = v.findViewById(R.id.textViewKind);
         mTextViewSubCount = v.findViewById(R.id.textViewSubCount);
@@ -58,7 +58,7 @@ public class ChannelFragment extends Fragment implements Contract.View {
         mTextViewDescription.setMovementMethod(new ScrollingMovementMethod());
         mImageViewBanner = v.findViewById(R.id.imageViewBanner);
         mImageViewIcon = v.findViewById(R.id.imageViewIcon);
-        mLayout = v.findViewById(R.id.constraintLayoutChannel);
+        mLayout = v.findViewById(R.id.constraintLayoutChannelDescription);
         Log.d("CHANNEL", "CREATE");
         return v;
     }

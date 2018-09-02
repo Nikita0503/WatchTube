@@ -23,6 +23,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
@@ -167,6 +168,19 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     public void hideProgress(){
         //mProgress.hide();
+    }
+
+    public void turnOnViewPagerSwipe(){
+        mViewPager.setOnTouchListener(null);
+    }
+
+    public void turnOffViewPagerSwipe(){
+        mViewPager.setOnTouchListener(new View.OnTouchListener() {
+
+            public boolean onTouch(View arg0, MotionEvent arg1) {
+                return true;
+            }
+        });
     }
 
     @Override

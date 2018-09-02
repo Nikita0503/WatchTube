@@ -5,8 +5,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
-import com.example.watchtube.ChannelPresenter;
-import com.example.watchtube.Contract;
+import com.example.watchtube.ChannelDescriptionPresenter;
 import com.example.watchtube.MainPresenter;
 import com.example.watchtube.R;
 import com.example.watchtube.VideoListPresenter;
@@ -20,9 +19,6 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
-import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.Activity;
-import com.google.api.services.youtube.model.ActivityListResponse;
 import com.google.api.services.youtube.model.Channel;
 import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.Subscription;
@@ -44,7 +40,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
@@ -59,7 +54,7 @@ public class YouTubeAPIUtils {
     public String pageToken;
     private MainPresenter mMainPresenter;
     private VideoListPresenter mVideoListPresenter;
-    private ChannelPresenter mChannelPresenter;
+    private ChannelDescriptionPresenter mChannelPresenter;
     private GoogleAccountCredential mCredential;
     private Context mContext;
 
@@ -75,7 +70,7 @@ public class YouTubeAPIUtils {
         mCredential = credential;
     }
 
-    public YouTubeAPIUtils(Context context, ChannelPresenter channelPresenter, GoogleAccountCredential credential, String channelId){
+    public YouTubeAPIUtils(Context context, ChannelDescriptionPresenter channelPresenter, GoogleAccountCredential credential, String channelId){
         mContext = context;
         mChannelPresenter = channelPresenter;
         mCredential = credential;

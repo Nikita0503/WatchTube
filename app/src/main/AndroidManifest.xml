@@ -23,7 +23,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UI.ChannelFragment"></activity>
+        <activity android:name=".UI.ChannelDescriptionFragment" />
+        <activity android:name=".ChannelFragment"></activity>
     </application>
 
 </manifest>

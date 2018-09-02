@@ -4,7 +4,7 @@ import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.content.Intent;
 
-import com.example.watchtube.UI.ChannelFragment;
+import com.example.watchtube.UI.ChannelDescriptionFragment;
 import com.example.watchtube.model.APIUtils.YouTubeAPIUtils;
 import com.example.watchtube.UI.MainActivity;
 import com.example.watchtube.UI.VideoListFragment;

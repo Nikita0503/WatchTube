@@ -1,6 +1,6 @@
 package com.example.watchtube;
 
-import com.example.watchtube.UI.ChannelFragment;
+import com.example.watchtube.UI.ChannelDescriptionFragment;
 import com.example.watchtube.model.APIUtils.YouTubeAPIUtils;
 import com.example.watchtube.model.data.ChannelData;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -15,14 +15,14 @@ import io.reactivex.schedulers.Schedulers;
  * Created by Nikita on 31.08.2018.
  */
 
-public class ChannelPresenter implements Contract.Presenter {
+public class ChannelDescriptionPresenter implements Contract.Presenter {
 
-    private ChannelFragment mFragment;
+    private ChannelDescriptionFragment mFragment;
     private CompositeDisposable mDisposables;
     private GoogleAccountCredential mCredential;
     private YouTubeAPIUtils mYouTubeAPIUtils;
 
-    public ChannelPresenter(ChannelFragment activity, GoogleAccountCredential credential, String channelId) {
+    public ChannelDescriptionPresenter(ChannelDescriptionFragment activity, GoogleAccountCredential credential, String channelId) {
         mCredential = credential;
         mFragment = activity;
         mYouTubeAPIUtils = new YouTubeAPIUtils(mFragment.getContext(), this, mCredential, channelId);

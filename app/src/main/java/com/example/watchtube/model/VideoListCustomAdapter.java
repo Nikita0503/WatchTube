@@ -1,4 +1,4 @@
-package com.example.watchtube;
+package com.example.watchtube.model;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.watchtube.R;
 import com.example.watchtube.UI.VideoListFragment;
 import com.example.watchtube.model.data.VideoPreviewData;
 
