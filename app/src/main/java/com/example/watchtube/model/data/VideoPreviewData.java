@@ -17,7 +17,7 @@ public class VideoPreviewData {
 
     public String videoId;
     public String channelId;
-    public BigInteger viewsCount;
+    public BigInteger viewCount;
     public String videoTitle;
     public String channelTitle;
     public String publishedAt;
@@ -25,10 +25,10 @@ public class VideoPreviewData {
     public Drawable videoImage;
     public Drawable channelImage;
 
-    public VideoPreviewData(String videoId, String videoTitle, BigInteger viewsCount, Drawable videoImage, String channelId, String channelTitle, Drawable channelImage, String publishedAt, String duration) {
+    public VideoPreviewData(String videoId, String videoTitle, BigInteger viewCount, Drawable videoImage, String channelId, String channelTitle, Drawable channelImage, String publishedAt, String duration) {
         this.videoId = videoId;
         this.channelId = channelId;
-        this.viewsCount = viewsCount;
+        this.viewCount = viewCount;
         this.videoTitle = videoTitle;
         this.channelTitle = channelTitle;
         this.publishedAt = publishedAt;

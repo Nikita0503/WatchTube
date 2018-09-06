@@ -66,6 +66,8 @@
         app:layout_constraintStart_toStartOf="parent" />
 
 
+
+
     <TextView
         android:id="@+id/textViewSubCount"
         android:layout_width="wrap_content"

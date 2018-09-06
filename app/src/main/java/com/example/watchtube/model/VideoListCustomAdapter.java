@@ -35,7 +35,7 @@ public class VideoListCustomAdapter extends RecyclerView.Adapter<VideoListCustom
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.my_text_view, parent, false);
+        View view = inflater.inflate(R.layout.fragment_video_list_preview_video, parent, false);
         return new ViewHolder(view);
     }
 
@@ -46,7 +46,7 @@ public class VideoListCustomAdapter extends RecyclerView.Adapter<VideoListCustom
         holder.textViewChannelTitle.setText(mList.get(position).channelTitle);
         holder.imageViewChannel.setImageDrawable(mList.get(position).channelImage);
         holder.textViewPublishedAt.setText(mList.get(position).publishedAt);
-        holder.textViewViewCount.setText(String.valueOf(mList.get(position).viewsCount) + " views");
+        holder.textViewViewCount.setText(String.valueOf(mList.get(position).viewCount) + " views");
         holder.textViewDuration.setText(mList.get(position).duration);
         Log.d("Queue", "= " + position);
         if(position == mList.size() - 3){

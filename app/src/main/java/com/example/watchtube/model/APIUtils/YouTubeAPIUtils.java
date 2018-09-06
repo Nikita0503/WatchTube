@@ -6,10 +6,12 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.example.watchtube.ChannelDescriptionPresenter;
+import com.example.watchtube.ChannelVideoListPresenter;
 import com.example.watchtube.MainPresenter;
 import com.example.watchtube.R;
 import com.example.watchtube.VideoListPresenter;
 import com.example.watchtube.model.data.ChannelData;
+import com.example.watchtube.model.data.ChannelVideoPreviewData;
 import com.example.watchtube.model.data.SubscriptionData;
 import com.example.watchtube.model.CircleTransform;
 import com.example.watchtube.model.data.VideoPreviewData;
@@ -21,6 +23,8 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.model.Channel;
 import com.google.api.services.youtube.model.ChannelListResponse;
+import com.google.api.services.youtube.model.PlaylistItem;
+import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
 import com.google.api.services.youtube.model.Video;
@@ -51,10 +55,12 @@ import io.reactivex.SingleOnSubscribe;
 public class YouTubeAPIUtils {
 
     private String mChannelId;
+    private String mPlaylistId;
     public String pageToken;
     private MainPresenter mMainPresenter;
     private VideoListPresenter mVideoListPresenter;
     private ChannelDescriptionPresenter mChannelPresenter;
+    private ChannelVideoListPresenter mChannelVideoListPresenter;
     private GoogleAccountCredential mCredential;
     private Context mContext;
 
@@ -76,6 +82,14 @@ public class YouTubeAPIUtils {
         mCredential = credential;
         mChannelId = channelId;
     }
+
+    public YouTubeAPIUtils(Context context, ChannelVideoListPresenter channelVideoListPresenter, GoogleAccountCredential credential, String channelId){
+        mContext = context;
+        mChannelVideoListPresenter = channelVideoListPresenter;
+        mCredential = credential;
+        mChannelId = channelId;
+    }
+
 
     public Single<ArrayList<SubscriptionData>> getSubscriptionsInfo = Single.create(new SingleOnSubscribe<ArrayList<SubscriptionData>>() {
         @Override
@@ -122,6 +136,69 @@ public class YouTubeAPIUtils {
         }
     });
 
+    public Single<ArrayList<ChannelVideoPreviewData>> getChannelVideoPreviewData = Single.create(new SingleOnSubscribe<ArrayList<ChannelVideoPreviewData>>() {
+        @Override
+        public void subscribe(SingleEmitter<ArrayList<ChannelVideoPreviewData>> e) throws Exception {
+            HttpTransport transport = AndroidHttp.newCompatibleTransport();
+            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+            com.google.api.services.youtube.YouTube mService = new com.google.api.services.youtube.YouTube.Builder(
+                    transport, jsonFactory, mCredential)
+                    .setApplicationName("WatchTube")
+                    .build();
+            Log.d("videoList", "WAS CREATED");
+            ArrayList<ChannelVideoPreviewData> channelVideoPreviewData = new ArrayList<ChannelVideoPreviewData>();
+            Log.d("Video ChannelID123", mChannelId);
+            ChannelListResponse resultPlaylist = mService.channels().list("contentDetails")
+                    .setId(mChannelId)
+                    .setFields("items/contentDetails/relatedPlaylists/uploads")
+                    .execute();
+            Channel channel = resultPlaylist.getItems().get(0);
+            mPlaylistId = channel.getContentDetails().getRelatedPlaylists().getUploads();
+            PlaylistItemListResponse result = null;
+            if(pageToken != null){
+                result = mService.playlistItems()
+                        .list("snippet,contentDetails")
+                        .setPlaylistId(mPlaylistId)
+                        .setPageToken(pageToken)
+                        .setMaxResults(10L)
+                        .setFields("items(contentDetails(videoId,videoPublishedAt),snippet(thumbnails/medium,title)),nextPageToken")
+                        .execute();
+
+            }else{
+                result = mService.playlistItems()
+                        .list("snippet,contentDetails")
+                        .setPlaylistId(mPlaylistId)
+                        .setMaxResults(10L)
+                        .setFields("items(contentDetails(videoId,videoPublishedAt),snippet(thumbnails/medium,title)),nextPageToken")
+                        .execute();
+            }
+            if(result.getNextPageToken() != null){
+                pageToken = result.getNextPageToken();
+            }else {
+                pageToken = null;
+            }
+                Log.d("NORMAL", "!");
+            List<PlaylistItem> playlistItems = result.getItems();
+            String id;
+            String title;
+            String publishedAt;
+            Drawable imageVideo;
+
+            for(int i = 0; i < playlistItems.size(); i++){
+                PlaylistItem item = playlistItems.get(i);
+                id = item.getContentDetails().getVideoId();
+                title = item.getSnippet().getTitle();
+                publishedAt = getTimeDifference(item.getContentDetails().getVideoPublishedAt());
+                imageVideo = new BitmapDrawable(mContext.getResources(), Picasso.with(mContext)
+                        .load(item.getSnippet().getThumbnails().getMedium().getUrl())
+                        .get());
+                Log.d("VideoLIST", "item = " + i);
+                channelVideoPreviewData.add(new ChannelVideoPreviewData(id, i+":"+title, publishedAt, imageVideo));
+            }
+            e.onSuccess(channelVideoPreviewData);
+        }
+    });
+
     public Single<ChannelData> getChannelData = Single.create(new SingleOnSubscribe<ChannelData>() {
         @Override
         public void subscribe(SingleEmitter<ChannelData> e) throws Exception {
@@ -135,7 +212,7 @@ public class YouTubeAPIUtils {
             ChannelListResponse result = mService.channels().list("snippet,contentDetails,brandingSettings,statistics")
                     .setId(mChannelId)
                     .setFields("items(brandingSettings(channel(featuredChannelsTitle,profileColor)," +
-                            "image/bannerMobileMediumHdImageUrl),contentDetails/relatedPlaylists/uploads," +
+                            "image/bannerMobileMediumHdImageUrl)," +
                             "id,snippet(description,publishedAt,thumbnails/medium,title),statistics" +
                             "(subscriberCount)),kind")
                     .execute();
@@ -145,7 +222,6 @@ public class YouTubeAPIUtils {
             BigInteger subscriptionsCount = channel.getStatistics().getSubscriberCount(); // поменять на int
             String description = channel.getSnippet().getDescription();
             DateTime publishedAt = channel.getSnippet().getPublishedAt();
-            String uploadPlaylist = channel.getContentDetails().getRelatedPlaylists().getUploads();
             String kind = channel.getBrandingSettings().getChannel().getFeaturedChannelsTitle();
             String color = channel.getBrandingSettings().getChannel().getProfileColor();
             Drawable imageIcon = new BitmapDrawable(mContext.getResources(), Picasso.with(mContext)
@@ -156,10 +232,11 @@ public class YouTubeAPIUtils {
                     .load(channel.getBrandingSettings().getImage().getBannerMobileMediumHdImageUrl())
                     .get());
             ChannelData channelData = new ChannelData(id, title, subscriptionsCount, description, publishedAt,
-                    uploadPlaylist, kind, color, imageIcon, imageBanner);
+                     kind, color, imageIcon, imageBanner);
             e.onSuccess(channelData);
         }
     });
+    
 
     public Single<ArrayList<VideoPreviewData>> getVideoPreviewData = Single.create(new SingleOnSubscribe<ArrayList<VideoPreviewData>>() {
         @Override
@@ -218,7 +295,6 @@ public class YouTubeAPIUtils {
                 channelTitle = video.getSnippet().getChannelTitle();
                 viewCount = video.getStatistics().getViewCount();
                 publishedAt =  getTimeDifference(video.getSnippet().getPublishedAt());
-
                 duration = String.valueOf(getDuration(video.getContentDetails().getDuration()));
                 videoImage = new BitmapDrawable(mContext.getResources(), Picasso.with(mContext)
                         .load(video.getSnippet().getThumbnails().getHigh().getUrl())

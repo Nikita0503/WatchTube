@@ -3,25 +3,15 @@ package com.example.watchtube;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.example.watchtube.UI.ChannelDescriptionFragment;
-import com.example.watchtube.UI.OneFragment;
+import com.example.watchtube.UI.ChannelVideoListFragment;
 import com.example.watchtube.UI.TwoFragment;
-import com.example.watchtube.UI.VideoListFragment;
-import com.example.watchtube.model.VideoListCustomAdapter;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 public class ChannelFragment extends Fragment {
@@ -31,7 +21,7 @@ public class ChannelFragment extends Fragment {
     private ViewPager mViewPagerChannel;
     private GoogleAccountCredential mCredential;
     private ChannelDescriptionFragment mChannelDescriptionFragment;
-    private OneFragment fragmentOne;
+    private ChannelVideoListFragment fragmentOne;
     private TwoFragment twoFragment;
     private ConstraintLayout mLayout;
 
@@ -53,6 +43,9 @@ public class ChannelFragment extends Fragment {
         mChannelDescriptionFragment.setCredential(mCredential);
         mChannelDescriptionFragment.setChannelId(mChannelId);
         mChannelDescriptionFragment.fetchChannelData();
+        fragmentOne.setCredentials(mCredential);
+        fragmentOne.setChannelId(mChannelId);
+        fragmentOne.fetchVideoListData();
         mLayout.setVisibility(View.VISIBLE);
     }
 
@@ -73,7 +66,7 @@ public class ChannelFragment extends Fragment {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager());
         mChannelDescriptionFragment = new ChannelDescriptionFragment();
         adapter.addFragment(mChannelDescriptionFragment, "Description");
-        fragmentOne = new OneFragment();
+        fragmentOne = new ChannelVideoListFragment();
         adapter.addFragment(fragmentOne, "Videos");
         twoFragment = new TwoFragment();
         adapter.addFragment(twoFragment, "Playlists");
