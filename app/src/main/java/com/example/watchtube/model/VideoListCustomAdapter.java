@@ -35,7 +35,7 @@ public class VideoListCustomAdapter extends RecyclerView.Adapter<VideoListCustom
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.fragment_video_list_preview_video, parent, false);
+        View view = inflater.inflate(R.layout.fragment_video_list_preview_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -74,7 +74,7 @@ public class VideoListCustomAdapter extends RecyclerView.Adapter<VideoListCustom
         TextView textViewDuration;
         public ViewHolder(View itemView){
             super(itemView);
-            imageView = (ImageView) itemView.findViewById(R.id.imageViewVideo);
+            imageView = (ImageView) itemView.findViewById(R.id.imageViewPlaylist);
             textViewVideoTitle = (TextView) itemView.findViewById(R.id.textViewVideoTitle);
             textViewChannelTitle = (TextView) itemView.findViewById(R.id.textViewChannelTitle);
             imageViewChannel = (ImageView) itemView.findViewById(R.id.imageViewChannel);

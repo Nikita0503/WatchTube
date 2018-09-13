@@ -1,4 +1,4 @@
-package com.example.watchtube;
+package com.example.watchtube.UI;
 
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TabLayout;
@@ -9,9 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.watchtube.R;
 import com.example.watchtube.UI.ChannelDescriptionFragment;
 import com.example.watchtube.UI.ChannelVideoListFragment;
 import com.example.watchtube.UI.TwoFragment;
+import com.example.watchtube.ViewPagerAdapter;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 public class ChannelFragment extends Fragment {
@@ -22,7 +24,7 @@ public class ChannelFragment extends Fragment {
     private GoogleAccountCredential mCredential;
     private ChannelDescriptionFragment mChannelDescriptionFragment;
     private ChannelVideoListFragment fragmentOne;
-    private TwoFragment twoFragment;
+    private ChannelPlaylistListFragment twoFragment;
     private ConstraintLayout mLayout;
 
     @Override
@@ -46,6 +48,9 @@ public class ChannelFragment extends Fragment {
         fragmentOne.setCredentials(mCredential);
         fragmentOne.setChannelId(mChannelId);
         fragmentOne.fetchVideoListData();
+        twoFragment.setCredentials(mCredential);
+        twoFragment.setChannelId(mChannelId);
+        twoFragment.fetchVideoListData();
         mLayout.setVisibility(View.VISIBLE);
     }
 
@@ -68,7 +73,7 @@ public class ChannelFragment extends Fragment {
         adapter.addFragment(mChannelDescriptionFragment, "Description");
         fragmentOne = new ChannelVideoListFragment();
         adapter.addFragment(fragmentOne, "Videos");
-        twoFragment = new TwoFragment();
+        twoFragment = new ChannelPlaylistListFragment();
         adapter.addFragment(twoFragment, "Playlists");
         mViewPagerChannel.setAdapter(adapter);
         mViewPagerChannel.setOffscreenPageLimit(2);

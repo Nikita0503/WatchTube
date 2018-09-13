@@ -2,6 +2,7 @@ package com.example.watchtube;
 
 import android.support.v7.widget.RecyclerView;
 
+import com.example.watchtube.Contract;
 import com.example.watchtube.UI.VideoListFragment;
 import com.example.watchtube.model.APIUtils.YouTubeAPIUtils;
 import com.example.watchtube.model.data.SubscriptionData;

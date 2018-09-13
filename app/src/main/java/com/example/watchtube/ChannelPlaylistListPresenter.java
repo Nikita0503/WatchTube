@@ -2,11 +2,9 @@ package com.example.watchtube;
 
 import android.util.Log;
 
-import com.example.watchtube.Contract;
-import com.example.watchtube.UI.ChannelVideoListFragment;
+import com.example.watchtube.UI.ChannelPlaylistListFragment;
 import com.example.watchtube.model.APIUtils.YouTubeAPIUtils;
-import com.example.watchtube.model.data.ChannelVideoPreviewData;
-import com.example.watchtube.model.data.VideoPreviewData;
+import com.example.watchtube.model.data.ChannelPlaylistPreviewData;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import java.util.ArrayList;
@@ -18,20 +16,20 @@ import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by Nikita on 06.09.2018.
+ * Created by Nikita on 13.09.2018.
  */
 
-public class ChannelVideoListPresenter implements Contract.Presenter {
+public class ChannelPlaylistListPresenter implements Contract.Presenter {
 
-    private ChannelVideoListFragment mFragment;
+    private ChannelPlaylistListFragment mFragment;
     private CompositeDisposable mDisposable;
     private GoogleAccountCredential mCredential;
     private YouTubeAPIUtils mYouTubeAPIUtils;
 
-    public ChannelVideoListPresenter(ChannelVideoListFragment fragment, GoogleAccountCredential credential, String channelId){
+    public ChannelPlaylistListPresenter(ChannelPlaylistListFragment fragment, GoogleAccountCredential credential, String channelId) {
         mFragment = fragment;
         mCredential = credential;
-        Log.d("VideoListPresenter", channelId);
+        Log.d("ChannelListPresenter", channelId);
         mYouTubeAPIUtils = new YouTubeAPIUtils(mFragment.getContext(), this, mCredential, channelId);
     }
 
@@ -40,13 +38,13 @@ public class ChannelVideoListPresenter implements Contract.Presenter {
         mDisposable = new CompositeDisposable();
     }
 
-    public void fetchVideoList(){
-        Disposable disposable = mYouTubeAPIUtils.getChannelVideoPreviewData.subscribeOn(Schedulers.io())
+    public void fetchPlaylistList(){
+        Disposable disposable = mYouTubeAPIUtils.getChannelPlaylistPreviewData.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<ArrayList<ChannelVideoPreviewData>>() {
+                .subscribeWith(new DisposableSingleObserver<ArrayList<ChannelPlaylistPreviewData>>() {
                     @Override
-                    public void onSuccess(ArrayList<ChannelVideoPreviewData> channelVideoPreviewData) {
-                        mFragment.addVideosToList(channelVideoPreviewData);
+                    public void onSuccess(ArrayList<ChannelPlaylistPreviewData> channelPlaylistPreviewData) {
+                        mFragment.addPlaylistsToList(channelPlaylistPreviewData);
                     }
                     @Override
                     public void onError(Throwable e) {
@@ -60,6 +58,4 @@ public class ChannelVideoListPresenter implements Contract.Presenter {
     public void onStop() {
         mDisposable.clear();
     }
-
-
 }

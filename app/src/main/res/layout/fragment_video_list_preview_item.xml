@@ -31,10 +31,10 @@
                 android:maxLines="2"
                 android:text="videoTitle"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageViewVideo" />
+                app:layout_constraintTop_toBottomOf="@+id/imageViewPlaylist" />
 
             <ImageView
-                android:id="@+id/imageViewVideo"
+                android:id="@+id/imageViewPlaylist"
                 android:layout_width="match_parent"
                 android:layout_height="190dp"
                 android:layout_marginTop="5dp"
@@ -67,7 +67,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginTop="6dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageViewVideo"
+                app:layout_constraintTop_toBottomOf="@+id/imageViewPlaylist"
                 app:srcCompat="@android:drawable/btn_star_big_on" />
 
             <TextView
@@ -100,9 +100,9 @@
                 android:paddingLeft="2dp"
                 android:paddingRight="3dp"
                 android:text="duration"
-                app:layout_constraintBottom_toBottomOf="@+id/imageViewVideo"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewPlaylist"
                 android:layout_marginRight="3dp"
-                app:layout_constraintEnd_toEndOf="@+id/imageViewVideo" />
+                app:layout_constraintEnd_toEndOf="@+id/imageViewPlaylist" />
 
         </android.support.constraint.ConstraintLayout>
 

@@ -11,9 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.watchtube.UI.ChannelVideoListFragment;
-import com.example.watchtube.model.VideoListCustomAdapter;
 import com.example.watchtube.model.data.ChannelVideoPreviewData;
-import com.example.watchtube.model.data.VideoPreviewData;
 
 import java.util.ArrayList;
 
@@ -36,7 +34,7 @@ public class ChannelVideoListCustomAdapter extends RecyclerView.Adapter<ChannelV
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.fragment_channel_video_list_preview_video, parent, false);
+        View view = inflater.inflate(R.layout.fragment_channel_video_list_preview_item, parent, false);
         return new ChannelVideoListCustomAdapter.ViewHolder(view);
     }
 
@@ -71,7 +69,7 @@ public class ChannelVideoListCustomAdapter extends RecyclerView.Adapter<ChannelV
         TextView textViewPublishedAt;
         public ViewHolder(View itemView){
             super(itemView);
-            imageView = (ImageView) itemView.findViewById(R.id.imageViewVideo);
+            imageView = (ImageView) itemView.findViewById(R.id.imageViewPlaylist);
             textViewVideoTitle = (TextView) itemView.findViewById(R.id.textViewTitle);
             textViewPublishedAt = (TextView) itemView.findViewById(R.id.textViewPublishedAt);
         }

@@ -1,5 +1,6 @@
 package com.example.watchtube;
 
+import com.example.watchtube.Contract;
 import com.example.watchtube.UI.ChannelDescriptionFragment;
 import com.example.watchtube.model.APIUtils.YouTubeAPIUtils;
 import com.example.watchtube.model.data.ChannelData;
@@ -22,9 +23,9 @@ public class ChannelDescriptionPresenter implements Contract.Presenter {
     private GoogleAccountCredential mCredential;
     private YouTubeAPIUtils mYouTubeAPIUtils;
 
-    public ChannelDescriptionPresenter(ChannelDescriptionFragment activity, GoogleAccountCredential credential, String channelId) {
+    public ChannelDescriptionPresenter(ChannelDescriptionFragment fragment, GoogleAccountCredential credential, String channelId) {
         mCredential = credential;
-        mFragment = activity;
+        mFragment = fragment;
         mYouTubeAPIUtils = new YouTubeAPIUtils(mFragment.getContext(), this, mCredential, channelId);
     }
 

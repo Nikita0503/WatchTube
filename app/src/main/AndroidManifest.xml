@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".UI.ChannelDescriptionFragment" />
-        <activity android:name=".ChannelFragment"></activity>
+        <activity android:name=".UI.ChannelFragment"></activity>
     </application>
 
 </manifest>

@@ -4,7 +4,9 @@ import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.content.Intent;
 
-import com.example.watchtube.UI.ChannelDescriptionFragment;
+import com.example.watchtube.Contract;
+import com.example.watchtube.UI.ChannelFragment;
+import com.example.watchtube.ViewPagerAdapter;
 import com.example.watchtube.model.APIUtils.YouTubeAPIUtils;
 import com.example.watchtube.UI.MainActivity;
 import com.example.watchtube.UI.VideoListFragment;
@@ -29,7 +31,7 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
  * Created by Nikita on 22.08.2018.
  */
 
-public class MainPresenter implements Contract.Presenter{
+public class MainPresenter implements Contract.Presenter {
 
     private List<SubscriptionData> mSubscriptions;
     private MainActivity mActivity;
