@@ -25,6 +25,7 @@ import java.util.ArrayList;
  */
 
 public class ChannelPlaylistListFragment extends Fragment implements Contract.View {
+    private boolean mFirstCreating;
     private ChannelPlaylistListPresenter mPresenter;
     private GoogleAccountCredential mCredential;
     private String mChannelId;
@@ -57,6 +58,7 @@ public class ChannelPlaylistListFragment extends Fragment implements Contract.Vi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("ROOT", "onCreate()");
+        mFirstCreating = true;
         mPresenter = new ChannelPlaylistListPresenter(this);
         mPresenter.onStart();
         setCredentials(mRootFragment.getCredential());
@@ -74,9 +76,15 @@ public class ChannelPlaylistListFragment extends Fragment implements Contract.Vi
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 //        Log.d("1234", mCredential.getSelectedAccountName());
-        mAdapter = new ChannelPlaylistListCustomAdapter(this);
-        mRecyclerView.setAdapter(mAdapter);
-        fetchPlaylistListData();
+        if(mFirstCreating) {
+            mAdapter = new ChannelPlaylistListCustomAdapter(this);
+            mRecyclerView.setAdapter(mAdapter);
+            fetchPlaylistListData();
+            mFirstCreating = false;
+        }else{
+            mRecyclerView.setAdapter(mAdapter);
+        }
+
         return v;
     }
 

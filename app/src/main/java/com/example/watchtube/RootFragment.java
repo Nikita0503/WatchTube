@@ -55,7 +55,7 @@ public class RootFragment extends Fragment {
                 .beginTransaction();
         channelPlaylistListFragment = new ChannelPlaylistListFragment();
         channelPlaylistListFragment.setRootFragment(this);
-        transaction.replace(R.id.root_frame, channelPlaylistListFragment);
+        transaction.replace(R.id.root_frame, channelPlaylistListFragment).addToBackStack(null);
         transaction.commit();
 
         Log.d("123456", mCredential.getSelectedAccountName());
