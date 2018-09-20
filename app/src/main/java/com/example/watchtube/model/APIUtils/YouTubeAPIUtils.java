@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.example.watchtube.ChannelDescriptionPresenter;
 import com.example.watchtube.ChannelPlaylistListPresenter;
+import com.example.watchtube.ChannelVideoListOfPlaylistPresenter;
 import com.example.watchtube.ChannelVideoListPresenter;
 import com.example.watchtube.MainPresenter;
 import com.example.watchtube.R;
@@ -66,43 +67,54 @@ public class YouTubeAPIUtils {
     private ChannelDescriptionPresenter mChannelPresenter;
     private ChannelVideoListPresenter mChannelVideoListPresenter;
     private ChannelPlaylistListPresenter mChannelPlaylistListPresenter;
+    private ChannelVideoListOfPlaylistPresenter mChannelVideoListOfPlaylistPresenter;
     private GoogleAccountCredential mCredential;
     private Context mContext;
 
-    public YouTubeAPIUtils(Context context, MainPresenter mainPresenter, GoogleAccountCredential credential){
+    public YouTubeAPIUtils(Context context, MainPresenter mainPresenter){
         mContext = context;
         mMainPresenter = mainPresenter;
-        mCredential = credential;
     }
 
-    public YouTubeAPIUtils(Context context, VideoListPresenter videoListPresenter, GoogleAccountCredential credential){
+    public YouTubeAPIUtils(Context context, VideoListPresenter videoListPresenter){
         mContext = context;
         mVideoListPresenter = videoListPresenter;
-        mCredential = credential;
     }
 
-    public YouTubeAPIUtils(Context context, ChannelDescriptionPresenter channelPresenter, GoogleAccountCredential credential, String channelId){
+    public YouTubeAPIUtils(Context context, ChannelDescriptionPresenter channelPresenter){
         mContext = context;
         mChannelPresenter = channelPresenter;
-        mCredential = credential;
-        mChannelId = channelId;
     }
 
-    public YouTubeAPIUtils(Context context, ChannelVideoListPresenter channelVideoListPresenter, GoogleAccountCredential credential, String channelId){
+    public YouTubeAPIUtils(Context context, ChannelVideoListPresenter channelVideoListPresenter){
         mContext = context;
         mChannelVideoListPresenter = channelVideoListPresenter;
-        mCredential = credential;
-        mChannelId = channelId;
     }
 
-    public YouTubeAPIUtils(Context context, ChannelPlaylistListPresenter channelVideoListPresenter, GoogleAccountCredential credential, String channelId){
-        Log.d("ChannelPlaylistAPI", channelId);
+    public YouTubeAPIUtils(Context context, ChannelPlaylistListPresenter channelVideoListPresenter){
         mContext = context;
         mChannelPlaylistListPresenter = channelVideoListPresenter;
+    }
+
+    public YouTubeAPIUtils(Context context, ChannelVideoListOfPlaylistPresenter channelVideoListOfPlaylistPresenter, GoogleAccountCredential credential, String playlistId){
+        Log.d("channelPlayListId", playlistId);
+        mContext = context;
+        mChannelVideoListOfPlaylistPresenter = channelVideoListOfPlaylistPresenter;     //лагает NextToken везде
         mCredential = credential;
+        mPlaylistId = playlistId;
+    }
+
+    public void setupChannelId(String channelId){
         mChannelId = channelId;
     }
 
+    public void setupCredential(GoogleAccountCredential credential){
+        mCredential = credential;
+    }
+
+    public void setupPlaylistId(String playlistId){
+        mPlaylistId = playlistId;
+    }
 
 
 
@@ -151,6 +163,8 @@ public class YouTubeAPIUtils {
         }
     });
 
+
+
     public Single<ArrayList<ChannelPlaylistPreviewData>>  getChannelPlaylistPreviewData = Single.create(new SingleOnSubscribe<ArrayList<ChannelPlaylistPreviewData>>() {
         @Override
         public void subscribe(SingleEmitter<ArrayList<ChannelPlaylistPreviewData>> e) throws Exception {
@@ -191,10 +205,74 @@ public class YouTubeAPIUtils {
                 id = playlist.getId();
                 itemCount = playlist.getContentDetails().getItemCount();
                 title = playlist.getSnippet().getTitle();
+
                 image = new BitmapDrawable(mContext.getResources(), Picasso.with(mContext)
                         .load(playlist.getSnippet().getThumbnails().getMedium().getUrl())
                         .get());
                 channelVideoPreviewData.add(new ChannelPlaylistPreviewData(id, title, itemCount, image));
+            }
+            e.onSuccess(channelVideoPreviewData);
+        }
+    });
+
+    public Single<ArrayList<ChannelVideoPreviewData>> getChannelVideoPreviewOfPlaylistData = Single.create(new SingleOnSubscribe<ArrayList<ChannelVideoPreviewData>>() {
+        @Override
+        public void subscribe(SingleEmitter<ArrayList<ChannelVideoPreviewData>> e) throws Exception {
+            HttpTransport transport = AndroidHttp.newCompatibleTransport();
+            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+            com.google.api.services.youtube.YouTube mService = new com.google.api.services.youtube.YouTube.Builder(
+                    transport, jsonFactory, mCredential)
+                    .setApplicationName("WatchTube")
+                    .build();
+            Log.d("videoListOfPL", "WAS CREATED");
+            Log.d("videoListOfPL", mCredential.getSelectedAccountName());
+            ArrayList<ChannelVideoPreviewData> channelVideoPreviewData = new ArrayList<ChannelVideoPreviewData>();
+            PlaylistItemListResponse result = null;
+            if(pageToken != null){
+                result = mService.playlistItems()
+                        .list("snippet,contentDetails")
+                        .setPlaylistId(mPlaylistId)
+                        .setPageToken(pageToken)
+                        .setMaxResults(10L)
+                        .setFields("items(contentDetails(videoId,videoPublishedAt),snippet(thumbnails/medium,title)),nextPageToken")
+                        .execute();
+
+            }else{
+                result = mService.playlistItems()
+                        .list("snippet,contentDetails")
+                        .setPlaylistId(mPlaylistId)
+                        .setMaxResults(10L)
+                        .setFields("items(contentDetails(videoId,videoPublishedAt),snippet(thumbnails/medium,title)),nextPageToken")
+                        .execute();
+            }
+            if(result.getNextPageToken() != null){
+                pageToken = result.getNextPageToken();
+            }else {
+                pageToken = null;
+            }
+            Log.d("NORMALIN", "!");
+            List<PlaylistItem> playlistItems = result.getItems();
+            Log.d("NORMALIN", playlistItems.size()+"");
+            String id;
+            String title;
+            String publishedAt;
+            Drawable imageVideo;
+
+            for(int i = 0; i < playlistItems.size(); i++){
+                Log.d("VideoLISTof", "item = " + i);
+                try {
+                    PlaylistItem item = playlistItems.get(i);
+                    id = item.getContentDetails().getVideoId();
+                    title = item.getSnippet().getTitle();
+                    publishedAt = getTimeDifference(item.getContentDetails().getVideoPublishedAt());
+                    imageVideo = new BitmapDrawable(mContext.getResources(), Picasso.with(mContext)
+                            .load(item.getSnippet().getThumbnails().getMedium().getUrl())
+                            .get());
+
+                    channelVideoPreviewData.add(new ChannelVideoPreviewData(id, i + ":" + title, publishedAt, imageVideo));
+                }catch (Exception c){
+                    c.printStackTrace();
+                }
             }
             e.onSuccess(channelVideoPreviewData);
         }

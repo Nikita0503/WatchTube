@@ -47,7 +47,8 @@ public class MainPresenter implements Contract.Presenter {
                 mActivity.getApplicationContext(), Arrays.asList(MainActivity.SCOPES))
                 .setBackOff(new ExponentialBackOff());
         mYouTubeAPIUtils = new YouTubeAPIUtils(mActivity.getApplicationContext(),
-                this, mCredential);
+                this);
+        mYouTubeAPIUtils.setupCredential(mCredential);
     }
 
     @Override

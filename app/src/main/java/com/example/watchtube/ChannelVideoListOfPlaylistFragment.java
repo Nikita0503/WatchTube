@@ -1,5 +1,6 @@
-package com.example.watchtube.UI;
+package com.example.watchtube;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,46 +10,47 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.watchtube.ChannelVideoListCustomAdapter;
-import com.example.watchtube.ChannelVideoListPresenter;
-import com.example.watchtube.Contract;
-import com.example.watchtube.R;
 import com.example.watchtube.model.data.ChannelVideoPreviewData;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import java.util.ArrayList;
 
 /**
- * Created by Nikita on 06.09.2018.
+ * Created by Nikita on 14.09.2018.
  */
 
-public class ChannelVideoListFragment extends Fragment implements Contract.View {
+public class ChannelVideoListOfPlaylistFragment extends Fragment implements Contract.View{
 
-    private ChannelVideoListPresenter mPresenter;
+    private ChannelVideoListOfPlaylistPresenter mPresenter;
     private GoogleAccountCredential mCredential;
-    private String mChannelId;
+    private String mPlaylistId;
     private RecyclerView mRecyclerView;
-    private ChannelVideoListCustomAdapter mAdapter;
+    private ChannelVideoListOfPlaylistCustomAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-
+    private Context mContext;
     public void setCredentials(GoogleAccountCredential credential){
         mCredential = credential;
-        mPresenter.setupCredential(mCredential);
     }
 
-    public void setChannelId(String channelId){
-        mChannelId = channelId;
-        mPresenter.setupChannelId(mChannelId);
-        mAdapter = new ChannelVideoListCustomAdapter(this);
-        mRecyclerView.setAdapter(mAdapter);
-       // mAdapter.clearList(); //всеровно экземпляр не пересоздается. Сделать так чтобы не пересоздавало заново, а тупо обращалось к старому
+    public void setContext(Context context){
+        mContext = context;
+    }
+
+    public void setPlaylistId(String playlistId){
+        mPlaylistId = playlistId;
+        mPresenter = new ChannelVideoListOfPlaylistPresenter(this, mCredential, mPlaylistId, mContext);
+        mPresenter.onStart();
+        try {
+            mAdapter.clearList(); // переделать!!!
+        }catch (Exception c){}
+         //всеровно экземпляр не пересоздается. Сделать так чтобы не пересоздавало заново, а тупо обращалось к старому
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPresenter = new ChannelVideoListPresenter(this);
-        mPresenter.onStart();
+
+
         Log.d("VideoList", "fragment");
     }
 
@@ -61,6 +63,9 @@ public class ChannelVideoListFragment extends Fragment implements Contract.View 
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapter = new ChannelVideoListOfPlaylistCustomAdapter(this);
+        mAdapter.clearList();
+        mRecyclerView.setAdapter(mAdapter);
         return v;
     }
 
@@ -73,8 +78,8 @@ public class ChannelVideoListFragment extends Fragment implements Contract.View 
     }
 
     @Override
-    public void onDestroy(){
-        super.onDestroy();
+    public void onStop(){
+        super.onStop();
         mPresenter.onStop();
     }
 }

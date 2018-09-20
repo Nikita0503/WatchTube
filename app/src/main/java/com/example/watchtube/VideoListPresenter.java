@@ -32,7 +32,8 @@ public class VideoListPresenter implements Contract.Presenter {
     public VideoListPresenter(VideoListFragment fragment, GoogleAccountCredential credential){
         mFragment = fragment;
         mCredential = credential;
-        mYouTubeAPIUtils = new YouTubeAPIUtils(mFragment.getContext(), this, mCredential);
+        mYouTubeAPIUtils = new YouTubeAPIUtils(mFragment.getContext(), this);
+        mYouTubeAPIUtils.setupCredential(mCredential);
     }
 
     public void fetchVideoList(){

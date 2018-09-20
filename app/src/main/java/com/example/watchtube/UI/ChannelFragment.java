@@ -10,9 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.watchtube.R;
-import com.example.watchtube.UI.ChannelDescriptionFragment;
-import com.example.watchtube.UI.ChannelVideoListFragment;
-import com.example.watchtube.UI.TwoFragment;
+import com.example.watchtube.RootFragment;
 import com.example.watchtube.ViewPagerAdapter;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
@@ -24,9 +22,9 @@ public class ChannelFragment extends Fragment {
     private GoogleAccountCredential mCredential;
     private ChannelDescriptionFragment mChannelDescriptionFragment;
     private ChannelVideoListFragment fragmentOne;
-    private ChannelPlaylistListFragment twoFragment;
+    private RootFragment twoFragment;
     private ConstraintLayout mLayout;
-
+    private ViewPagerAdapter mAdapter;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +48,7 @@ public class ChannelFragment extends Fragment {
         fragmentOne.fetchVideoListData();
         twoFragment.setCredentials(mCredential);
         twoFragment.setChannelId(mChannelId);
-        twoFragment.fetchVideoListData();
+        twoFragment.fetch();
         mLayout.setVisibility(View.VISIBLE);
     }
 
@@ -68,14 +66,14 @@ public class ChannelFragment extends Fragment {
 
 
     public void setupPagerAdapter(){
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager());
+        mAdapter = new ViewPagerAdapter(getChildFragmentManager());
         mChannelDescriptionFragment = new ChannelDescriptionFragment();
-        adapter.addFragment(mChannelDescriptionFragment, "Description");
+        mAdapter.addFragment(mChannelDescriptionFragment, "Description");
         fragmentOne = new ChannelVideoListFragment();
-        adapter.addFragment(fragmentOne, "Videos");
-        twoFragment = new ChannelPlaylistListFragment();
-        adapter.addFragment(twoFragment, "Playlists");
-        mViewPagerChannel.setAdapter(adapter);
+        mAdapter.addFragment(fragmentOne, "Videos");
+        twoFragment = new RootFragment();
+        mAdapter.addFragment(twoFragment, "Playlists");
+        mViewPagerChannel.setAdapter(mAdapter);
         mViewPagerChannel.setOffscreenPageLimit(2);
     }
 }

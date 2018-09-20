@@ -14,8 +14,8 @@ import com.example.watchtube.ChannelPlaylistListPresenter;
 
 import com.example.watchtube.Contract;
 import com.example.watchtube.R;
+import com.example.watchtube.RootFragment;
 import com.example.watchtube.model.data.ChannelPlaylistPreviewData;
-import com.example.watchtube.model.data.ChannelVideoPreviewData;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import java.util.ArrayList;
@@ -31,23 +31,36 @@ public class ChannelPlaylistListFragment extends Fragment implements Contract.Vi
     private RecyclerView mRecyclerView;
     private ChannelPlaylistListCustomAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private RootFragment mRootFragment;
+
+    public void setRootFragment(RootFragment rootFragment){
+        mRootFragment = rootFragment;
+    }
 
     public void setCredentials(GoogleAccountCredential credential){
+        Log.d("ROOT", "setCredentials()");
         mCredential = credential;
+        mPresenter.setCredential(mCredential);
+        //mPresenter.setCredential(mCredential);
     }
 
     public void setChannelId(String channelId){
+        Log.d("ROOT", "setChannelId()");
         mChannelId = channelId;
-        mPresenter = new ChannelPlaylistListPresenter(this, mCredential, mChannelId);
-        mPresenter.onStart();
-        mAdapter.clearList(); //всеровно экземпляр не пересоздается. Сделать так чтобы не пересоздавало заново, а тупо обращалось к старому
+        mPresenter.setChannelId(mChannelId);
+        //mPresenter.setChannelId(mChannelId);
+//        mAdapter.clearList(); //всеровно экземпляр не пересоздается. Сделать так чтобы не пересоздавало заново, а тупо обращалось к старому
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
+        Log.d("ROOT", "onCreate()");
+        mPresenter = new ChannelPlaylistListPresenter(this);
+        mPresenter.onStart();
+        setCredentials(mRootFragment.getCredential());
+        setChannelId(mRootFragment.getChannelId());
         Log.d("ChannelList", "fragment");
     }
 
@@ -60,8 +73,10 @@ public class ChannelPlaylistListFragment extends Fragment implements Contract.Vi
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
+//        Log.d("1234", mCredential.getSelectedAccountName());
         mAdapter = new ChannelPlaylistListCustomAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
+        fetchPlaylistListData();
         return v;
     }
 
@@ -69,7 +84,9 @@ public class ChannelPlaylistListFragment extends Fragment implements Contract.Vi
         mAdapter.addPlaylistsToList(data);
     }
 
-    public void fetchVideoListData(){
+
+    public void fetchPlaylistListData(){
+        mAdapter.setCredential(mCredential);
         mPresenter.fetchPlaylistList();
     }
 

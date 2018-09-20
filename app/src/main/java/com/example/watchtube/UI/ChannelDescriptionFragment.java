@@ -30,21 +30,22 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
     private ImageView mImageViewIcon;
     private ConstraintLayout mLayout;
 
-    public void setChannelId(String channelId){
-        mChannelId = channelId;
-        mPresenter = new ChannelDescriptionPresenter(this, mCredential, mChannelId);
-        mPresenter.onStart();
-    }
-
     public void setCredential(GoogleAccountCredential credential){
         mCredential = credential;
+        mPresenter.setupCredential(mCredential);
+    }
 
+    public void setChannelId(String channelId){
+        mChannelId = channelId;
+        mPresenter.setupChannelId(mChannelId);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mPresenter = new ChannelDescriptionPresenter(this);
+        mPresenter.onStart();
+        Log.d("OnStart", "123");
     }
 
     @Override
@@ -64,6 +65,7 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
     }
 
     public void fetchChannelData(){
+
         mPresenter.fetchChannelData();
         Log.d("FETCH", "CREATE");
     }
@@ -80,9 +82,10 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
     }
 
     @Override
-    public void onStop(){
-        super.onStop();
+    public void onDestroy(){
+        super.onDestroy();
         mPresenter.onStop();
+        Log.d("OnStop", "+");
     }
 
 }

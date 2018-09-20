@@ -21,21 +21,30 @@ import io.reactivex.schedulers.Schedulers;
 
 public class ChannelPlaylistListPresenter implements Contract.Presenter {
 
+    private String mChannelId;
     private ChannelPlaylistListFragment mFragment;
     private CompositeDisposable mDisposable;
     private GoogleAccountCredential mCredential;
     private YouTubeAPIUtils mYouTubeAPIUtils;
 
-    public ChannelPlaylistListPresenter(ChannelPlaylistListFragment fragment, GoogleAccountCredential credential, String channelId) {
+    public ChannelPlaylistListPresenter(ChannelPlaylistListFragment fragment) {
         mFragment = fragment;
-        mCredential = credential;
-        Log.d("ChannelListPresenter", channelId);
-        mYouTubeAPIUtils = new YouTubeAPIUtils(mFragment.getContext(), this, mCredential, channelId);
     }
 
     @Override
     public void onStart() {
         mDisposable = new CompositeDisposable();
+    }
+
+    public void setCredential(GoogleAccountCredential credential){
+        mCredential = credential;
+    }
+
+    public void setChannelId(String channelId){
+        mChannelId = channelId;
+        mYouTubeAPIUtils = new YouTubeAPIUtils(mFragment.getContext(), this);
+        mYouTubeAPIUtils.setupCredential(mCredential);
+        mYouTubeAPIUtils.setupChannelId(mChannelId);
     }
 
     public void fetchPlaylistList(){

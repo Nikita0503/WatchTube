@@ -9,23 +9,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.watchtube.UI.ChannelVideoListFragment;
 import com.example.watchtube.model.data.ChannelVideoPreviewData;
 
 import java.util.ArrayList;
 
 /**
- * Created by Nikita on 06.09.2018.
+ * Created by Nikita on 14.09.2018.
  */
 
-public class ChannelVideoListCustomAdapter extends RecyclerView.Adapter<ChannelVideoListCustomAdapter.ViewHolder> {
+public class ChannelVideoListOfPlaylistCustomAdapter extends RecyclerView.Adapter<ChannelVideoListOfPlaylistCustomAdapter.ViewHolder>{
 
     private ArrayList<ChannelVideoPreviewData> mList;
-    private ChannelVideoListFragment mFragment;
+    private ChannelVideoListOfPlaylistFragment mFragment;
 
-    public ChannelVideoListCustomAdapter(ChannelVideoListFragment fragment){
+    public ChannelVideoListOfPlaylistCustomAdapter(ChannelVideoListOfPlaylistFragment fragment){
         mList = new ArrayList<ChannelVideoPreviewData>();
         mFragment = fragment;
     }
@@ -36,7 +34,7 @@ public class ChannelVideoListCustomAdapter extends RecyclerView.Adapter<ChannelV
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.fragment_channel_video_list_preview_item, parent, false);
-        return new ChannelVideoListCustomAdapter.ViewHolder(view);
+        return new ChannelVideoListOfPlaylistCustomAdapter.ViewHolder(view);
     }
 
     @Override
@@ -44,17 +42,6 @@ public class ChannelVideoListCustomAdapter extends RecyclerView.Adapter<ChannelV
         holder.textViewVideoTitle.setText(mList.get(position).videoTitle);
         holder.imageView.setImageDrawable(mList.get(position).videoImage);
         holder.textViewPublishedAt.setText(mList.get(position).publishedAt);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /*ChannelVideoListOfPlaylistFragment fragment = new ChannelVideoListOfPlaylistFragment();
-                fragment.setCredentials(mCredential);
-                fragment.setPlaylistId(mList.get(position).playlistId);
-                fragment.fetchVideoListData();*/
-
-            }
-        });
         Log.d("Queue", "= " + position);
         if(position == mList.size() - 3){
             mFragment.fetchVideoListData();
@@ -72,6 +59,9 @@ public class ChannelVideoListCustomAdapter extends RecyclerView.Adapter<ChannelV
 
     public void addVideosToList(ArrayList<ChannelVideoPreviewData> list){
         mList.addAll(list);
+        for(int i = 0; i < list.size(); i++) {
+            Log.d("VIDEONAME", list.get(i).videoTitle);
+        }
         notifyDataSetChanged();
     }
 

@@ -6,6 +6,10 @@
     android:layout_height="match_parent"
     tools:context="com.example.watchtube.UI.MainActivity">
 
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <TextView
         android:id="@+id/textView"
@@ -27,8 +31,8 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        app:layout_goneMarginBottom="1dp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_goneMarginBottom="1dp">
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
