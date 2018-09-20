@@ -44,9 +44,9 @@ public class RootFragment extends Fragment {
         View view = inflater.inflate(R.layout.root_fragment, container, false);
         FragmentTransaction transaction = getFragmentManager()
                 .beginTransaction();
-        channelPlaylistListFragment = new ChannelPlaylistListFragment();
+        /*channelPlaylistListFragment = new ChannelPlaylistListFragment();
         channelPlaylistListFragment.setRootFragment(this);
-        transaction.replace(R.id.root_frame, channelPlaylistListFragment);
+        transaction.replace(R.id.root_frame, channelPlaylistListFragment);*/
         return view;
     }
 
