@@ -28,6 +28,7 @@ public class ChannelPlaylistListCustomAdapter extends RecyclerView.Adapter<Chann
     private ArrayList<ChannelPlaylistPreviewData> mList;
     private ChannelPlaylistListFragment mFragment;
     private GoogleAccountCredential mCredential;
+    private String mPlaylistId;
 
     public ChannelPlaylistListCustomAdapter(ChannelPlaylistListFragment fragment){
         mList = new ArrayList<ChannelPlaylistPreviewData>();
@@ -48,6 +49,14 @@ public class ChannelPlaylistListCustomAdapter extends RecyclerView.Adapter<Chann
         return new ChannelPlaylistListCustomAdapter.ViewHolder(view);
     }
 
+    public GoogleAccountCredential getCredential(){
+        return mCredential;
+    }
+
+    public String getPlaylistId(){
+        return mPlaylistId;
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ChannelPlaylistListCustomAdapter.ViewHolder holder, final int position) {
         holder.textViewPlaylistTitle.setText(mList.get(position).playlistTitle);
@@ -57,10 +66,6 @@ public class ChannelPlaylistListCustomAdapter extends RecyclerView.Adapter<Chann
             public void onClick(View v) {
                 Toast.makeText(mFragment.getContext(), mList.get(position).playlistId, Toast.LENGTH_SHORT).show();
                 ChannelVideoListOfPlaylistFragment fragment = new ChannelVideoListOfPlaylistFragment();
-                fragment.setCredentials(mCredential);
-                fragment.setContext(mFragment.getContext());
-                fragment.setPlaylistId(mList.get(position).playlistId);
-                fragment.fetchVideoListData();
                 FragmentTransaction trans = mFragment.getFragmentManager()
                         .beginTransaction();
 				/*
@@ -68,15 +73,17 @@ public class ChannelPlaylistListCustomAdapter extends RecyclerView.Adapter<Chann
 				 * "root_fragment.xml" as the reference to replace fragment
 				 */
                 trans.replace(R.id.root_frame, fragment);
-
 				/*
 				 * IMPORTANT: The following lines allow us to add the fragment
 				 * to the stack and return to it later, by pressing back
 				 */
+                fragment.setContext(mFragment.getContext());
+                fragment.setStartAdapter(ChannelPlaylistListCustomAdapter.this);
                 trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 trans.addToBackStack(null);
-
                 trans.commit();
+                mPlaylistId = mList.get(position).playlistId;
+
 
             }
         });
@@ -90,10 +97,6 @@ public class ChannelPlaylistListCustomAdapter extends RecyclerView.Adapter<Chann
     @Override
     public int getItemCount() {
         return mList.size();
-    }
-
-    public void clearList(){
-        mList.clear();
     }
 
     public void addPlaylistsToList(ArrayList<ChannelPlaylistPreviewData> list){

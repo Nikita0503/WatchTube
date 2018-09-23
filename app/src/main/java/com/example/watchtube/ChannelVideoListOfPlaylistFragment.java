@@ -27,10 +27,16 @@ public class ChannelVideoListOfPlaylistFragment extends Fragment implements Cont
     private String mPlaylistId;
     private RecyclerView mRecyclerView;
     private ChannelVideoListOfPlaylistCustomAdapter mAdapter;
+    private ChannelPlaylistListCustomAdapter mChannelPlaylistAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private Context mContext;
     public void setCredentials(GoogleAccountCredential credential){
         mCredential = credential;
+        mPresenter.setCredential(mCredential);
+    }
+
+    public void setStartAdapter(ChannelPlaylistListCustomAdapter adapter){
+        mChannelPlaylistAdapter = adapter;
     }
 
     public void setContext(Context context){
@@ -39,34 +45,29 @@ public class ChannelVideoListOfPlaylistFragment extends Fragment implements Cont
 
     public void setPlaylistId(String playlistId){
         mPlaylistId = playlistId;
-        mPresenter = new ChannelVideoListOfPlaylistPresenter(this, mCredential, mPlaylistId, mContext);
-        mPresenter.onStart();
-        try {
-            mAdapter.clearList(); // переделать!!!
-        }catch (Exception c){}
-         //всеровно экземпляр не пересоздается. Сделать так чтобы не пересоздавало заново, а тупо обращалось к старому
+        mPresenter.setPlaylistId(mPlaylistId);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-        Log.d("VideoList", "fragment");
+        mPresenter = new ChannelVideoListOfPlaylistPresenter(this, mContext);
+        mPresenter.onStart();
+        Log.d("VideoListPlay", "create");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("CreateFragment", "created");
+        Log.d("VideoListPlay", "view");
         View v = inflater.inflate(R.layout.fragment_video_list, container, false);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new ChannelVideoListOfPlaylistCustomAdapter(this);
-        mAdapter.clearList();
         mRecyclerView.setAdapter(mAdapter);
+        fetchVideoListData();
         return v;
     }
 
@@ -75,12 +76,15 @@ public class ChannelVideoListOfPlaylistFragment extends Fragment implements Cont
     }
 
     public void fetchVideoListData(){
+        Log.d("VideoListPlay", "fetch");
+        setCredentials(mChannelPlaylistAdapter.getCredential());
+        setPlaylistId(mChannelPlaylistAdapter.getPlaylistId());
         mPresenter.fetchVideoList();
     }
 
     @Override
-    public void onStop(){
-        super.onStop();
+    public void onDestroy(){
+        super.onDestroy();
         mPresenter.onStop();
     }
 

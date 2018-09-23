@@ -96,12 +96,9 @@ public class YouTubeAPIUtils {
         mChannelPlaylistListPresenter = channelVideoListPresenter;
     }
 
-    public YouTubeAPIUtils(Context context, ChannelVideoListOfPlaylistPresenter channelVideoListOfPlaylistPresenter, GoogleAccountCredential credential, String playlistId){
-        Log.d("channelPlayListId", playlistId);
+    public YouTubeAPIUtils(Context context, ChannelVideoListOfPlaylistPresenter channelVideoListOfPlaylistPresenter){
         mContext = context;
         mChannelVideoListOfPlaylistPresenter = channelVideoListOfPlaylistPresenter;     //лагает NextToken везде
-        mCredential = credential;
-        mPlaylistId = playlistId;
     }
 
     public void setupChannelId(String channelId){
