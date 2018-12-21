@@ -2,6 +2,7 @@ package com.example.watchtube;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,14 +41,15 @@ public class ChannelVideoListCustomAdapter extends RecyclerView.Adapter<ChannelV
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         holder.textViewVideoTitle.setText(mList.get(position).videoTitle);
         holder.imageView.setImageDrawable(mList.get(position).videoImage);
         holder.textViewPublishedAt.setText(mList.get(position).publishedAt);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mFragment.chooseVideo(mList.get(position).videoId);
+                Log.d("ERROR", mList.get(position).videoTitle);
                 /*ChannelVideoListOfPlaylistFragment fragment = new ChannelVideoListOfPlaylistFragment();
                 fragment.setCredentials(mCredential);
                 fragment.setPlaylistId(mList.get(position).playlistId);

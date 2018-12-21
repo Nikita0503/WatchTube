@@ -106,37 +106,37 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     public void onStart() {
         super.onStart();
-     //
+        //
     }
 
     @Override
     protected void onActivityResult(
             int requestCode, int resultCode, Intent data) {
-            super.onActivityResult(requestCode, resultCode, data);
-            switch(requestCode) {
-                case REQUEST_GOOGLE_PLAY_SERVICES:
-                    if (resultCode != RESULT_OK) {
-                        mOutputText.setText("This app requires Google Play Services. Please install " +
-                                             "Google Play Services on your device and relaunch this app.");
-                    } else {
-                        checkDemands();
-                    }
-                    break;
-                    case REQUEST_ACCOUNT_PICKER:
-                        if (resultCode == RESULT_OK && data != null &&
-                                 data.getExtras() != null) {
-                            mPresenter.checkAccountName(data);
-                        }else{
-                            hideProgress();
-                        }
-                        break;
-                    case REQUEST_AUTHORIZATION:
-                        if (resultCode == RESULT_OK) {
-                            checkDemands();
-                        }
-                        break;
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case REQUEST_GOOGLE_PLAY_SERVICES:
+                if (resultCode != RESULT_OK) {
+                    mOutputText.setText("This app requires Google Play Services. Please install " +
+                            "Google Play Services on your device and relaunch this app.");
+                } else {
+                    checkDemands();
                 }
-            }
+                break;
+            case REQUEST_ACCOUNT_PICKER:
+                if (resultCode == RESULT_OK && data != null &&
+                        data.getExtras() != null) {
+                    mPresenter.checkAccountName(data);
+                }else{
+                    hideProgress();
+                }
+                break;
+            case REQUEST_AUTHORIZATION:
+                if (resultCode == RESULT_OK) {
+                    checkDemands();
+                }
+                break;
+        }
+    }
 
     public void checkDemands(){
         mPresenter.checkDemands();
@@ -154,13 +154,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         mViewPager.setAdapter(adapter);
     }
 
-     public void setupNavigationDrawer(ArrayList<SubscriptionData> someSubscriptionData){
-         for(int i = 1; i < someSubscriptionData.size(); i++){
-             drawerResult.addItem(new SecondaryDrawerItem()
-                .withName(someSubscriptionData.get(i).title)
-                .withIcon(someSubscriptionData.get(i).image));
-         }
-     }
+    public void setupNavigationDrawer(ArrayList<SubscriptionData> someSubscriptionData){
+        for(int i = 1; i < someSubscriptionData.size(); i++){
+            drawerResult.addItem(new SecondaryDrawerItem()
+                    .withName(someSubscriptionData.get(i).title)
+                    .withIcon(someSubscriptionData.get(i).image));
+        }
+    }
 
     public void showProgress(){
         //mProgress.show();
@@ -168,6 +168,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     public void hideProgress(){
         //mProgress.hide();
+    }
+
+    public void setPage(){
+        mViewPager.setCurrentItem(3);
     }
 
     public void turnOnViewPagerSwipe(){

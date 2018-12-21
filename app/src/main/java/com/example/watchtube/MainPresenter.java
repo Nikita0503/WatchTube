@@ -31,15 +31,18 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
  * Created by Nikita on 22.08.2018.
  */
 
+
 public class MainPresenter implements Contract.Presenter {
 
     private List<SubscriptionData> mSubscriptions;
     private MainActivity mActivity;
     private ChannelFragment mChannelFragment;
+    private VideoListFragment mTrendsVideoListFragment;
     private CompositeDisposable mDisposables;
     private YouTubeAPIUtils mYouTubeAPIUtils;
     public GoogleAccountCredential mCredential;
     private DemandsChecker mDemandsChecker;
+    private VideoFragment mVideoFragment;
 
     public MainPresenter(MainActivity mainActivity){
         mActivity = mainActivity;
@@ -57,7 +60,7 @@ public class MainPresenter implements Contract.Presenter {
     }
 
     public void checkDemands(){
-         mDemandsChecker = new DemandsChecker(mActivity, this);
+        mDemandsChecker = new DemandsChecker(mActivity, this);
         if (!mDemandsChecker.isGooglePlayServicesAvailable()) {
             mDemandsChecker.acquireGooglePlayServices();
         } else if (mCredential.getSelectedAccountName() == null) {
@@ -76,7 +79,7 @@ public class MainPresenter implements Contract.Presenter {
                 .subscribeWith(new DisposableSingleObserver<ArrayList<SubscriptionData>>() {
                     @Override
                     public void onSuccess(ArrayList<SubscriptionData> subscriptions) {
-                            //loadImageFromUrl(defaultObject.get(0).URL);
+                        //loadImageFromUrl(defaultObject.get(0).URL);
 
                         mActivity.setupNavigationDrawer(subscriptions);
                         mSubscriptions = subscriptions;
@@ -101,6 +104,11 @@ public class MainPresenter implements Contract.Presenter {
         //startActivity(Intent) channelActivity
     }
 
+    public void chooseVideo(String videoId){
+        mVideoFragment.setVideoId(videoId);
+        mActivity.setPage();
+    }
+
     public void checkAccountName(Intent data){
         String accountName =
                 data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
@@ -117,19 +125,19 @@ public class MainPresenter implements Contract.Presenter {
 
     @AfterPermissionGranted(MainActivity.REQUEST_PERMISSION_GET_ACCOUNTS)
     public void chooseAccount() {
-            String accountName = mDemandsChecker.getSelectedAccountName();
-            if (accountName != null) {
-                mCredential.setSelectedAccountName(accountName);
-                checkDemands();
-            } else {
-                mActivity.startActivityForResult(
-                        mCredential.newChooseAccountIntent(),
-                        MainActivity.REQUEST_ACCOUNT_PICKER);
+        String accountName = mDemandsChecker.getSelectedAccountName();
+        if (accountName != null) {
+            mCredential.setSelectedAccountName(accountName);
+            checkDemands();
+        } else {
+            mActivity.startActivityForResult(
+                    mCredential.newChooseAccountIntent(),
+                    MainActivity.REQUEST_ACCOUNT_PICKER);
         }
     }
 
     public void makeGooglePlayServicesAvailabilityErrorDialog(GoogleApiAvailability apiAvailability,
-            final int connectionStatusCode) {
+                                                              final int connectionStatusCode) {
         Dialog dialog = apiAvailability.getErrorDialog(
                 mActivity,
                 connectionStatusCode,
@@ -139,12 +147,15 @@ public class MainPresenter implements Contract.Presenter {
 
     public void makePagerAdapter(){
         ViewPagerAdapter adapter = new ViewPagerAdapter(mActivity.getSupportFragmentManager());
-        VideoListFragment recommendedVideoListFragment = new VideoListFragment();
-        recommendedVideoListFragment.setCredentials(mCredential);
-        adapter.addFragment(recommendedVideoListFragment, "Trending");
+        mTrendsVideoListFragment = new VideoListFragment();
+        mTrendsVideoListFragment.setCredentials(mCredential);
+        adapter.addFragment(mTrendsVideoListFragment, "Trending");
         mChannelFragment = new ChannelFragment();
+        mChannelFragment.setMainPresenter(this);
         adapter.addFragment(mChannelFragment, "Subscribe");
         adapter.addFragment(new VideoListFragment(), "Settings");
+        mVideoFragment = new VideoFragment();
+        adapter.addFragment(mVideoFragment, "Video");
         mActivity.setupPagerAdapter(adapter);
         mActivity.setupTabIcons();
         hideProgress();

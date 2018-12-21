@@ -11,10 +11,12 @@ import com.example.watchtube.ChannelVideoListOfPlaylistPresenter;
 import com.example.watchtube.ChannelVideoListPresenter;
 import com.example.watchtube.MainPresenter;
 import com.example.watchtube.R;
+import com.example.watchtube.VideoFragmentPresenter;
 import com.example.watchtube.VideoListPresenter;
 import com.example.watchtube.model.data.ChannelData;
 import com.example.watchtube.model.data.ChannelPlaylistPreviewData;
 import com.example.watchtube.model.data.ChannelVideoPreviewData;
+import com.example.watchtube.model.data.CommentData;
 import com.example.watchtube.model.data.SubscriptionData;
 import com.example.watchtube.model.CircleTransform;
 import com.example.watchtube.model.data.VideoPreviewData;
@@ -61,6 +63,7 @@ public class YouTubeAPIUtils {
 
     private String mChannelId;
     private String mPlaylistId;
+    private String mVideoId;
     public String pageToken;
     private MainPresenter mMainPresenter;
     private VideoListPresenter mVideoListPresenter;
@@ -68,6 +71,7 @@ public class YouTubeAPIUtils {
     private ChannelVideoListPresenter mChannelVideoListPresenter;
     private ChannelPlaylistListPresenter mChannelPlaylistListPresenter;
     private ChannelVideoListOfPlaylistPresenter mChannelVideoListOfPlaylistPresenter;
+    private VideoFragmentPresenter mVideoFragmentPresenter;
     private GoogleAccountCredential mCredential;
     private Context mContext;
 
@@ -101,6 +105,11 @@ public class YouTubeAPIUtils {
         mChannelVideoListOfPlaylistPresenter = channelVideoListOfPlaylistPresenter;     //лагает NextToken везде
     }
 
+    public YouTubeAPIUtils(Context context, VideoFragmentPresenter videoFragmentPresenter){
+        mContext = context;
+        mVideoFragmentPresenter = videoFragmentPresenter;
+    }
+
     public void setupChannelId(String channelId){
         mChannelId = channelId;
     }
@@ -113,7 +122,9 @@ public class YouTubeAPIUtils {
         mPlaylistId = playlistId;
     }
 
-
+    public void setupVideoId(String videoId){
+        mVideoId = videoId;
+    }
 
     public Single<ArrayList<SubscriptionData>> getSubscriptionsInfo = Single.create(new SingleOnSubscribe<ArrayList<SubscriptionData>>() {
         @Override
@@ -338,6 +349,20 @@ public class YouTubeAPIUtils {
         }
     });
 
+    public Single<ArrayList<CommentData>> getVideoComments = Single.create(new SingleOnSubscribe<ArrayList<CommentData>>() {
+        @Override
+        public void subscribe(SingleEmitter<ArrayList<CommentData>> e) throws Exception {
+            HttpTransport transport = AndroidHttp.newCompatibleTransport();
+            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+            com.google.api.services.youtube.YouTube mService = new com.google.api.services.youtube.YouTube.Builder(
+                    transport, jsonFactory, mCredential)
+                    .setApplicationName("WatchTube")
+                    .build();
+            ArrayList<CommentData> videoComments = new ArrayList<CommentData>();
+            mService.comments().list("")
+        }
+    });
+
     public Single<ChannelData> getChannelData = Single.create(new SingleOnSubscribe<ChannelData>() {
         @Override
         public void subscribe(SingleEmitter<ChannelData> e) throws Exception {
@@ -450,6 +475,8 @@ public class YouTubeAPIUtils {
             e.onSuccess(videoPreviewData);
         }
     });
+
+
 
     public String getDuration(String oldTime) {
         PeriodFormatter formatter = ISOPeriodFormat.standard();

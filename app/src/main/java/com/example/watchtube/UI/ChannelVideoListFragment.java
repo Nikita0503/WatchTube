@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.example.watchtube.ChannelVideoListCustomAdapter;
 import com.example.watchtube.ChannelVideoListPresenter;
 import com.example.watchtube.Contract;
+import com.example.watchtube.MainPresenter;
 import com.example.watchtube.R;
 import com.example.watchtube.model.data.ChannelVideoPreviewData;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -30,6 +31,11 @@ public class ChannelVideoListFragment extends Fragment implements Contract.View 
     private RecyclerView mRecyclerView;
     private ChannelVideoListCustomAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private MainPresenter mMainPresenter;
+
+    public void setMainPresenter(MainPresenter mainPresenter){
+        mMainPresenter = mainPresenter;
+    }
 
     public void setCredentials(GoogleAccountCredential credential){
         mCredential = credential;
@@ -62,6 +68,10 @@ public class ChannelVideoListFragment extends Fragment implements Contract.View 
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         return v;
+    }
+
+    public void chooseVideo(String videoId){
+        mMainPresenter.chooseVideo(videoId);
     }
 
     public void addVideosToList(ArrayList<ChannelVideoPreviewData> data){

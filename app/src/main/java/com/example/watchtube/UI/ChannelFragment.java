@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.watchtube.MainPresenter;
 import com.example.watchtube.R;
 import com.example.watchtube.RootFragment;
 import com.example.watchtube.ViewPagerAdapter;
@@ -25,6 +26,8 @@ public class ChannelFragment extends Fragment {
     private RootFragment twoFragment;
     private ConstraintLayout mLayout;
     private ViewPagerAdapter mAdapter;
+    private MainPresenter mMainPresenter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +36,9 @@ public class ChannelFragment extends Fragment {
     public void setChannelId(String channelId){
         mChannelId = channelId;
 
+    }
+    public void setMainPresenter(MainPresenter mainPresenter){
+        mMainPresenter = mainPresenter;
     }
 
     public void setCredential(GoogleAccountCredential credential){
@@ -43,6 +49,7 @@ public class ChannelFragment extends Fragment {
         mChannelDescriptionFragment.setCredential(mCredential);
         mChannelDescriptionFragment.setChannelId(mChannelId);
         mChannelDescriptionFragment.fetchChannelData();
+        fragmentOne.setMainPresenter(mMainPresenter);
         fragmentOne.setCredentials(mCredential);
         fragmentOne.setChannelId(mChannelId);
         fragmentOne.fetchVideoListData();
@@ -76,4 +83,5 @@ public class ChannelFragment extends Fragment {
         mViewPagerChannel.setAdapter(mAdapter);
         mViewPagerChannel.setOffscreenPageLimit(2);
     }
+
 }

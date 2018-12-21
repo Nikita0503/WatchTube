@@ -75,7 +75,7 @@ public class VideoListCustomAdapter extends RecyclerView.Adapter<VideoListCustom
         public ViewHolder(View itemView){
             super(itemView);
             imageView = (ImageView) itemView.findViewById(R.id.imageViewPlaylist);
-            textViewVideoTitle = (TextView) itemView.findViewById(R.id.textViewVideoTitle);
+            textViewVideoTitle = (TextView) itemView.findViewById(R.id.textViewComment);
             textViewChannelTitle = (TextView) itemView.findViewById(R.id.textViewChannelTitle);
             imageViewChannel = (ImageView) itemView.findViewById(R.id.imageViewChannel);
             textViewPublishedAt = (TextView) itemView.findViewById(R.id.textViewPublishedAt);
