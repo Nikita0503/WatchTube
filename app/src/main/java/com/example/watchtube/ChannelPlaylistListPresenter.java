@@ -1,7 +1,6 @@
 package com.example.watchtube;
 
-import android.util.Log;
-
+import com.example.watchtube.Contract;
 import com.example.watchtube.UI.ChannelPlaylistListFragment;
 import com.example.watchtube.model.APIUtils.YouTubeAPIUtils;
 import com.example.watchtube.model.data.ChannelPlaylistPreviewData;
@@ -42,6 +41,10 @@ public class ChannelPlaylistListPresenter implements Contract.Presenter {
 
     public void setChannelId(String channelId){
         mChannelId = channelId;
+        prepareYouTubeUtils();
+    }
+
+    private void prepareYouTubeUtils(){
         mYouTubeAPIUtils = new YouTubeAPIUtils(mFragment.getContext(), this);
         mYouTubeAPIUtils.setupCredential(mCredential);
         mYouTubeAPIUtils.setupChannelId(mChannelId);

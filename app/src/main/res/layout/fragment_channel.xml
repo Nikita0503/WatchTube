@@ -1,32 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraintLayoutChannel"
-    android:visibility="invisible"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.watchtube.UI.ChannelFragment">
+    android:orientation="vertical"
+    >
 
     <android.support.design.widget.TabLayout
-        android:id="@+id/tabsFragment"
+        android:id="@+id/sliding_tabs"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        app:tabGravity="fill"
-        app:tabMode="fixed" />
+        android:layout_height="wrap_content"
+        app:tabMode="fixed"
+        />
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/viewpagerChannel"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tabsFragment" />
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1"
 
-</android.support.constraint.ConstraintLayout>
+        />
+
+</LinearLayout>

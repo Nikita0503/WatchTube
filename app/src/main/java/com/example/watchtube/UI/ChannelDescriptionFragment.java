@@ -9,13 +9,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.watchtube.ChannelDescriptionPresenter;
 import com.example.watchtube.Contract;
 import com.example.watchtube.R;
 import com.example.watchtube.model.data.ChannelData;
+import com.example.watchtube.ChannelDescriptionPresenter;
+import com.github.ybq.android.spinkit.sprite.Sprite;
+import com.github.ybq.android.spinkit.style.CubeGrid;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+
 
 public class ChannelDescriptionFragment extends Fragment implements Contract.View {
 
@@ -29,15 +33,14 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
     private ImageView mImageViewBanner;
     private ImageView mImageViewIcon;
     private ConstraintLayout mLayout;
+    private ProgressBar mProgressBar;
 
     public void setCredential(GoogleAccountCredential credential){
         mCredential = credential;
-        mPresenter.setupCredential(mCredential);
     }
 
     public void setChannelId(String channelId){
         mChannelId = channelId;
-        mPresenter.setupChannelId(mChannelId);
     }
 
     @Override
@@ -49,8 +52,7 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_channel_descripiton, container, false);
         mTextViewTitle = v.findViewById(R.id.textViewTitle);
         mTextViewKind = v.findViewById(R.id.textViewKind);
@@ -60,17 +62,25 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
         mImageViewBanner = v.findViewById(R.id.imageViewBanner);
         mImageViewIcon = v.findViewById(R.id.imageViewIcon);
         mLayout = v.findViewById(R.id.constraintLayoutChannelDescription);
+        mProgressBar = (ProgressBar) v.findViewById(R.id.spin_kit);
+
+        Sprite cubeGrid = new CubeGrid();
+        mProgressBar.setIndeterminateDrawable(cubeGrid);
+        mProgressBar.setVisibility(ProgressBar.VISIBLE);
         Log.d("CHANNEL", "CREATE");
+
+        fetchChannelData();
         return v;
     }
 
-    public void fetchChannelData(){
-
+    private void fetchChannelData(){
+        mPresenter.setupCredential(mCredential);
+        mPresenter.setupChannelId(mChannelId);
         mPresenter.fetchChannelData();
-        Log.d("FETCH", "CREATE");
     }
 
     public void showChannelData(ChannelData channelData){
+
         mLayout.setVisibility(View.VISIBLE);
         mTextViewTitle.setText(channelData.title);
         mTextViewKind.setText(channelData.kind);
@@ -79,6 +89,7 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
         mImageViewBanner.setImageDrawable(channelData.imageBanner);
         mImageViewIcon.setImageDrawable(channelData.imageIcon);
         Log.d("CHANNEL", "SHOW");
+        mProgressBar.setVisibility(ProgressBar.INVISIBLE);
     }
 
     @Override
@@ -87,5 +98,6 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
         mPresenter.onStop();
         Log.d("OnStop", "+");
     }
+
 
 }

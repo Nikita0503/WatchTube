@@ -2,6 +2,8 @@ package com.example.watchtube;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,7 +12,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.watchtube.R;
+import com.example.watchtube.UI.ChannelVideoListOfPlaylistFragment;
+import com.example.watchtube.UI.VideoFragment;
 import com.example.watchtube.model.data.ChannelVideoPreviewData;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import java.util.ArrayList;
 
@@ -20,12 +26,14 @@ import java.util.ArrayList;
 
 public class ChannelVideoListOfPlaylistCustomAdapter extends RecyclerView.Adapter<ChannelVideoListOfPlaylistCustomAdapter.ViewHolder>{
 
+    private GoogleAccountCredential mCredential;
     private ArrayList<ChannelVideoPreviewData> mList;
     private ChannelVideoListOfPlaylistFragment mFragment;
 
-    public ChannelVideoListOfPlaylistCustomAdapter(ChannelVideoListOfPlaylistFragment fragment){
+    public ChannelVideoListOfPlaylistCustomAdapter(ChannelVideoListOfPlaylistFragment fragment, GoogleAccountCredential credential){
         mList = new ArrayList<ChannelVideoPreviewData>();
         mFragment = fragment;
+        mCredential = credential;
     }
 
     @NonNull
@@ -34,18 +42,28 @@ public class ChannelVideoListOfPlaylistCustomAdapter extends RecyclerView.Adapte
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.fragment_channel_video_list_preview_item, parent, false);
-        return new ChannelVideoListOfPlaylistCustomAdapter.ViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         holder.textViewVideoTitle.setText(mList.get(position).videoTitle);
         holder.imageView.setImageDrawable(mList.get(position).videoImage);
         holder.textViewPublishedAt.setText(mList.get(position).publishedAt);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                VideoFragment fragment = new VideoFragment();
+                fragment.setCredential(mCredential);
+                fragment.setVideoId(mList.get(position).videoId);
+                FragmentManager manager = mFragment.getActivity().getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.replace(R.id.container, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
         Log.d("Queue", "= " + position);
-        if(position == mList.size() - 3){
-            mFragment.fetchVideoListData();
-        }
     }
 
     @Override
@@ -53,9 +71,6 @@ public class ChannelVideoListOfPlaylistCustomAdapter extends RecyclerView.Adapte
         return mList.size();
     }
 
-    public void clearList(){
-        mList.clear();
-    }
 
     public void addVideosToList(ArrayList<ChannelVideoPreviewData> list){
         mList.addAll(list);

@@ -3,13 +3,10 @@ package com.example.watchtube;
 import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.content.Intent;
+import android.widget.Toast;
 
-import com.example.watchtube.Contract;
-import com.example.watchtube.UI.ChannelFragment;
-import com.example.watchtube.ViewPagerAdapter;
 import com.example.watchtube.model.APIUtils.YouTubeAPIUtils;
 import com.example.watchtube.UI.MainActivity;
-import com.example.watchtube.UI.VideoListFragment;
 import com.example.watchtube.model.DemandsChecker;
 import com.example.watchtube.model.data.SubscriptionData;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -33,16 +30,18 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 
 
 public class MainPresenter implements Contract.Presenter {
-
     private List<SubscriptionData> mSubscriptions;
     private MainActivity mActivity;
-    private ChannelFragment mChannelFragment;
-    private VideoListFragment mTrendsVideoListFragment;
+    //private ChannelFragment mChannelFragment;
+    //private VideoListFragment mTrendsVideoListFragment;
     private CompositeDisposable mDisposables;
     private YouTubeAPIUtils mYouTubeAPIUtils;
-    public GoogleAccountCredential mCredential;
+
+
+
+    private GoogleAccountCredential mCredential;
     private DemandsChecker mDemandsChecker;
-    private VideoFragment mVideoFragment;
+    //private VideoFragment mVideoFragment;
 
     public MainPresenter(MainActivity mainActivity){
         mActivity = mainActivity;
@@ -59,6 +58,14 @@ public class MainPresenter implements Contract.Presenter {
         mDisposables = new CompositeDisposable();
     }
 
+    public List<SubscriptionData> getSubscriptions() {
+        return mSubscriptions;
+    }
+
+    public GoogleAccountCredential getCredential() {
+        return mCredential;
+    }
+
     public void checkDemands(){
         mDemandsChecker = new DemandsChecker(mActivity, this);
         if (!mDemandsChecker.isGooglePlayServicesAvailable()) {
@@ -66,48 +73,50 @@ public class MainPresenter implements Contract.Presenter {
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
         } else if (!mDemandsChecker.isDeviceOnline()) {
-            setText("No network connection available.");
+            Toast.makeText(mActivity.getApplicationContext(), "No network connection available.", Toast.LENGTH_SHORT).show();
+            //setText();
         } else {
             fetchSubscribesList();
+
         }
     }
 
     private void fetchSubscribesList() {
-        setText("");
+        //setText("");
         Disposable disposable = mYouTubeAPIUtils.getSubscriptionsInfo.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableSingleObserver<ArrayList<SubscriptionData>>() {
                     @Override
                     public void onSuccess(ArrayList<SubscriptionData> subscriptions) {
                         //loadImageFromUrl(defaultObject.get(0).URL);
-
                         mActivity.setupNavigationDrawer(subscriptions);
                         mSubscriptions = subscriptions;
-                        if(mYouTubeAPIUtils.pageToken != null){
+                        mActivity.hideProgress();
+                        /*if(mYouTubeAPIUtils.pageToken != null){
                             fetchSubscribesList();
-                        }
+                        }*/
                     }
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        setText("Error");
+                        //setText("Error");
                     }
                 });
         mDisposables.add(disposable);
     }
 
-    public void fetchSelectedChannelData(int position){
+    /*public void fetchSelectedChannelData(int position){
         mChannelFragment.setCredential(mCredential);
         mChannelFragment.setChannelId(mSubscriptions.get(position).channelId);
         mChannelFragment.fetchChannelData();
         //mActivity.startActivity(intent);
         //startActivity(Intent) channelActivity
-    }
+    }*/
 
-    public void chooseVideo(String videoId){
+    /*public void chooseVideo(String videoId){
         mVideoFragment.setVideoId(videoId);
         mActivity.setPage();
-    }
+    }*/
 
     public void checkAccountName(Intent data){
         String accountName =
@@ -145,7 +154,7 @@ public class MainPresenter implements Contract.Presenter {
         mActivity.showDialog(dialog);
     }
 
-    public void makePagerAdapter(){
+    /*public void makePagerAdapter(){
         ViewPagerAdapter adapter = new ViewPagerAdapter(mActivity.getSupportFragmentManager());
         mTrendsVideoListFragment = new VideoListFragment();
         mTrendsVideoListFragment.setCredentials(mCredential);
@@ -159,19 +168,12 @@ public class MainPresenter implements Contract.Presenter {
         mActivity.setupPagerAdapter(adapter);
         mActivity.setupTabIcons();
         hideProgress();
-    }
+    }*/
 
-    public void showProgress(){
-        mActivity.showProgress();
-    }
 
-    public void hideProgress(){
-        mActivity.hideProgress();
-    }
-
-    public void setText(String text){
+    /*public void setText(String text){
         mActivity.mOutputText.setText(text);
-    }
+    }*/
 
     @Override
     public void onStop() {

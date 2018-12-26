@@ -1,8 +1,9 @@
 package com.example.watchtube;
 
-import android.content.Context;
 import android.util.Log;
 
+import com.example.watchtube.Contract;
+import com.example.watchtube.UI.ChannelVideoListOfPlaylistFragment;
 import com.example.watchtube.model.APIUtils.YouTubeAPIUtils;
 import com.example.watchtube.model.data.ChannelVideoPreviewData;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -27,22 +28,27 @@ public class ChannelVideoListOfPlaylistPresenter implements Contract.Presenter {
     private GoogleAccountCredential mCredential;
     private YouTubeAPIUtils mYouTubeAPIUtils;
 
-    public ChannelVideoListOfPlaylistPresenter(ChannelVideoListOfPlaylistFragment fragment, Context context){
+    public ChannelVideoListOfPlaylistPresenter(ChannelVideoListOfPlaylistFragment fragment){
         mFragment = fragment;
         Log.d("IS", "norm");
-        mYouTubeAPIUtils = new YouTubeAPIUtils(context, this);
+        mYouTubeAPIUtils = new YouTubeAPIUtils(fragment.getContext(), this);
 
 
     }
 
-    public void setCredential(GoogleAccountCredential credential){
+    public void setupCredential(GoogleAccountCredential credential){
         mCredential = credential;
         mYouTubeAPIUtils.setupCredential(mCredential);
     }
 
-    public void setPlaylistId(String playlistId){
+    public void setupPlaylistId(String playlistId){
         mPlaylistId = playlistId;
         mYouTubeAPIUtils.setupPlaylistId(mPlaylistId);
+    }
+
+    @Override
+    public void onStart() {
+        mDisposable = new CompositeDisposable();
     }
 
     public void fetchVideoList(){
@@ -61,10 +67,7 @@ public class ChannelVideoListOfPlaylistPresenter implements Contract.Presenter {
         mDisposable.add(disposable);
     }
 
-    @Override
-    public void onStart() {
-        mDisposable = new CompositeDisposable();
-    }
+
 
     @Override
     public void onStop() {

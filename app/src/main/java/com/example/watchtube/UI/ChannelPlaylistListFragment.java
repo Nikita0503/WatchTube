@@ -8,14 +8,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.example.watchtube.ChannelPlaylistListCustomAdapter;
-import com.example.watchtube.ChannelPlaylistListPresenter;
+import android.widget.ProgressBar;
 
 import com.example.watchtube.Contract;
 import com.example.watchtube.R;
-import com.example.watchtube.RootFragment;
 import com.example.watchtube.model.data.ChannelPlaylistPreviewData;
+import com.example.watchtube.ChannelPlaylistListCustomAdapter;
+import com.example.watchtube.ChannelPlaylistListPresenter;
+import com.github.ybq.android.spinkit.sprite.Sprite;
+import com.github.ybq.android.spinkit.style.CubeGrid;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import java.util.ArrayList;
@@ -26,29 +27,28 @@ import java.util.ArrayList;
 
 public class ChannelPlaylistListFragment extends Fragment implements Contract.View {
     private boolean mFirstCreating;
-    private ChannelPlaylistListPresenter mPresenter;
-    private GoogleAccountCredential mCredential;
     private String mChannelId;
-    private RecyclerView mRecyclerView;
+    private ChannelPlaylistListPresenter mPresenter;
     private ChannelPlaylistListCustomAdapter mAdapter;
+    private GoogleAccountCredential mCredential;
+    private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private RootFragment mRootFragment;
+    private ProgressBar mProgressBar;
+    //private RootFragment mRootFragment;
 
-    public void setRootFragment(RootFragment rootFragment){
+    /*public void setRootFragment(RootFragment rootFragment){
         mRootFragment = rootFragment;
-    }
+    }*/
 
-    public void setCredentials(GoogleAccountCredential credential){
+    public void setCredential(GoogleAccountCredential credential){
         Log.d("ROOT", "setCredentials()");
         mCredential = credential;
-        mPresenter.setCredential(mCredential);
         //mPresenter.setCredential(mCredential);
     }
 
     public void setChannelId(String channelId){
         Log.d("ROOT", "setChannelId()");
         mChannelId = channelId;
-        mPresenter.setChannelId(mChannelId);
         //mPresenter.setChannelId(mChannelId);
 //        mAdapter.clearList(); //всеровно экземпляр не пересоздается. Сделать так чтобы не пересоздавало заново, а тупо обращалось к старому
     }
@@ -61,8 +61,8 @@ public class ChannelPlaylistListFragment extends Fragment implements Contract.Vi
         mFirstCreating = true;
         mPresenter = new ChannelPlaylistListPresenter(this);
         mPresenter.onStart();
-        setCredentials(mRootFragment.getCredential());
-        setChannelId(mRootFragment.getChannelId());
+        //setCredentials(mRootFragment.getCredential());
+        //setChannelId(mRootFragment.getChannelId());
         Log.d("ChannelList", "fragment");
     }
 
@@ -75,26 +75,34 @@ public class ChannelPlaylistListFragment extends Fragment implements Contract.Vi
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mProgressBar = (ProgressBar) v.findViewById(R.id.spin_kit);
 //        Log.d("1234", mCredential.getSelectedAccountName());
         if(mFirstCreating) {
+            mPresenter.setCredential(mCredential);
+            mPresenter.setChannelId(mChannelId);
             mAdapter = new ChannelPlaylistListCustomAdapter(this);
+            mAdapter.setCredential(mCredential);
             mRecyclerView.setAdapter(mAdapter);
+
+            Sprite cubeGrid = new CubeGrid();
+            mProgressBar.setIndeterminateDrawable(cubeGrid);
+            mProgressBar.setVisibility(ProgressBar.VISIBLE);
             fetchPlaylistListData();
             mFirstCreating = false;
         }else{
             mRecyclerView.setAdapter(mAdapter);
         }
-
         return v;
     }
 
     public void addPlaylistsToList(ArrayList<ChannelPlaylistPreviewData> data){
         mAdapter.addPlaylistsToList(data);
+        mProgressBar.setVisibility(ProgressBar.INVISIBLE);
     }
 
 
-    public void fetchPlaylistListData(){
-        mAdapter.setCredential(mCredential);
+    public void fetchPlaylistListData() {
+        //mAdapter.setCredential(mCredential);
         mPresenter.fetchPlaylistList();
     }
 
@@ -103,4 +111,6 @@ public class ChannelPlaylistListFragment extends Fragment implements Contract.Vi
         super.onStop();
         mPresenter.onStop();
     }
+
+
 }

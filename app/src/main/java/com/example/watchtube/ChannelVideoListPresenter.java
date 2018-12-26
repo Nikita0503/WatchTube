@@ -1,12 +1,9 @@
 package com.example.watchtube;
 
-import android.util.Log;
-
 import com.example.watchtube.Contract;
 import com.example.watchtube.UI.ChannelVideoListFragment;
 import com.example.watchtube.model.APIUtils.YouTubeAPIUtils;
 import com.example.watchtube.model.data.ChannelVideoPreviewData;
-import com.example.watchtube.model.data.VideoPreviewData;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import java.util.ArrayList;
@@ -44,6 +41,10 @@ public class ChannelVideoListPresenter implements Contract.Presenter {
 
     public void setupChannelId(String channelId){
         mChannelId = channelId;
+        prepareYouTubeAPIUtils();
+    }
+
+    private void prepareYouTubeAPIUtils(){
         mYouTubeAPIUtils = new YouTubeAPIUtils(mFragment.getContext(), this);
         mYouTubeAPIUtils.setupCredential(mCredential);
         mYouTubeAPIUtils.setupChannelId(mChannelId);

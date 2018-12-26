@@ -8,13 +8,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import com.example.watchtube.ChannelVideoListOfPlaylistCustomAdapter;
 import com.example.watchtube.Contract;
 import com.example.watchtube.R;
-import com.example.watchtube.model.data.ChannelVideoPreviewData;
-import com.example.watchtube.ChannelVideoListCustomAdapter;
-import com.example.watchtube.ChannelVideoListPresenter;
+import com.example.watchtube.VideoCommentsPresenter;
+import com.example.watchtube.model.VideoCommentsListCustomAdapter;
+import com.example.watchtube.model.data.CommentData;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.CubeGrid;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -22,72 +24,69 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import java.util.ArrayList;
 
 /**
- * Created by Nikita on 06.09.2018.
+ * Created by Nikita on 25.12.2018.
  */
 
-public class ChannelVideoListFragment extends Fragment implements Contract.View {
-    private String mChannelId;
-    private ChannelVideoListPresenter mPresenter;
-    private ChannelVideoListCustomAdapter mAdapter;
+public class VideoCommentsFragment extends Fragment implements Contract.View {
+
+    private String mVideoId;
+    private VideoCommentsPresenter mPresenter;
+    private VideoCommentsListCustomAdapter mAdapter;
     private GoogleAccountCredential mCredential;
+    private EditText mEditTextComment;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private ProgressBar mProgressBar;
-    //private MainPresenter mMainPresenter;
-
-    /*public void setMainPresenter(MainPresenter mainPresenter){
-        mMainPresenter = mainPresenter;
-    }*/
 
     public void setCredential(GoogleAccountCredential credential){
         mCredential = credential;
     }
 
-    public void setChannelId(String channelId){
-        mChannelId = channelId;
-       // mAdapter.clearList(); //всеровно экземпляр не пересоздается. Сделать так чтобы не пересоздавало заново, а тупо обращалось к старому
+    public void setVideoId(String videoId){
+        mVideoId = videoId;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPresenter = new ChannelVideoListPresenter(this);
+        mPresenter = new VideoCommentsPresenter(this);
         mPresenter.onStart();
-        Log.d("VideoList", "fragment");
+        //mPresenter = new VideoFragmentPresenter(this);
+        //mPresenter.onStart();
+        Log.d("VideoCommentsFragment", "fragment");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("CreateFragment", "created");
+        Log.d("VideoListPlay", "view");
         View v = inflater.inflate(R.layout.fragment_video_list, container, false);
-        mAdapter = new ChannelVideoListCustomAdapter(this, mCredential);
+        mEditTextComment = (EditText) v.findViewById(R.id.editTextComment);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setAdapter(mAdapter);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapter = new VideoCommentsListCustomAdapter(this);
+        mRecyclerView.setAdapter(mAdapter);
         mProgressBar = (ProgressBar) v.findViewById(R.id.spin_kit);
         Sprite cubeGrid = new CubeGrid();
         mProgressBar.setIndeterminateDrawable(cubeGrid);
         mProgressBar.setVisibility(ProgressBar.VISIBLE);
-        fetchVideoListData();
+        fetchVideoCommentsList();
         return v;
     }
 
-    /*public void chooseVideo(String videoId){
-        mMainPresenter.chooseVideo(videoId);
-    }*/
-
-    public void addVideosToList(ArrayList<ChannelVideoPreviewData> data){
-        mAdapter.addVideosToList(data);
+    public void addCommentsToList(ArrayList<CommentData> data){
+        mAdapter.addCommentsToList(data);
         mProgressBar.setVisibility(ProgressBar.INVISIBLE);
     }
 
-    private void fetchVideoListData(){
+    public void fetchVideoCommentsList(){
+        Log.d("VideoListPlay", "fetch");
         mPresenter.setupCredential(mCredential);
-        mPresenter.setupChannelId(mChannelId);
-        mPresenter.fetchVideoList();
+        Log.d("COMENTS2", mCredential.getSelectedAccountName());
+        mPresenter.setupVideoId(mVideoId);
+        mPresenter.fetchVideoCommentsList();
     }
 
     @Override
@@ -95,6 +94,4 @@ public class ChannelVideoListFragment extends Fragment implements Contract.View 
         super.onDestroy();
         mPresenter.onStop();
     }
-
-
 }

@@ -3,7 +3,6 @@ package com.example.watchtube.UI;
 import com.example.watchtube.Contract;
 import com.example.watchtube.MainPresenter;
 import com.example.watchtube.R;
-import com.example.watchtube.ViewPagerAdapter;
 import com.example.watchtube.model.data.SubscriptionData;
 import com.google.api.services.youtube.YouTubeScopes;
 
@@ -14,16 +13,15 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import android.app.Dialog;
-        import android.app.ProgressDialog;
+import android.support.v4.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
         import android.support.annotation.NonNull;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
@@ -47,17 +45,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private Drawer.Result drawerResult;
     public TextView mOutputText;
     private Toolbar mToolbar;
-    private ViewPager mViewPager;
+    //private ViewPager mViewPager;
     public ProgressDialog mProgress;
-    private TabLayout mTabLayout;
+    //private TabLayout mTabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { //NEXT PAGE TOKEN (Subscriptions)
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mOutputText = findViewById(R.id.textView);
-        mOutputText.setText(
-                "Click the \'" + BUTTON_TEXT +"\' button to test the API.");
+        mOutputText.setText("In developing...");
         mProgress = new ProgressDialog(this);
         mProgress.setMessage("Calling YouTube Data API ...");
 
@@ -67,11 +64,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        mViewPager.setOffscreenPageLimit(2);
-        mTabLayout = (TabLayout) findViewById(R.id.tabs);
-        mTabLayout.setupWithViewPager(mViewPager);
-
+        //mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        //mViewPager.setOffscreenPageLimit(2);
+        //mTabLayout = (TabLayout) findViewById(R.id.tabs);
+        //mTabLayoutTabLayout.setupWithViewPager(mViewPager);
 
         disposables = new CompositeDisposable();
 
@@ -90,23 +86,80 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
                         if(position!=0){
-                            mPresenter.fetchSelectedChannelData(position-1);
-                            mViewPager.setCurrentItem(1);
+                            //Toast.makeText(getApplicationContext(), String.valueOf(position-1), Toast.LENGTH_SHORT).show();
+                            /*ChannelDescriptionFragment fragment = new ChannelDescriptionFragment();
+                            fragment.setCredential(mPresenter.getCredential());
+                            fragment.setChannelId(mPresenter.getSubscriptions().get(position-1).channelId);
+                            FragmentManager manager = getSupportFragmentManager();
+                            FragmentTransaction transaction = manager.beginTransaction();
+                            transaction.replace(R.id.container, fragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();*/
+
+                            /*ChannelVideoListFragment fragment = new ChannelVideoListFragment();
+                            fragment.setCredential(mPresenter.getCredential());
+                            fragment.setChannelId(mPresenter.getSubscriptions().get(position-1).channelId);
+                            FragmentManager manager = getSupportFragmentManager();
+                            FragmentTransaction transaction = manager.beginTransaction();
+                            transaction.replace(R.id.container, fragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();*/
+
+                            /*ChannelPlaylistListFragment fragment = new ChannelPlaylistListFragment();
+                            fragment.setCredential(mPresenter.getCredential());
+                            fragment.setChannelId(mPresenter.getSubscriptions().get(position-1).channelId);
+                            FragmentManager manager = getSupportFragmentManager();
+                            FragmentTransaction transaction = manager.beginTransaction();
+                            transaction.replace(R.id.container, fragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();*/
+
+                            /*RootFragment fragment = new RootFragment();
+                            fragment.setCredential(mPresenter.getCredential());
+                            fragment.setChannelId(mPresenter.getSubscriptions().get(position-1).channelId);
+                            FragmentManager manager = getSupportFragmentManager();
+                            FragmentTransaction transaction = manager.beginTransaction();
+                            transaction.replace(R.id.container, fragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();*/
+                            ChannelFragment fragment = new ChannelFragment();
+                            fragment.setCredential(mPresenter.getCredential());
+                            fragment.setChannelId(mPresenter.getSubscriptions().get(position-1).channelId);
+                            FragmentManager manager = getSupportFragmentManager();
+                            FragmentTransaction transaction = manager.beginTransaction();
+                            transaction.replace(R.id.container, fragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();
+
+                            /*VideoFragment fragment = new VideoFragment();
+                            fragment.setVideoId("mmDj8b6u9G0");
+                            FragmentManager manager = getSupportFragmentManager();
+                            FragmentTransaction transaction = manager.beginTransaction();
+                            transaction.replace(R.id.container, fragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();*/
                         }
-                        Log.d("POSITION", position+"");
+                        Log.d("POSITION", position-1+"");
                     }
                 })
                 .build();
+
+        //mPresenter.onStart();
         mPresenter = new MainPresenter(this);
+       /*RootFragment fragment1 = new RootFragment();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.container, fragment1, "one");
+        transaction.commit();*/
         mPresenter.onStart();
         checkDemands();
-        mPresenter.makePagerAdapter();
+        //mPresenter.makePagerAdapter();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        //
+        //TODO:
     }
 
     @Override
@@ -143,16 +196,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         showProgress();
     }
 
-    public void setupTabIcons() {
+    /*public void setupTabIcons() {
         mTabLayout.getTabAt(0).setIcon(R.drawable.tab_trending);
         mTabLayout.getTabAt(1).setIcon(R.drawable.tab_subscriptions);
         mTabLayout.getTabAt(2).setIcon(R.drawable.tab_home);
 
-    }
+    }*/
 
-    public void setupPagerAdapter(ViewPagerAdapter adapter) {
+    /*public void setupPagerAdapter(ViewPagerAdapter adapter) {
         mViewPager.setAdapter(adapter);
-    }
+    }*/
 
     public void setupNavigationDrawer(ArrayList<SubscriptionData> someSubscriptionData){
         for(int i = 1; i < someSubscriptionData.size(); i++){
@@ -163,29 +216,29 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     public void showProgress(){
-        //mProgress.show();
+        mProgress.show();
     }
 
     public void hideProgress(){
-        //mProgress.hide();
+        mProgress.hide();
     }
 
-    public void setPage(){
+    /*public void setPage(){
         mViewPager.setCurrentItem(3);
-    }
+    }*/
 
-    public void turnOnViewPagerSwipe(){
+    /*public void turnOnViewPagerSwipe(){
         mViewPager.setOnTouchListener(null);
-    }
+    }*/
 
-    public void turnOffViewPagerSwipe(){
+    /*public void turnOffViewPagerSwipe(){
         mViewPager.setOnTouchListener(new View.OnTouchListener() {
 
             public boolean onTouch(View arg0, MotionEvent arg1) {
                 return true;
             }
         });
-    }
+    }*/
 
     @Override
     public void onRequestPermissionsResult(int requestCode,

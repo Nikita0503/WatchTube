@@ -1,14 +1,14 @@
-package com.example.watchtube;
+package com.example.watchtube.UI;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.watchtube.UI.ChannelPlaylistListFragment;
+import com.example.watchtube.R;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 /**
@@ -18,11 +18,11 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 public class RootFragment extends Fragment {
 
     private static final String TAG = "RootFragment";
-    ChannelPlaylistListFragment channelPlaylistListFragment;
-    GoogleAccountCredential mCredential;
-    String mChannelId;
+    private String mChannelId;
+    private GoogleAccountCredential mCredential;
 
-    public void setCredentials(GoogleAccountCredential credential){
+
+    public void setCredential(GoogleAccountCredential credential){
         mCredential = credential;
     }
 
@@ -30,27 +30,49 @@ public class RootFragment extends Fragment {
         mChannelId = channelId;
     }
 
-    public GoogleAccountCredential getCredential(){
+    /*public GoogleAccountCredential getCredential(){
         return mCredential;
-    }
+    }*/
 
-    public String getChannelId(){
+    /*public String getChannelId(){
         return mChannelId;
-    }
+    }*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 		/* Inflate the layout for this fragment */
         View view = inflater.inflate(R.layout.root_fragment, container, false);
-        FragmentTransaction transaction = getFragmentManager()
-                .beginTransaction();
+        ChannelPlaylistListFragment fragment = new ChannelPlaylistListFragment();
+        fragment.setCredential(mCredential);
+        fragment.setChannelId(mChannelId);
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.root_fragment, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+        /*Button button;
+        button = view.findViewById(R.id.button2);*/
+
         /*channelPlaylistListFragment = new ChannelPlaylistListFragment();
         channelPlaylistListFragment.setRootFragment(this);
         transaction.replace(R.id.root_frame, channelPlaylistListFragment);*/
+        /*button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager manager = getFragmentManager();
+                FragmentTransaction transaction1 = manager.beginTransaction();
+                TwoFragment fragment2 = new TwoFragment();
+                transaction1.replace(R.id.container, fragment2, "two");
+                transaction1.addToBackStack(null);
+                transaction1.commit();
+            }
+        });*/
         return view;
     }
 
-    public void fetch(){
+
+
+    /*public void fetch(){
         FragmentTransaction transaction = getFragmentManager()
                 .beginTransaction();
         channelPlaylistListFragment = new ChannelPlaylistListFragment();
@@ -61,5 +83,5 @@ public class RootFragment extends Fragment {
         Log.d("123456", mCredential.getSelectedAccountName());
         //channelPlaylistListFragment.setCredentials(mCredential);
         //channelPlaylistListFragment.setChannelId(mChannelId);
-    }
+    }*/
 }

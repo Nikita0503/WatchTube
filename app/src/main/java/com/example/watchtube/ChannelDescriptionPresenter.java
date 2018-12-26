@@ -39,6 +39,10 @@ public class ChannelDescriptionPresenter implements Contract.Presenter {
 
     public void setupChannelId(String channelId){
         mChannelId = channelId;
+        prepareYouTubeAPIUtils();
+    }
+
+    private void prepareYouTubeAPIUtils(){
         mYouTubeAPIUtils = new YouTubeAPIUtils(mFragment.getContext(), this);
         mYouTubeAPIUtils.setupCredential(mCredential);
         mYouTubeAPIUtils.setupChannelId(mChannelId);

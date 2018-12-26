@@ -11,15 +11,13 @@ import com.example.watchtube.ChannelVideoListOfPlaylistPresenter;
 import com.example.watchtube.ChannelVideoListPresenter;
 import com.example.watchtube.MainPresenter;
 import com.example.watchtube.R;
-import com.example.watchtube.VideoFragmentPresenter;
-import com.example.watchtube.VideoListPresenter;
+import com.example.watchtube.VideoCommentsPresenter;
 import com.example.watchtube.model.data.ChannelData;
 import com.example.watchtube.model.data.ChannelPlaylistPreviewData;
 import com.example.watchtube.model.data.ChannelVideoPreviewData;
 import com.example.watchtube.model.data.CommentData;
 import com.example.watchtube.model.data.SubscriptionData;
 import com.example.watchtube.model.CircleTransform;
-import com.example.watchtube.model.data.VideoPreviewData;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.HttpTransport;
@@ -28,20 +26,24 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.model.Channel;
 import com.google.api.services.youtube.model.ChannelListResponse;
+import com.google.api.services.youtube.model.Comment;
+import com.google.api.services.youtube.model.CommentListResponse;
+import com.google.api.services.youtube.model.CommentThread;
+import com.google.api.services.youtube.model.CommentThreadListResponse;
 import com.google.api.services.youtube.model.Playlist;
 import com.google.api.services.youtube.model.PlaylistItem;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.PlaylistListResponse;
 import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
-import com.google.api.services.youtube.model.Video;
-import com.google.api.services.youtube.model.VideoListResponse;
 import com.squareup.picasso.Picasso;
 
 import org.joda.time.Period;
 import org.joda.time.Seconds;
 import org.joda.time.format.ISOPeriodFormat;
 import org.joda.time.format.PeriodFormatter;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -49,29 +51,31 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by Nikita on 22.08.2018.
  */
 
 public class YouTubeAPIUtils {
-
     private String mChannelId;
     private String mPlaylistId;
     private String mVideoId;
     public String pageToken;
     private MainPresenter mMainPresenter;
-    private VideoListPresenter mVideoListPresenter;
+    //private VideoListPresenter mVideoListPresenter;
     private ChannelDescriptionPresenter mChannelPresenter;
     private ChannelVideoListPresenter mChannelVideoListPresenter;
     private ChannelPlaylistListPresenter mChannelPlaylistListPresenter;
     private ChannelVideoListOfPlaylistPresenter mChannelVideoListOfPlaylistPresenter;
-    private VideoFragmentPresenter mVideoFragmentPresenter;
+    private VideoCommentsPresenter mVideoCommentsPresenter;
+    //private VideoFragmentPresenter mVideoFragmentPresenter;
     private GoogleAccountCredential mCredential;
     private Context mContext;
 
@@ -80,10 +84,10 @@ public class YouTubeAPIUtils {
         mMainPresenter = mainPresenter;
     }
 
-    public YouTubeAPIUtils(Context context, VideoListPresenter videoListPresenter){
+    /*public YouTubeAPIUtils(Context context, VideoListPresenter videoListPresenter){
         mContext = context;
         mVideoListPresenter = videoListPresenter;
-    }
+    }*/
 
     public YouTubeAPIUtils(Context context, ChannelDescriptionPresenter channelPresenter){
         mContext = context;
@@ -105,10 +109,15 @@ public class YouTubeAPIUtils {
         mChannelVideoListOfPlaylistPresenter = channelVideoListOfPlaylistPresenter;     //лагает NextToken везде
     }
 
-    public YouTubeAPIUtils(Context context, VideoFragmentPresenter videoFragmentPresenter){
+    public YouTubeAPIUtils(Context context, VideoCommentsPresenter videoCommentsPresenter){
+        mContext = context;
+        mVideoCommentsPresenter = videoCommentsPresenter;
+    }
+
+    /*public YouTubeAPIUtils(Context context, VideoFragmentPresenter videoFragmentPresenter){
         mContext = context;
         mVideoFragmentPresenter = videoFragmentPresenter;
-    }
+    }*/
 
     public void setupChannelId(String channelId){
         mChannelId = channelId;
@@ -352,14 +361,96 @@ public class YouTubeAPIUtils {
     public Single<ArrayList<CommentData>> getVideoComments = Single.create(new SingleOnSubscribe<ArrayList<CommentData>>() {
         @Override
         public void subscribe(SingleEmitter<ArrayList<CommentData>> e) throws Exception {
+            /*
             HttpTransport transport = AndroidHttp.newCompatibleTransport();
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
             com.google.api.services.youtube.YouTube mService = new com.google.api.services.youtube.YouTube.Builder(
                     transport, jsonFactory, mCredential)
                     .setApplicationName("WatchTube")
                     .build();
+
             ArrayList<CommentData> videoComments = new ArrayList<CommentData>();
-            mService.comments().list("")
+            Log.d("COMMENTS1", mVideoId);
+            Log.d("COMMENTS1", mCredential.getSelectedAccountName());
+            try {
+                CommentThreadListResponse result = mService.commentThreads()
+                        .list("snippet").setVideoId(mVideoId).setTextFormat("plainText").execute();
+                List<CommentThread> comments = result.getItems();
+                Drawable authorImage;
+                String comment;
+                Log.d("COMMENTS1", comments.size() + "");
+                for (int i = 0; i < comments.size(); i++) {
+                    CommentThread commentThread = comments.get(i);
+                    comment = commentThread.getSnippet().getTopLevelComment().getSnippet().getTextDisplay();
+                    authorImage = new BitmapDrawable(mContext.getResources(), Picasso.with(mContext)
+                            .load(commentThread.getSnippet().getTopLevelComment().getSnippet().getAuthorProfileImageUrl())
+                            .transform(new CircleTransform(25, 0))
+                            .get());
+                    //comment.getSnippet().getTopLevelComment().getSnippet().getAuthorProfileImageUrl()
+                    CommentData data = new CommentData(comment, authorImage);
+                    videoComments.add(data);
+                }
+
+            }catch (Exception c){
+                c.printStackTrace();
+            }*/
+
+            /*try {
+               SubscriptionListResponse result = mService.subscriptions().list("snippet,contentDetails").setMine(true).setMaxResults(50L).execute();
+               List<Subscription> subscriptions = result.getItems();
+               for(int i = 0; i < subscriptions.size(); i++){
+                   Drawable authorImage = new BitmapDrawable(mContext.getResources(), Picasso.with(mContext)
+                           .load(subscriptions.get(i).getSnippet().getThumbnails().getMedium().getUrl())
+                           .transform(new CircleTransform(25, 0))
+                           .get());
+                   videoComments.add(new CommentData(subscriptions.get(i).getSnippet().getTitle(), authorImage));
+               }
+            }catch (Exception c){
+                c.printStackTrace();
+            }*/
+
+
+            /*videoComments.add(new CommentData("Good Video!", mContext.getResources().getDrawable(R.drawable.ic_doctor)));
+            videoComments.add(new CommentData("Great Video!", mContext.getResources().getDrawable(R.drawable.ic_patient)));
+            e.onSuccess(videoComments);*/
+            ArrayList<CommentData> videoComments = new ArrayList<CommentData>();
+            OkHttpClient client = new OkHttpClient();
+                Request request = new Request.Builder()
+                        .url("https://www.googleapis.com/youtube/v3/commentThreads?part=snippet%2Creplies&order=relevance&textFormat=plainText&videoId="+mVideoId+"&fields=items(snippet(topLevelComment(snippet(authorChannelId%2CauthorDisplayName%2CauthorProfileImageUrl%2CtextDisplay))))&key=AIzaSyA8QOXpXSM1Q6g3haiSS_PBV5TZBmOdlkU ")
+                        .build();
+
+                Response response = client.newCall(request).execute();
+                JSONObject jsonObject = new JSONObject(response.body().string());
+                JSONArray commentsArray = jsonObject.getJSONArray("items");
+                for(int i = 0; i < commentsArray.length(); i++) {
+                    JSONObject postObject = commentsArray.getJSONObject(i).getJSONObject("snippet").getJSONObject("topLevelComment").getJSONObject("snippet");
+                    Request requestImageURL = new Request.Builder()
+                            .url("https://www.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id="
+                                    +postObject.getJSONObject("authorChannelId").getString("value")
+                                    +"&fields=items%2Fsnippet%2Fthumbnails%2Fdefault%2Furl&key=AIzaSyA8QOXpXSM1Q6g3haiSS_PBV5TZBmOdlkU")
+                            .build();
+                    Response responseImageURL = client.newCall(requestImageURL).execute();
+                    JSONObject jsonObjectImageURL = new JSONObject(responseImageURL.body().string());
+                    String imageURL = jsonObjectImageURL.getJSONArray("items")
+                            .getJSONObject(0)
+                            .getJSONObject("snippet")
+                            .getJSONObject("thumbnails")
+                            .getJSONObject("default")
+                            .getString("url");
+                    Drawable authorImage = new BitmapDrawable(mContext.getResources(), Picasso.with(mContext)
+                            .load(imageURL)
+                            .transform(new CircleTransform(25, 0))
+                            .get());
+
+
+
+                    String comment = postObject.getString("textDisplay");
+                    videoComments.add(new CommentData(comment, authorImage));
+                    Log.d("COMMENTS", comment);
+                }
+                e.onSuccess(videoComments);
+
+
         }
     });
 
@@ -402,7 +493,7 @@ public class YouTubeAPIUtils {
     });
     
 
-    public Single<ArrayList<VideoPreviewData>> getVideoPreviewData = Single.create(new SingleOnSubscribe<ArrayList<VideoPreviewData>>() {
+    /*public Single<ArrayList<VideoPreviewData>> getVideoPreviewData = Single.create(new SingleOnSubscribe<ArrayList<VideoPreviewData>>() {
         @Override
         public void subscribe(SingleEmitter<ArrayList<VideoPreviewData>> e) throws Exception {
             HttpTransport transport = AndroidHttp.newCompatibleTransport();
@@ -474,7 +565,7 @@ public class YouTubeAPIUtils {
             }
             e.onSuccess(videoPreviewData);
         }
-    });
+    });*/
 
 
 

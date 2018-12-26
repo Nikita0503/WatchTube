@@ -11,10 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.watchtube.UI.ChannelFragment;
 import com.example.watchtube.UI.ChannelPlaylistListFragment;
+import com.example.watchtube.UI.ChannelVideoListOfPlaylistFragment;
+import com.example.watchtube.R;
 import com.example.watchtube.model.data.ChannelPlaylistPreviewData;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
@@ -25,10 +25,11 @@ import java.util.ArrayList;
  */
 
 public class ChannelPlaylistListCustomAdapter extends RecyclerView.Adapter<ChannelPlaylistListCustomAdapter.ViewHolder>{
+
+    private String mPlaylistId;
+    private GoogleAccountCredential mCredential;
     private ArrayList<ChannelPlaylistPreviewData> mList;
     private ChannelPlaylistListFragment mFragment;
-    private GoogleAccountCredential mCredential;
-    private String mPlaylistId;
 
     public ChannelPlaylistListCustomAdapter(ChannelPlaylistListFragment fragment){
         mList = new ArrayList<ChannelPlaylistPreviewData>();
@@ -42,56 +43,59 @@ public class ChannelPlaylistListCustomAdapter extends RecyclerView.Adapter<Chann
 
     @NonNull
     @Override
-    public ChannelPlaylistListCustomAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.fragment_channel_playlist_list_preview_item, parent, false);
-        return new ChannelPlaylistListCustomAdapter.ViewHolder(view);
+        return new ViewHolder(view);
     }
 
-    public GoogleAccountCredential getCredential(){
+    /*public GoogleAccountCredential getCredential(){
         return mCredential;
     }
 
     public String getPlaylistId(){
         return mPlaylistId;
-    }
+    }*/
 
     @Override
-    public void onBindViewHolder(@NonNull ChannelPlaylistListCustomAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         holder.textViewPlaylistTitle.setText(mList.get(position).playlistTitle);
         holder.imageView.setImageDrawable(mList.get(position).playlistImage);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mFragment.getContext(), mList.get(position).playlistId, Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(mFragment.getContext(), mList.get(position).playlistId, Toast.LENGTH_SHORT).show();
                 ChannelVideoListOfPlaylistFragment fragment = new ChannelVideoListOfPlaylistFragment();
                 FragmentTransaction trans = mFragment.getFragmentManager()
                         .beginTransaction();
-				/*
-				 * IMPORTANT: We use the "root frame" defined in
-				 * "root_fragment.xml" as the reference to replace fragment
-				 */
+
                 trans.replace(R.id.root_frame, fragment);
-				/*
-				 * IMPORTANT: The following lines allow us to add the fragment
-				 * to the stack and return to it later, by pressing back
-				 */
+
                 fragment.setContext(mFragment.getContext());
                 fragment.setStartAdapter(ChannelPlaylistListCustomAdapter.this);
                 trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 trans.addToBackStack(null);
                 trans.commit();
                 mPlaylistId = mList.get(position).playlistId;
-
+                */
+                ChannelVideoListOfPlaylistFragment fragment = new ChannelVideoListOfPlaylistFragment();
+                fragment.setCredentials(mCredential);
+                fragment.setPlaylistId(mList.get(position).playlistId);
+                Log.d("SUPER", mList.get(position).playlistId);
+                FragmentManager manager = mFragment.getFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.replace(R.id.root_fragment, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
 
             }
         });
         holder.textViewVideoCount.setText(String.valueOf(mList.get(position).videoCount +  " videos"));
         Log.d("Queue", "= " + position);
-        if(position == mList.size() - 3){
+        /*if(position == mList.size() - 3){
             mFragment.fetchPlaylistListData();
-        }
+        }*/
     }
 
     @Override

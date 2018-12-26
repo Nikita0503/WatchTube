@@ -7,7 +7,7 @@
     android:layout_height="80dp">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/imageViewAuthor"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginBottom="8dp"
@@ -20,14 +20,15 @@
 
     <TextView
         android:id="@+id/textViewComment"
-        android:layout_width="287dp"
+        android:layout_width="270dp"
         android:layout_height="61dp"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:ellipsize="end"
-        android:maxLines="3"
-        android:text="videoTitle"
+        android:maxLines="5"
+        android:scrollbars="vertical"
+        android:text="comment"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
