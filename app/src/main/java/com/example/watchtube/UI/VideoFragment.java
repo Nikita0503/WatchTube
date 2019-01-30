@@ -64,18 +64,27 @@ public class VideoFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        //savedInstanceState.putString(STATE_USER, mUser);
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_video, container, false);
         mTabLayout = (TabLayout) v.findViewById(R.id.sliding_tabs);
         mViewPager = (ViewPager) v.findViewById(R.id.viewpager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
-        VideoCommentsFragment fragment = new VideoCommentsFragment();
+        VideoCommentsFragment fragment2 = new VideoCommentsFragment();
+        fragment2.setCredential(mCredential);
+        fragment2.setVideoId(mVideoId);
+        VideoDescriptionFragment fragment = new VideoDescriptionFragment();
         fragment.setCredential(mCredential);
         fragment.setVideoId(mVideoId);
-        adapter.addFragment(fragment, "Comments");
-        adapter.addFragment(new TwoFragment(), "Info");
-
+        adapter.addFragment(fragment, "Info");
+        adapter.addFragment(fragment2, "Comments");
         mViewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mViewPager);
         //mLayoutManager = new LinearLayoutManager(getContext());
@@ -84,12 +93,11 @@ public class VideoFragment extends Fragment {
         //mRecyclerView.setHasFixedSize(true);
         mVideoView = (YouTubePlayerSupportFragment) getChildFragmentManager()
                 .findFragmentById(R.id.youtube_fragment);
-
         mVideoView.initialize("687555550784-tm0hfod9mca6rk0clt5ok4uog6s01kd3.apps.googleusercontent.com", new YouTubePlayer.OnInitializedListener() {
                     @Override
                     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
-                        youTubePlayer.setShowFullscreenButton(true);
-
+                        //youTubePlayer.setShowFullscreenButton(false);
+                        youTubePlayer.setFullscreenControlFlags(0);
                         youTubePlayer.loadVideo(mVideoId);
                         Log.d("ERROR", "2");
                     }

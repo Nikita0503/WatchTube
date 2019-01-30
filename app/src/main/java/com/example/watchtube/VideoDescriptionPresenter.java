@@ -2,9 +2,10 @@ package com.example.watchtube;
 
 import android.util.Log;
 
-import com.example.watchtube.UI.VideoCommentsFragment;
+import com.example.watchtube.UI.VideoDescriptionFragment;
 import com.example.watchtube.model.APIUtils.YouTubeAPIUtils;
 import com.example.watchtube.model.data.CommentData;
+import com.example.watchtube.model.data.VideoDescription;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import java.util.ArrayList;
@@ -16,18 +17,18 @@ import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by Nikita on 26.12.2018.
+ * Created by Nikita on 14.01.2019.
  */
 
-public class VideoCommentsPresenter implements Contract.Presenter {
+public class VideoDescriptionPresenter implements Contract.Presenter {
 
     private String mVideoId;
-    private VideoCommentsFragment mFragment;
+    private VideoDescriptionFragment mFragment;
     private CompositeDisposable mDisposable;
     private GoogleAccountCredential mCredential;
     private YouTubeAPIUtils mYouTubeAPIUtils;
 
-    public VideoCommentsPresenter(VideoCommentsFragment fragment){
+    public VideoDescriptionPresenter(VideoDescriptionFragment fragment){
         mFragment = fragment;
         mYouTubeAPIUtils = new YouTubeAPIUtils(fragment.getContext(), this);
     }
@@ -48,13 +49,13 @@ public class VideoCommentsPresenter implements Contract.Presenter {
         mDisposable = new CompositeDisposable();
     }
 
-    public void fetchVideoCommentsList(){
-        Disposable disposable = mYouTubeAPIUtils.getVideoComments.subscribeOn(Schedulers.io())
+    public void fetchVideoDescription(){
+        Disposable disposable = mYouTubeAPIUtils.getVideoDescription.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<ArrayList<CommentData>>() {
+                .subscribeWith(new DisposableSingleObserver<VideoDescription>() {
                     @Override
-                    public void onSuccess(ArrayList<CommentData> channelVideoPreviewData) {
-                        mFragment.addCommentsToList(channelVideoPreviewData);
+                    public void onSuccess(VideoDescription videoDescriptionData) {
+                        mFragment.setVideoDescription(videoDescriptionData);
                     }
                     @Override
                     public void onError(Throwable e) {

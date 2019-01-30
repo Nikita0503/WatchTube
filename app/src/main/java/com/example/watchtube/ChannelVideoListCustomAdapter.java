@@ -57,6 +57,7 @@ public class ChannelVideoListCustomAdapter extends RecyclerView.Adapter<ChannelV
                 VideoFragment fragment = new VideoFragment();
                 fragment.setCredential(mCredential);
                 fragment.setVideoId(mList.get(position).videoId);
+                Log.d("TAG112", mCredential.getSelectedAccountName()+" "+mList.get(position).videoId);
                 FragmentManager manager = mFragment.getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = manager.beginTransaction();
                 transaction.replace(R.id.container, fragment);

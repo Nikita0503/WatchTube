@@ -84,7 +84,7 @@ public class VideoCommentsFragment extends Fragment implements Contract.View {
     public void fetchVideoCommentsList(){
         Log.d("VideoListPlay", "fetch");
         mPresenter.setupCredential(mCredential);
-        Log.d("COMENTS2", mCredential.getSelectedAccountName());
+        //Log.d("COMENTS2", mCredential.getSelectedAccountName());
         mPresenter.setupVideoId(mVideoId);
         mPresenter.fetchVideoCommentsList();
     }

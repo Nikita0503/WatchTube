@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">WatchTube</string>
+    <string name="like">Likes</string>
+    <string name="dislike">Dislikes</string>
 </resources>

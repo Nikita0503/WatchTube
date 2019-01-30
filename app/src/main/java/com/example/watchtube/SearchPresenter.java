@@ -1,10 +1,8 @@
 package com.example.watchtube;
 
-import android.util.Log;
-
-import com.example.watchtube.UI.VideoCommentsFragment;
+import com.example.watchtube.UI.SearchFragment;
 import com.example.watchtube.model.APIUtils.YouTubeAPIUtils;
-import com.example.watchtube.model.data.CommentData;
+import com.example.watchtube.model.data.VideoDescription;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import java.util.ArrayList;
@@ -16,31 +14,19 @@ import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by Nikita on 26.12.2018.
+ * Created by Nikita on 30.01.2019.
  */
 
-public class VideoCommentsPresenter implements Contract.Presenter {
+public class SearchPresenter implements Contract.Presenter {
 
-    private String mVideoId;
-    private VideoCommentsFragment mFragment;
+    private SearchFragment mFragment;
     private CompositeDisposable mDisposable;
     private GoogleAccountCredential mCredential;
     private YouTubeAPIUtils mYouTubeAPIUtils;
 
-    public VideoCommentsPresenter(VideoCommentsFragment fragment){
+    public SearchPresenter(SearchFragment fragment) {
         mFragment = fragment;
         mYouTubeAPIUtils = new YouTubeAPIUtils(fragment.getContext(), this);
-    }
-
-    public void setupCredential(GoogleAccountCredential credential){
-        mCredential = credential;
-        mYouTubeAPIUtils.setupCredential(mCredential);
-        //Log.d("COMMENTSS", mCredential.getSelectedAccountName());
-    }
-
-    public void setupVideoId(String videoId){
-        mVideoId = videoId;
-        mYouTubeAPIUtils.setupVideoId(mVideoId);
     }
 
     @Override
@@ -48,13 +34,19 @@ public class VideoCommentsPresenter implements Contract.Presenter {
         mDisposable = new CompositeDisposable();
     }
 
-    public void fetchVideoCommentsList(){
-        Disposable disposable = mYouTubeAPIUtils.getVideoComments.subscribeOn(Schedulers.io())
+    public void setupCredential(GoogleAccountCredential credential){
+        mCredential = credential;
+        mYouTubeAPIUtils.setupCredential(mCredential);
+    }
+
+    public void fetchSearchResults(String request){
+        mYouTubeAPIUtils.setupRequest(request);
+        Disposable disposable = mYouTubeAPIUtils.getSearchResults.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<ArrayList<CommentData>>() {
+                .subscribeWith(new DisposableSingleObserver<ArrayList<SearchItemType>>() {
                     @Override
-                    public void onSuccess(ArrayList<CommentData> channelVideoPreviewData) {
-                        mFragment.addCommentsToList(channelVideoPreviewData);
+                    public void onSuccess(ArrayList<SearchItemType> results) {
+                        mFragment.addSearchResults(results);
                     }
                     @Override
                     public void onError(Throwable e) {
@@ -63,6 +55,8 @@ public class VideoCommentsPresenter implements Contract.Presenter {
                 });
         mDisposable.add(disposable);
     }
+
+
 
     @Override
     public void onStop() {

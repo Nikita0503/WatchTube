@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     public void checkDemands(){
         mPresenter.checkDemands();
-        showProgress();
+//        showProgress();
     }
 
     /*public void setupTabIcons() {
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     public void showProgress(){
-        mProgress.show();
+       // mProgress.show();
     }
 
     public void hideProgress(){

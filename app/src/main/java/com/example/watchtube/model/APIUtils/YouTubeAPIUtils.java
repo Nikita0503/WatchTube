@@ -11,13 +11,18 @@ import com.example.watchtube.ChannelVideoListOfPlaylistPresenter;
 import com.example.watchtube.ChannelVideoListPresenter;
 import com.example.watchtube.MainPresenter;
 import com.example.watchtube.R;
+import com.example.watchtube.SearchItemType;
+import com.example.watchtube.SearchPresenter;
 import com.example.watchtube.VideoCommentsPresenter;
+import com.example.watchtube.VideoDescriptionPresenter;
 import com.example.watchtube.model.data.ChannelData;
 import com.example.watchtube.model.data.ChannelPlaylistPreviewData;
 import com.example.watchtube.model.data.ChannelVideoPreviewData;
 import com.example.watchtube.model.data.CommentData;
 import com.example.watchtube.model.data.SubscriptionData;
 import com.example.watchtube.model.CircleTransform;
+import com.example.watchtube.model.data.VideoDescription;
+import com.example.watchtube.model.data.search.SearchChannelData;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.HttpTransport;
@@ -36,6 +41,7 @@ import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.PlaylistListResponse;
 import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
+import com.google.api.services.youtube.model.VideoListResponse;
 import com.squareup.picasso.Picasso;
 
 import org.joda.time.Period;
@@ -47,6 +53,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -67,6 +74,7 @@ public class YouTubeAPIUtils {
     private String mChannelId;
     private String mPlaylistId;
     private String mVideoId;
+    private String mRequest;
     public String pageToken;
     private MainPresenter mMainPresenter;
     //private VideoListPresenter mVideoListPresenter;
@@ -75,6 +83,8 @@ public class YouTubeAPIUtils {
     private ChannelPlaylistListPresenter mChannelPlaylistListPresenter;
     private ChannelVideoListOfPlaylistPresenter mChannelVideoListOfPlaylistPresenter;
     private VideoCommentsPresenter mVideoCommentsPresenter;
+    private VideoDescriptionPresenter mVideoDescriptionPresenter;
+    private SearchPresenter mSearchPresenter;
     //private VideoFragmentPresenter mVideoFragmentPresenter;
     private GoogleAccountCredential mCredential;
     private Context mContext;
@@ -114,6 +124,16 @@ public class YouTubeAPIUtils {
         mVideoCommentsPresenter = videoCommentsPresenter;
     }
 
+    public YouTubeAPIUtils(Context context, VideoDescriptionPresenter videoDescriptionPresenter){
+        mContext = context;
+        mVideoDescriptionPresenter = videoDescriptionPresenter;
+    }
+
+    public YouTubeAPIUtils(Context context, SearchPresenter searchPresenter){
+        mContext = context;
+        mSearchPresenter = searchPresenter;
+    }
+
     /*public YouTubeAPIUtils(Context context, VideoFragmentPresenter videoFragmentPresenter){
         mContext = context;
         mVideoFragmentPresenter = videoFragmentPresenter;
@@ -133,6 +153,10 @@ public class YouTubeAPIUtils {
 
     public void setupVideoId(String videoId){
         mVideoId = videoId;
+    }
+
+    public void setupRequest(String request){
+        mRequest = request;
     }
 
     public Single<ArrayList<SubscriptionData>> getSubscriptionsInfo = Single.create(new SingleOnSubscribe<ArrayList<SubscriptionData>>() {
@@ -295,6 +319,15 @@ public class YouTubeAPIUtils {
         }
     });
 
+    public Single<ArrayList<SearchItemType>> getSearchResults = Single.create(new SingleOnSubscribe<ArrayList<SearchItemType>>() {
+        @Override
+        public void subscribe(SingleEmitter<ArrayList<SearchItemType>> e) throws Exception {
+            ArrayList<SearchItemType> resultsList = new ArrayList<SearchItemType>();
+            //TODO: результаты поиска (mRequest - запрос из строки поиска)
+            e.onSuccess(resultsList);
+        }
+    });
+
     public Single<ArrayList<ChannelVideoPreviewData>> getChannelVideoPreviewData = Single.create(new SingleOnSubscribe<ArrayList<ChannelVideoPreviewData>>() {
         @Override
         public void subscribe(SingleEmitter<ArrayList<ChannelVideoPreviewData>> e) throws Exception {
@@ -358,6 +391,52 @@ public class YouTubeAPIUtils {
         }
     });
 
+    public Single<VideoDescription> getVideoDescription = Single.create(new SingleOnSubscribe<VideoDescription>() {
+        @Override
+        public void subscribe(SingleEmitter<VideoDescription> e) throws Exception {
+            HttpTransport transport = AndroidHttp.newCompatibleTransport();
+            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+            com.google.api.services.youtube.YouTube mService = new com.google.api.services.youtube.YouTube.Builder(
+                    transport, jsonFactory, mCredential)
+                    .setApplicationName("WatchTube")
+                    .build();
+            VideoDescription videoDescription;
+            VideoListResponse result = mService.videos().list("snippet,contentDetails,statistics")
+                    .setId(mVideoId)
+                    .execute();
+            BigInteger countLikes;
+            BigInteger countDislikes;
+            String videoTitle;
+            String authorName;
+            String description;
+            String publishedAt;
+            Drawable authorImage;
+            countLikes = result.getItems().get(0).getStatistics().getLikeCount();
+            countDislikes = result.getItems().get(0).getStatistics().getDislikeCount();
+            videoTitle = result.getItems().get(0).getSnippet().getTitle();
+            authorName = result.getItems().get(0).getSnippet().getChannelTitle();
+            description = result.getItems().get(0).getSnippet().getDescription();
+            SimpleDateFormat dateFormatAfter = new SimpleDateFormat("d MMM yyyy");
+            Date date = new Date(result.getItems().get(0).getSnippet().getPublishedAt().getValue());
+            publishedAt = dateFormatAfter.format(date);
+
+
+            String channelId = result.getItems().get(0).getSnippet().getChannelId();
+
+            ChannelListResponse resultImage = mService.channels().list("snippet,contentDetails,statistics")
+                    .setId(channelId)
+                    .setFields("items/snippet/thumbnails/default/url")
+                    .execute();
+
+            authorImage = new BitmapDrawable(mContext.getResources(), Picasso.with(mContext)
+                    .load(resultImage.getItems().get(0).getSnippet().getThumbnails().getDefault().getUrl())
+                    .transform(new CircleTransform(25, 0))
+                    .get());
+            videoDescription = new VideoDescription(countLikes, countDislikes, videoTitle, authorName, description, publishedAt, authorImage);
+            e.onSuccess(videoDescription);
+        }
+    });
+
     public Single<ArrayList<CommentData>> getVideoComments = Single.create(new SingleOnSubscribe<ArrayList<CommentData>>() {
         @Override
         public void subscribe(SingleEmitter<ArrayList<CommentData>> e) throws Exception {
@@ -415,6 +494,7 @@ public class YouTubeAPIUtils {
             e.onSuccess(videoComments);*/
             ArrayList<CommentData> videoComments = new ArrayList<CommentData>();
             OkHttpClient client = new OkHttpClient();
+
                 Request request = new Request.Builder()
                         .url("https://www.googleapis.com/youtube/v3/commentThreads?part=snippet%2Creplies&order=relevance&textFormat=plainText&videoId="+mVideoId+"&fields=items(snippet(topLevelComment(snippet(authorChannelId%2CauthorDisplayName%2CauthorProfileImageUrl%2CtextDisplay))))&key=AIzaSyA8QOXpXSM1Q6g3haiSS_PBV5TZBmOdlkU ")
                         .build();
@@ -424,19 +504,15 @@ public class YouTubeAPIUtils {
                 JSONArray commentsArray = jsonObject.getJSONArray("items");
                 for(int i = 0; i < commentsArray.length(); i++) {
                     JSONObject postObject = commentsArray.getJSONObject(i).getJSONObject("snippet").getJSONObject("topLevelComment").getJSONObject("snippet");
-                    Request requestImageURL = new Request.Builder()
+                    /*Request requestImageURL = new Request.Builder()
                             .url("https://www.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id="
                                     +postObject.getJSONObject("authorChannelId").getString("value")
                                     +"&fields=items%2Fsnippet%2Fthumbnails%2Fdefault%2Furl&key=AIzaSyA8QOXpXSM1Q6g3haiSS_PBV5TZBmOdlkU")
                             .build();
                     Response responseImageURL = client.newCall(requestImageURL).execute();
                     JSONObject jsonObjectImageURL = new JSONObject(responseImageURL.body().string());
-                    String imageURL = jsonObjectImageURL.getJSONArray("items")
-                            .getJSONObject(0)
-                            .getJSONObject("snippet")
-                            .getJSONObject("thumbnails")
-                            .getJSONObject("default")
-                            .getString("url");
+                    */
+                    String imageURL = postObject.getString("authorProfileImageUrl");
                     Drawable authorImage = new BitmapDrawable(mContext.getResources(), Picasso.with(mContext)
                             .load(imageURL)
                             .transform(new CircleTransform(25, 0))
