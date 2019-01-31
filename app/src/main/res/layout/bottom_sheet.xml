@@ -10,6 +10,9 @@
     app:behavior_peekHeight="40dp"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
+
+
+
     <TextView
         android:id="@+id/panel"
         android:layout_width="match_parent"
@@ -26,6 +29,10 @@
         android:id="@+id/frgmCont"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+    </android.support.v4.widget.NestedScrollView>
     </FrameLayout>
 
 
