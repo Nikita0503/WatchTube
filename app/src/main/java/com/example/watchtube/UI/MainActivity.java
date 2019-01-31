@@ -3,7 +3,12 @@ package com.example.watchtube.UI;
 import com.example.watchtube.Contract;
 import com.example.watchtube.MainPresenter;
 import com.example.watchtube.R;
+import com.example.watchtube.ViewPagerAdapter;
 import com.example.watchtube.model.data.SubscriptionData;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayerSupportFragment;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.services.youtube.YouTubeScopes;
 
 import com.mikepenz.materialdrawer.Drawer;
@@ -13,18 +18,24 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import android.app.Dialog;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
         import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,11 +59,55 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     //private ViewPager mViewPager;
     public ProgressDialog mProgress;
     //private TabLayout mTabLayout;
+    private FragmentTransaction mTrans;
+    private VideoFragment mVideoFragment;
+    private View mBottomLayout;
+    private TextView mTextViewVideoTitleBottom;
+    public void setBottom(final String videoId, String videoTitle){
+        mTextViewVideoTitleBottom.setText(videoTitle);
+        mTrans = getSupportFragmentManager().beginTransaction();
+        mVideoFragment = new VideoFragment();
+        mVideoFragment.setVideoId(videoId);
+        mVideoFragment.setCredential(mPresenter.getCredential());
+        mTrans.replace(R.id.frgmCont, mVideoFragment);
+        mTrans.commit();
 
+        Log.d("TAG1234", videoId);
+        /*fragment2.setCredential(mPresenter.getCredential());
+        fragment2.setVideoId(videoId);
+
+        fragment.setCredential(mPresenter.getCredential());
+        fragment.setVideoId(videoId);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+        adapter.addFragment(fragment, "Info");
+        adapter.addFragment(fragment2, "Comments");
+        mViewPager.setAdapter(adapter);*/
+       // mTabLayout.setupWithViewPager(mViewPager);
+        //mVideoFragment.setVideoId(videoId);
+
+//        mPlayer.loadVideo(videoId);
+        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(mBottomLayout);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) { //NEXT PAGE TOKEN (Subscriptions)
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mBottomLayout = (View) findViewById(R.id.bottom_fragment);
+        mTextViewVideoTitleBottom = (TextView) findViewById(R.id.panel);
+
+        //mVideoView = (YouTubePlayerSupportFragment) mBottomLayout(R.id.youtube_fragment);
+        /*ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        fragment = new VideoDescriptionFragment();
+        fragment2 = new VideoCommentsFragment();
+        adapter.addFragment(fragment, "Info");
+        adapter.addFragment(fragment2, "Comments");
+        mViewPager.setAdapter(adapter);
+        mTabLayout.setupWithViewPager(mViewPager);*/
+
+
         mOutputText = findViewById(R.id.textView);
         mOutputText.setText("In developing...");
         mProgress = new ProgressDialog(this);

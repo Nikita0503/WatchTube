@@ -3,6 +3,7 @@ package com.example.watchtube.UI;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,10 +41,12 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
 
     public void setCredential(GoogleAccountCredential credential){
         mCredential = credential;
+        Log.d("VideoListPlay", "setCredential");
     }
 
     public void setVideoId(String videoId){
         mVideoId = videoId;
+        Log.d("VideoListPlay", "setVideoId");
     }
 
     @Override
@@ -51,12 +54,13 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         super.onCreate(savedInstanceState);
         mPresenter = new VideoDescriptionPresenter(this);
         mPresenter.onStart();
+        Log.d("VideoListPlay", "onCreate");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //Log.d("VideoListPlay", "view");
+        Log.d("VideoListPlay", "onCreateView");
         View v = inflater.inflate(R.layout.fragment_video_description, container, false);
         mSeekBar = (SeekBar) v.findViewById(R.id.seekBar);
         mTextViewLikes = (TextView) v.findViewById(R.id.textViewLike);
@@ -102,6 +106,7 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
     }
 
     public void fetchVideoDescription(){
+        Log.d("VideoListPlay", "fetchVideoDescription");
         mPresenter.setupCredential(mCredential);
         mPresenter.setupVideoId(mVideoId);
         mPresenter.fetchVideoDescription();

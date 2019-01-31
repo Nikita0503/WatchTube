@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.watchtube.R;
 import com.example.watchtube.UI.ChannelVideoListOfPlaylistFragment;
+import com.example.watchtube.UI.MainActivity;
 import com.example.watchtube.UI.VideoFragment;
 import com.example.watchtube.model.data.ChannelVideoPreviewData;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -53,14 +54,16 @@ public class ChannelVideoListOfPlaylistCustomAdapter extends RecyclerView.Adapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                VideoFragment fragment = new VideoFragment();
+                /*VideoFragment fragment = new VideoFragment();
                 fragment.setCredential(mCredential);
                 fragment.setVideoId(mList.get(position).videoId);
                 FragmentManager manager = mFragment.getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = manager.beginTransaction();
                 transaction.replace(R.id.container, fragment);
                 transaction.addToBackStack(null);
-                transaction.commit();
+                transaction.commit();*/
+                MainActivity activity = (MainActivity)mFragment.getActivity();
+                activity.setBottom(mList.get(position).videoId, mList.get(position).videoTitle);
             }
         });
         Log.d("Queue", "= " + position);

@@ -77,7 +77,7 @@ public class MainPresenter implements Contract.Presenter {
             //setText();
         } else {
             fetchSubscribesList();
-
+            //mActivity.setBottom("Exir40TV5Mw");
         }
     }
 

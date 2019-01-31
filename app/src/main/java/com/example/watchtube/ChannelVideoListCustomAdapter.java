@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.watchtube.R;
 import com.example.watchtube.UI.ChannelVideoListFragment;
+import com.example.watchtube.UI.MainActivity;
 import com.example.watchtube.UI.VideoFragment;
 import com.example.watchtube.model.data.ChannelVideoPreviewData;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -45,6 +46,8 @@ public class ChannelVideoListCustomAdapter extends RecyclerView.Adapter<ChannelV
         return new ViewHolder(view);
     }
 
+
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         holder.textViewVideoTitle.setText(mList.get(position).videoTitle);
@@ -54,7 +57,7 @@ public class ChannelVideoListCustomAdapter extends RecyclerView.Adapter<ChannelV
             @Override
             public void onClick(View v) {
 
-                VideoFragment fragment = new VideoFragment();
+                /*VideoFragment fragment = new VideoFragment();
                 fragment.setCredential(mCredential);
                 fragment.setVideoId(mList.get(position).videoId);
                 Log.d("TAG112", mCredential.getSelectedAccountName()+" "+mList.get(position).videoId);
@@ -62,8 +65,9 @@ public class ChannelVideoListCustomAdapter extends RecyclerView.Adapter<ChannelV
                 FragmentTransaction transaction = manager.beginTransaction();
                 transaction.replace(R.id.container, fragment);
                 transaction.addToBackStack(null);
-                transaction.commit();
-
+                transaction.commit();*/
+                MainActivity activity = (MainActivity)mFragment.getActivity();
+                activity.setBottom(mList.get(position).videoId, mList.get(position).videoTitle);
                 /*mFragment.chooseVideo(mList.get(position).videoId);
                 Log.d("ERROR", mList.get(position).videoTitle);
                 ChannelVideoListOfPlaylistFragment fragment = new ChannelVideoListOfPlaylistFragment();
