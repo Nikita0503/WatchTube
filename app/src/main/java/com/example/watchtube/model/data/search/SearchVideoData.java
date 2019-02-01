@@ -9,12 +9,14 @@ import com.example.watchtube.SearchItemType;
  */
 
 public class SearchVideoData implements SearchItemType {
+    public String videoId;
     public String videoTitle;
     public String channelTitle;
     public String publishedAt;
     public Drawable videoImage;
 
-    public SearchVideoData(String videoTitle, String channelTitle, String publishedAt, Drawable videoImage) {
+    public SearchVideoData(String videoId, String videoTitle, String channelTitle, String publishedAt, Drawable videoImage) {
+        this.videoId = videoId;
         this.videoTitle = videoTitle;
         this.channelTitle = channelTitle;
         this.publishedAt = publishedAt;

@@ -31,13 +31,13 @@ import java.util.ArrayList;
 
 public class SearchFragment extends Fragment implements Contract.View {
 
+    private String mRequest;
     private SearchPresenter mPresenter;
     private GoogleAccountCredential mCredential;
-    private Button mButtonSearch;
-    private EditText mEditTextSearch;
     private RecyclerView mRecyclerViewSearch;
     private RecyclerView.LayoutManager mLayoutManager;
     private SearchAdapter mSearchAdapter;
+    private ProgressBar mProgressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,21 +54,16 @@ public class SearchFragment extends Fragment implements Contract.View {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_search, container, false);
         mPresenter.setupCredential(mCredential);
-        mButtonSearch = (Button) v.findViewById(R.id.buttonSearch);
-        mEditTextSearch = (EditText) v.findViewById(R.id.editTextSearch);
         mRecyclerViewSearch = (RecyclerView) v.findViewById(R.id.RecyclerVIewSearch);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerViewSearch.setLayoutManager(mLayoutManager);
-        mSearchAdapter = new SearchAdapter();
+        mSearchAdapter = new SearchAdapter(SearchFragment.this, mCredential);
         mRecyclerViewSearch.setAdapter(mSearchAdapter);
-        mButtonSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String request = mEditTextSearch.getText().toString();
-                mPresenter.fetchSearchResults(request);
-            }
-        });
-
+        mPresenter.fetchSearchResults(mRequest);
+        mProgressBar = (ProgressBar) v.findViewById(R.id.spin_kit);
+        Sprite cubeGrid = new CubeGrid();
+        mProgressBar.setIndeterminateDrawable(cubeGrid);
+        mProgressBar.setVisibility(ProgressBar.VISIBLE);
         return v;
     }
 
@@ -76,8 +71,13 @@ public class SearchFragment extends Fragment implements Contract.View {
         mCredential = credential;
     }
 
+    public void setRequest(String request){
+        mRequest = request;
+    }
+
     public void addSearchResults(ArrayList<SearchItemType> items){
         mSearchAdapter.addSearchResults(items);
+        mProgressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override

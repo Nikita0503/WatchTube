@@ -9,10 +9,12 @@ import com.example.watchtube.SearchItemType;
  */
 
 public class SearchChannelData implements SearchItemType {
+    public String channelId;
     public String channelTitle;
     public Drawable channelImage;
 
-    public SearchChannelData(String channelTitle, Drawable channelImage) {
+    public SearchChannelData(String channelId, String channelTitle, Drawable channelImage) {
+        this.channelId = channelId;
         this.channelTitle = channelTitle;
         this.channelImage = channelImage;
     }

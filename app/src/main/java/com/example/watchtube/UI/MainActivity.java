@@ -3,12 +3,7 @@ package com.example.watchtube.UI;
 import com.example.watchtube.Contract;
 import com.example.watchtube.MainPresenter;
 import com.example.watchtube.R;
-import com.example.watchtube.ViewPagerAdapter;
 import com.example.watchtube.model.data.SubscriptionData;
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubePlayer;
-import com.google.android.youtube.player.YouTubePlayerSupportFragment;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.services.youtube.YouTubeScopes;
 
 import com.mikepenz.materialdrawer.Drawer;
@@ -19,23 +14,23 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import android.app.Dialog;
 import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
         import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public static final String BUTTON_TEXT = "Call YouTube Data API";
     public static final String PREF_ACCOUNT_NAME = "accountName";
     public static final String[] SCOPES = { YouTubeScopes.YOUTUBE_READONLY };
+    private boolean mEditTextSearch;
     public MainPresenter mPresenter;
     public CompositeDisposable disposables;
     private Drawer.Result drawerResult;
@@ -63,6 +59,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private VideoFragment mVideoFragment;
     private View mBottomLayout;
     private TextView mTextViewVideoTitleBottom;
+
+    private TextView mTextViewAppTitle;
+    private EditText mEditTextSearchStrip;
+    private Button mButtonSearch;
+
     public void setBottom(final String videoId, String videoTitle){
         mTextViewVideoTitleBottom.setText(videoTitle);
         mTrans = getSupportFragmentManager().beginTransaction();
@@ -91,10 +92,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
     }
+
+    public void hideBottom(){
+        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(mBottomLayout);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) { //NEXT PAGE TOKEN (Subscriptions)
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mEditTextSearch = true;
         mBottomLayout = (View) findViewById(R.id.bottom_fragment);
         mTextViewVideoTitleBottom = (TextView) findViewById(R.id.panel);
 
@@ -118,6 +126,47 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             setSupportActionBar(mToolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+        mTextViewAppTitle = (TextView) mToolbar.findViewById(R.id.textViewAppTitle);
+        mButtonSearch = (Button) mToolbar.findViewById(R.id.search_button);
+        mEditTextSearchStrip = (EditText) mToolbar.findViewById(R.id.search_edit_text);
+        mButtonSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Animation animationEditText;
+                Animation animationTextView;
+                mEditTextSearchStrip.setVisibility(View.VISIBLE);
+                if(!mEditTextSearch){
+                    if(!mEditTextSearchStrip.getText().toString().equals("")) {
+                        String request = mEditTextSearchStrip.getText().toString();
+                        fetchSearchResult(request);
+                    }
+
+                    mEditTextSearch = true;
+                    animationEditText = AnimationUtils.loadAnimation(MainActivity.this, R.anim.toolbar_hide_edit_text);
+                    animationTextView = AnimationUtils.loadAnimation(MainActivity.this, R.anim.toolbar_show_app_title);
+                    mEditTextSearchStrip.startAnimation(animationEditText);
+                    mTextViewAppTitle.startAnimation(animationTextView);
+                    mEditTextSearchStrip.requestFocus();
+                    mEditTextSearchStrip.setFocusableInTouchMode(true);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mEditTextSearchStrip.getWindowToken(), 0);
+                    mTextViewAppTitle.setVisibility(View.VISIBLE);
+
+                }else{
+                    mEditTextSearch = false;
+                    animationEditText = AnimationUtils.loadAnimation(MainActivity.this, R.anim.toolbar_show_edit_text);
+                    animationTextView = AnimationUtils.loadAnimation(MainActivity.this, R.anim.toolbar_hide_app_title);
+                    mEditTextSearchStrip.startAnimation(animationEditText);
+                    mTextViewAppTitle.startAnimation(animationTextView);
+                    mEditTextSearchStrip.requestFocus();
+                    mEditTextSearchStrip.setFocusableInTouchMode(true);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(mEditTextSearchStrip, InputMethodManager.SHOW_FORCED);
+                    mTextViewAppTitle.setVisibility(View.INVISIBLE);
+
+                }
+            }
+        });
 
         //mViewPager = (ViewPager) findViewById(R.id.viewpager);
         //mViewPager.setOffscreenPageLimit(2);
@@ -249,6 +298,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public void checkDemands(){
         mPresenter.checkDemands();
 //        showProgress();
+    }
+
+    private void fetchSearchResult(String request){
+        SearchFragment fragment = new SearchFragment();
+        fragment.setCredential(mPresenter.getCredential());
+        fragment.setRequest(request);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     /*public void setupTabIcons() {

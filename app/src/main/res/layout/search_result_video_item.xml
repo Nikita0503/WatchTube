@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="150dp">
+    android:layout_height="120dp">
 
     <ImageView
         android:id="@+id/imageViewVideo"
@@ -20,10 +20,12 @@
     <TextView
         android:id="@+id/textViewVideoTitle"
         android:layout_width="190dp"
-        android:layout_height="60dp"
+        android:layout_height="45dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="16dp"
         android:text="Video Title"
+        android:maxLines="2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageViewVideo"
         app:layout_constraintTop_toTopOf="@+id/imageViewVideo" />
@@ -33,7 +35,7 @@
         android:layout_width="190dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="2dp"
         android:text="Channel Title"
         app:layout_constraintEnd_toEndOf="@+id/textViewVideoTitle"
         app:layout_constraintHorizontal_bias="1.0"
@@ -44,15 +46,12 @@
         android:id="@+id/textViewPublishedAt"
         android:layout_width="190dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="2dp"
         android:text="PublishedAt"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/textViewVideoTitle"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textViewVideoTitle"
-        app:layout_constraintTop_toBottomOf="@+id/textViewChannelTitle"
-        app:layout_constraintVertical_bias="0.111" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewChannelTitle" />
 
 </android.support.constraint.ConstraintLayout>

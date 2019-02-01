@@ -15,15 +15,17 @@ public class VideoDescription {
     public String authorName;
     public String videoDescription;
     public String publishedAt;
+    public String authorId;
     public Drawable authorImage;
 
-    public VideoDescription(BigInteger countLikes, BigInteger countDislikes, String videoTitle, String authorName, String videoDescription, String publishedAt, Drawable authorImage) {
+    public VideoDescription(BigInteger countLikes, BigInteger countDislikes, String videoTitle, String authorName, String videoDescription, String publishedAt, String authorId, Drawable authorImage) {
         this.countLikes = countLikes;
         this.countDislikes = countDislikes;
         this.videoTitle = videoTitle;
         this.authorName = authorName;
         this.videoDescription = videoDescription;
         this.publishedAt = publishedAt;
+        this.authorId = authorId;
         this.authorImage = authorImage;
     }
 }

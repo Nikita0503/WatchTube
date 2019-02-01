@@ -2,12 +2,15 @@ package com.example.watchtube.UI;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +19,9 @@ import com.example.watchtube.Contract;
 import com.example.watchtube.R;
 import com.example.watchtube.VideoDescriptionPresenter;
 import com.example.watchtube.model.data.VideoDescription;
+import com.example.watchtube.model.data.search.SearchChannelData;
+import com.github.ybq.android.spinkit.sprite.Sprite;
+import com.github.ybq.android.spinkit.style.CubeGrid;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 
@@ -26,6 +32,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 public class VideoDescriptionFragment extends Fragment implements Contract.View{
 
     private String mVideoId;
+    private String mChannelId;
     private VideoDescriptionPresenter mPresenter;
     private GoogleAccountCredential mCredential;
     private TextView mTextViewLikes;
@@ -38,6 +45,7 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
     private ImageView mImageViewLike;
     private ImageView mImageViewDislike;
     private SeekBar mSeekBar;
+    private ProgressBar mProgressBar;
 
     public void setCredential(GoogleAccountCredential credential){
         mCredential = credential;
@@ -47,6 +55,10 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
     public void setVideoId(String videoId){
         mVideoId = videoId;
         Log.d("VideoListPlay", "setVideoId");
+    }
+
+    public void setChannelId(String channelId){
+        mChannelId = channelId;
     }
 
     @Override
@@ -62,6 +74,10 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
                              Bundle savedInstanceState) {
         Log.d("VideoListPlay", "onCreateView");
         View v = inflater.inflate(R.layout.fragment_video_description, container, false);
+        mProgressBar = (ProgressBar) v.findViewById(R.id.spin_kit);
+        Sprite cubeGrid = new CubeGrid();
+        mProgressBar.setIndeterminateDrawable(cubeGrid);
+        mProgressBar.setVisibility(ProgressBar.VISIBLE);
         mSeekBar = (SeekBar) v.findViewById(R.id.seekBar);
         mTextViewLikes = (TextView) v.findViewById(R.id.textViewLike);
         mTextViewDislikes = (TextView) v.findViewById(R.id.textViewDislike);
@@ -70,6 +86,21 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         mTextViewDescription = (TextView) v.findViewById(R.id.textViewDescription);
         mTextViewPublishedAt = (TextView) v.findViewById(R.id.textViewPublishedAt);
         mImageViewAuthor = (ImageView) v.findViewById(R.id.imageViewAuthor);
+        mImageViewAuthor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChannelFragment fragment = new ChannelFragment();
+                fragment.setCredential(mCredential);
+                fragment.setChannelId(mChannelId);
+                FragmentManager manager = getActivity().getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.replace(R.id.container, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+                MainActivity activity = (MainActivity) getActivity();
+                activity.hideBottom();
+            }
+        });
         mImageViewLike = (ImageView) v.findViewById(R.id.imageViewLike);
         mImageViewDislike = (ImageView) v.findViewById(R.id.imageViewDislike);
         mTextViewDescription.setMovementMethod(new ScrollingMovementMethod());
@@ -120,6 +151,7 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         mTextViewVideoTitle.setText(videoDescriptionData.videoTitle);
         mTextViewPublishedAt.setText(videoDescriptionData.publishedAt);
         mImageViewAuthor.setImageDrawable(videoDescriptionData.authorImage);
+        mProgressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override

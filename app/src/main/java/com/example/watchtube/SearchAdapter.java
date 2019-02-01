@@ -2,6 +2,8 @@ package com.example.watchtube;
 
 import android.media.Image;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +11,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.watchtube.UI.ChannelFragment;
+import com.example.watchtube.UI.MainActivity;
+import com.example.watchtube.UI.SearchFragment;
 import com.example.watchtube.model.data.search.SearchChannelData;
 import com.example.watchtube.model.data.search.SearchVideoData;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import java.util.ArrayList;
 
@@ -20,7 +26,14 @@ import java.util.ArrayList;
 
 public class SearchAdapter extends RecyclerView.Adapter {
 
+    private SearchFragment mFragment;
     private ArrayList<SearchItemType> mDataSet;
+    private GoogleAccountCredential mCredential;
+    public SearchAdapter(SearchFragment fragment, GoogleAccountCredential credential) {
+        mFragment = fragment;
+        mCredential = credential;
+        mDataSet = new ArrayList<SearchItemType>();
+    }
 
     @Override
     public int getItemViewType(int position) {
@@ -50,12 +63,25 @@ public class SearchAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof ChannelViewHolder) {
             ((ChannelViewHolder) holder).textViewTitle
                     .setText(((SearchChannelData) mDataSet.get(position)).channelTitle);
             ((ChannelViewHolder) holder).imageViewChannel
                     .setImageDrawable(((SearchChannelData) mDataSet.get(position)).channelImage);
+            ((ChannelViewHolder) holder).itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ChannelFragment fragment = new ChannelFragment();
+                    fragment.setCredential(mCredential);
+                    fragment.setChannelId(((SearchChannelData) mDataSet.get(position)).channelId);
+                    FragmentManager manager = mFragment.getActivity().getSupportFragmentManager();
+                    FragmentTransaction transaction = manager.beginTransaction();
+                    transaction.replace(R.id.container, fragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
+            });
         } else if (holder instanceof VideoViewHolder) {
             ((VideoViewHolder) holder).imageViewVideo
                     .setImageDrawable(((SearchVideoData) mDataSet.get(position)).videoImage);
@@ -65,6 +91,13 @@ public class SearchAdapter extends RecyclerView.Adapter {
                     .setText(((SearchVideoData) mDataSet.get(position)).channelTitle);
             ((VideoViewHolder) holder).textViewPublishedAt
                     .setText(((SearchVideoData) mDataSet.get(position)).publishedAt);
+            ((VideoViewHolder) holder).itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MainActivity activity = (MainActivity)mFragment.getActivity();
+                    activity.setBottom(((SearchVideoData) mDataSet.get(position)).videoId, ((SearchVideoData) mDataSet.get(position)).videoTitle);
+                }
+            });
         }
     }
 
@@ -99,7 +132,7 @@ public class SearchAdapter extends RecyclerView.Adapter {
 
         public VideoViewHolder(View itemView) {
             super(itemView);
-            imageViewVideo = (ImageView) itemView.findViewById(R.id.imageViewChannel);
+            imageViewVideo = (ImageView) itemView.findViewById(R.id.imageViewVideo);
             textViewVideoTitle = (TextView) itemView.findViewById(R.id.textViewVideoTitle);
             textViewChannelTitle = (TextView) itemView.findViewById(R.id.textViewChannelTitle);
             textViewPublishedAt = (TextView) itemView.findViewById(R.id.textViewPublishedAt);

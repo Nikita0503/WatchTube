@@ -23,6 +23,7 @@ import com.example.watchtube.model.data.SubscriptionData;
 import com.example.watchtube.model.CircleTransform;
 import com.example.watchtube.model.data.VideoDescription;
 import com.example.watchtube.model.data.search.SearchChannelData;
+import com.example.watchtube.model.data.search.SearchVideoData;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.HttpTransport;
@@ -39,6 +40,8 @@ import com.google.api.services.youtube.model.Playlist;
 import com.google.api.services.youtube.model.PlaylistItem;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.PlaylistListResponse;
+import com.google.api.services.youtube.model.SearchListResponse;
+import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
 import com.google.api.services.youtube.model.VideoListResponse;
@@ -324,6 +327,46 @@ public class YouTubeAPIUtils {
         public void subscribe(SingleEmitter<ArrayList<SearchItemType>> e) throws Exception {
             ArrayList<SearchItemType> resultsList = new ArrayList<SearchItemType>();
             //TODO: результаты поиска (mRequest - запрос из строки поиска)
+            /*resultsList.add(new SearchVideoData("Title", "Channel", "puslishedAt", mContext.getDrawable(R.drawable.ic_patient)));
+            resultsList.add(new SearchChannelData("ChannelTitle", mContext.getDrawable(R.drawable.ic_doctor)));
+            resultsList.add(new SearchVideoData("Title", "Channel", "puslishedAt", mContext.getDrawable(R.drawable.ic_patient)));
+            resultsList.add(new SearchVideoData("Title", "Channel", "puslishedAt", mContext.getDrawable(R.drawable.ic_patient)));
+            resultsList.add(new SearchChannelData("ChannelTitle", mContext.getDrawable(R.drawable.ic_doctor)));*/
+            HttpTransport transport = AndroidHttp.newCompatibleTransport();
+            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+            com.google.api.services.youtube.YouTube mService = new com.google.api.services.youtube.YouTube.Builder(
+                    transport, jsonFactory, mCredential)
+                    .setApplicationName("WatchTube")
+                    .build();
+            SearchListResponse searchListResponse = mService.search().list("snippet")
+                    .setType("channel, video")
+                    .setQ(mRequest)
+                    .setMaxResults(25L)
+                    .execute();
+            List<SearchResult> results = searchListResponse.getItems();
+            for(int i = 0; i < results.size(); i++){
+                if(results.get(i).getId().getKind().equals("youtube#channel")){
+                    String channelId = results.get(i).getId().getChannelId();
+                    String channelTitle = results.get(i).getSnippet().getChannelTitle();
+                    String imageURL = results.get(i).getSnippet().getThumbnails().getMedium().getUrl();
+                    Drawable imageChannel = new BitmapDrawable(mContext.getResources(), Picasso.with(mContext)
+                            .load(imageURL)
+                            .transform(new CircleTransform(50, 0))
+                            .get());
+                    resultsList.add(new SearchChannelData(channelId, channelTitle, imageChannel));
+                }
+                if(results.get(i).getId().getKind().equals("youtube#video")){
+                    String videoId = results.get(i).getId().getVideoId();
+                    String videoTitle = results.get(i).getSnippet().getTitle();
+                    String channelTitle = results.get(i).getSnippet().getChannelTitle();
+                    String publishedAt = getTimeDifference(results.get(i).getSnippet().getPublishedAt());
+                    String imageURL = results.get(i).getSnippet().getThumbnails().getMedium().getUrl();
+                    Drawable imageVideo = new BitmapDrawable(mContext.getResources(), Picasso.with(mContext)
+                            .load(imageURL)
+                            .get());
+                    resultsList.add(new SearchVideoData(videoId, videoTitle, channelTitle, publishedAt, imageVideo));
+                }
+            }
             e.onSuccess(resultsList);
         }
     });
@@ -432,7 +475,7 @@ public class YouTubeAPIUtils {
                     .load(resultImage.getItems().get(0).getSnippet().getThumbnails().getDefault().getUrl())
                     .transform(new CircleTransform(25, 0))
                     .get());
-            videoDescription = new VideoDescription(countLikes, countDislikes, videoTitle, authorName, description, publishedAt, authorImage);
+            videoDescription = new VideoDescription(countLikes, countDislikes, videoTitle, authorName, description, publishedAt, channelId, authorImage);
             e.onSuccess(videoDescription);
         }
     });

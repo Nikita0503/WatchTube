@@ -56,6 +56,7 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
                     @Override
                     public void onSuccess(VideoDescription videoDescriptionData) {
                         mFragment.setVideoDescription(videoDescriptionData);
+                        mFragment.setChannelId(videoDescriptionData.authorId);
                     }
                     @Override
                     public void onError(Throwable e) {
