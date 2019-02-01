@@ -51,6 +51,7 @@ public class VideoCommentsFragment extends Fragment implements Contract.View {
         super.onCreate(savedInstanceState);
         mPresenter = new VideoCommentsPresenter(this);
         mPresenter.onStart();
+        setRetainInstance(true);
         //mPresenter = new VideoFragmentPresenter(this);
         //mPresenter.onStart();
         Log.d("VideoCommentsFragment", "fragment");

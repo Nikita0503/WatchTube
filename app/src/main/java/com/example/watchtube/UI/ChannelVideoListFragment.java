@@ -53,6 +53,7 @@ public class ChannelVideoListFragment extends Fragment implements Contract.View 
         super.onCreate(savedInstanceState);
         mPresenter = new ChannelVideoListPresenter(this);
         mPresenter.onStart();
+        setRetainInstance(true);
         Log.d("VideoList", "fragment");
     }
 

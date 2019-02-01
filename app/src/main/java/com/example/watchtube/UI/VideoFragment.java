@@ -59,6 +59,7 @@ public class VideoFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         //mPresenter = new VideoFragmentPresenter(this);
         //mPresenter.onStart();
         Log.d("VideoFragment", "fragment");
@@ -119,8 +120,10 @@ public class VideoFragment extends Fragment {
                     @Override
                     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
                         //youTubePlayer.setShowFullscreenButton(false);
-                        youTubePlayer.setFullscreenControlFlags(0);
+                        youTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION);
+                        youTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE);
                         youTubePlayer.loadVideo(mVideoId);
+
                         Log.d("ERROR", "2");
                     }
 

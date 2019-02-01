@@ -23,6 +23,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -129,6 +130,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         mTextViewAppTitle = (TextView) mToolbar.findViewById(R.id.textViewAppTitle);
         mButtonSearch = (Button) mToolbar.findViewById(R.id.search_button);
         mEditTextSearchStrip = (EditText) mToolbar.findViewById(R.id.search_edit_text);
+        mEditTextSearchStrip.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(!mEditTextSearchStrip.getText().toString().equals("")) {
+                    String request = mEditTextSearchStrip.getText().toString();
+                    fetchSearchResult(request);
+                }
+                return false;
+            }
+        });
         mButtonSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -265,6 +276,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onStart();
         //TODO:
     }
+
+
 
     @Override
     protected void onActivityResult(

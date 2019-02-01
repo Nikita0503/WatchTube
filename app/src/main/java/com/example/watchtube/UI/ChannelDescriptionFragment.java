@@ -48,6 +48,7 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
         super.onCreate(savedInstanceState);
         mPresenter = new ChannelDescriptionPresenter(this);
         mPresenter.onStart();
+        setRetainInstance(true);
         Log.d("OnStart", "123");
     }
 

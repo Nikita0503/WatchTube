@@ -66,6 +66,7 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         super.onCreate(savedInstanceState);
         mPresenter = new VideoDescriptionPresenter(this);
         mPresenter.onStart();
+        setRetainInstance(true);
         Log.d("VideoListPlay", "onCreate");
     }
 
