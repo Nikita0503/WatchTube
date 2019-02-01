@@ -123,7 +123,7 @@ public class VideoFragment extends Fragment {
                         youTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION);
                         youTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE);
                         youTubePlayer.loadVideo(mVideoId);
-
+                        youTubePlayer.play();
                         Log.d("ERROR", "2");
                     }
 

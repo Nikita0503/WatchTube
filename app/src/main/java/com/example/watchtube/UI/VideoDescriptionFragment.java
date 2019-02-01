@@ -1,6 +1,7 @@
 package com.example.watchtube.UI;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,14 +16,19 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ajts.androidmads.youtubemp3.YTubeMp3Service;
 import com.example.watchtube.Contract;
 import com.example.watchtube.R;
 import com.example.watchtube.VideoDescriptionPresenter;
+import com.example.watchtube.model.APIUtils.YouTubeMP3Downloader;
 import com.example.watchtube.model.data.VideoDescription;
 import com.example.watchtube.model.data.search.SearchChannelData;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.CubeGrid;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+
+import java.io.File;
+import java.util.ArrayList;
 
 
 /**
@@ -42,6 +48,7 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
     private TextView mTextViewDescription;
     private TextView mTextViewPublishedAt;
     private ImageView mImageViewAuthor;
+    private ImageView mImageViewDownload;
     private ImageView mImageViewLike;
     private ImageView mImageViewDislike;
     private SeekBar mSeekBar;
@@ -68,6 +75,11 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         mPresenter.onStart();
         setRetainInstance(true);
         Log.d("VideoListPlay", "onCreate");
+        ArrayList<File> files = listFilesWithSubFolders(new File(getActivity().getApplicationContext().getFilesDir(), "/PUDGE"));
+        for(int i = 0; i < files.size(); i++){
+            Log.d("FILE", files.get(i).getName());
+        }
+        //TODO: сделать кнопку с плееором
     }
 
     @Override
@@ -86,6 +98,36 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         mTextViewAuthorName = (TextView) v.findViewById(R.id.textViewAuthorName);
         mTextViewDescription = (TextView) v.findViewById(R.id.textViewDescription);
         mTextViewPublishedAt = (TextView) v.findViewById(R.id.textViewPublishedAt);
+        mImageViewDownload = (ImageView) v.findViewById(R.id.imageViewDownload);
+        mImageViewDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Download...", Toast.LENGTH_SHORT).show();
+                new YouTubeMP3Downloader.Builder(getActivity())
+                        .setDownloadUrl(mVideoId)
+                        .setFolderPath(new File(getActivity().getApplicationContext().getFilesDir(), "/PUDGE").getPath())
+                        .setOnDownloadListener(new YouTubeMP3Downloader.Builder.DownloadListener() {
+                            @Override
+                            public void onSuccess(String savedPath) {
+                                Log.v("exce1", savedPath);
+                                //mProgressBar.setVisibility(View.INVISIBLE);
+//                                Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onDownloadStarted() {
+//                                mProgressBar.setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                e.printStackTrace();
+                                Log.v("exce2", e.getMessage());
+                                //mProgressBar.setVisibility(View.INVISIBLE);
+                            }
+                        }).build();
+            }
+        });
         mImageViewAuthor = (ImageView) v.findViewById(R.id.imageViewAuthor);
         mImageViewAuthor.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,5 +201,16 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
     public void onDestroy(){
         super.onDestroy();
         mPresenter.onStop();
+    }
+
+    public ArrayList<File> listFilesWithSubFolders(File dir) {
+        ArrayList<File> files = new ArrayList<File>();
+        for (File file : dir.listFiles()) {
+            if (file.isDirectory())
+                files.addAll(listFilesWithSubFolders(file));
+            else
+                files.add(file);
+        }
+        return files;
     }
 }

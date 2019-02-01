@@ -326,7 +326,6 @@ public class YouTubeAPIUtils {
         @Override
         public void subscribe(SingleEmitter<ArrayList<SearchItemType>> e) throws Exception {
             ArrayList<SearchItemType> resultsList = new ArrayList<SearchItemType>();
-            //TODO: результаты поиска (mRequest - запрос из строки поиска)
             /*resultsList.add(new SearchVideoData("Title", "Channel", "puslishedAt", mContext.getDrawable(R.drawable.ic_patient)));
             resultsList.add(new SearchChannelData("ChannelTitle", mContext.getDrawable(R.drawable.ic_doctor)));
             resultsList.add(new SearchVideoData("Title", "Channel", "puslishedAt", mContext.getDrawable(R.drawable.ic_patient)));
