@@ -12,7 +12,12 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleOnSubscribe;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -26,6 +31,7 @@ import okio.Okio;
  */
 
 public class YouTubeMP3Downloader {
+
     private File file = null;
     private YouTubeMP3Downloader.Builder builder;
 
@@ -33,6 +39,8 @@ public class YouTubeMP3Downloader {
         builder = mBuilder;
         startDownload(builder.downloadUrl);
     }
+
+
 
     private void startDownload(String videoId) {
         try {

@@ -75,10 +75,10 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         mPresenter.onStart();
         setRetainInstance(true);
         Log.d("VideoListPlay", "onCreate");
-        ArrayList<File> files = listFilesWithSubFolders(new File(getActivity().getApplicationContext().getFilesDir(), "/PUDGE"));
+        /*ArrayList<File> files = listFilesWithSubFolders(new File(getActivity().getApplicationContext().getFilesDir(), "/PUDGE"));
         for(int i = 0; i < files.size(); i++){
             Log.d("FILE", files.get(i).getName());
-        }
+        }*/
         //TODO: сделать кнопку с плееором
     }
 
@@ -102,30 +102,31 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         mImageViewDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Download...", Toast.LENGTH_SHORT).show();
+                mPresenter.fetchMP3FileData(mVideoId);
+                /*Toast.makeText(getContext(), "Download...", Toast.LENGTH_SHORT).show();
                 new YouTubeMP3Downloader.Builder(getActivity())
                         .setDownloadUrl(mVideoId)
-                        .setFolderPath(new File(getActivity().getApplicationContext().getFilesDir(), "/PUDGE").getPath())
+                        .setFolderPath(new File(getActivity().getApplicationContext().getFilesDir()Environment.getExternalStorageState(), "/PUDGE").getPath())
                         .setOnDownloadListener(new YouTubeMP3Downloader.Builder.DownloadListener() {
                             @Override
                             public void onSuccess(String savedPath) {
                                 Log.v("exce1", savedPath);
-                                //mProgressBar.setVisibility(View.INVISIBLE);
-//                                Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+                                mProgressBar.setVisibility(View.INVISIBLE);
+                                Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
                             public void onDownloadStarted() {
-//                                mProgressBar.setVisibility(View.VISIBLE);
+                                mProgressBar.setVisibility(View.VISIBLE);
                             }
 
                             @Override
                             public void onError(Exception e) {
                                 e.printStackTrace();
                                 Log.v("exce2", e.getMessage());
-                                //mProgressBar.setVisibility(View.INVISIBLE);
+                                mProgressBar.setVisibility(View.INVISIBLE);
                             }
-                        }).build();
+                        }).build();*/
             }
         });
         mImageViewAuthor = (ImageView) v.findViewById(R.id.imageViewAuthor);
@@ -179,6 +180,8 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         return v;
     }
 
+
+
     public void fetchVideoDescription(){
         Log.d("VideoListPlay", "fetchVideoDescription");
         mPresenter.setupCredential(mCredential);
@@ -194,6 +197,14 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         mTextViewVideoTitle.setText(videoDescriptionData.videoTitle);
         mTextViewPublishedAt.setText(videoDescriptionData.publishedAt);
         mImageViewAuthor.setImageDrawable(videoDescriptionData.authorImage);
+        mProgressBar.setVisibility(View.INVISIBLE);
+    }
+
+    public void showProgress(){
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgress(){
         mProgressBar.setVisibility(View.INVISIBLE);
     }
 
