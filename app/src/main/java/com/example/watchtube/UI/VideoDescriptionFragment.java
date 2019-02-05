@@ -1,5 +1,6 @@
 package com.example.watchtube.UI;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ajts.androidmads.youtubemp3.YTubeMp3Service;
+import com.budiyev.android.circularprogressbar.CircularProgressBar;
 import com.example.watchtube.Contract;
 import com.example.watchtube.R;
 import com.example.watchtube.VideoDescriptionPresenter;
@@ -29,6 +31,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 
 import java.io.File;
 import java.util.ArrayList;
+
 
 
 /**
@@ -47,12 +50,15 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
     private TextView mTextViewAuthorName;
     private TextView mTextViewDescription;
     private TextView mTextViewPublishedAt;
+    private TextView mTextViewProgress;
     private ImageView mImageViewAuthor;
     private ImageView mImageViewDownload;
     private ImageView mImageViewLike;
     private ImageView mImageViewDislike;
     private SeekBar mSeekBar;
     private ProgressBar mProgressBar;
+    private CircularProgressBar mCircularProgressBar;
+    private Dialog mProgressDialog;
 
     public void setCredential(GoogleAccountCredential credential){
         mCredential = credential;
@@ -91,6 +97,7 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         Sprite cubeGrid = new CubeGrid();
         mProgressBar.setIndeterminateDrawable(cubeGrid);
         mProgressBar.setVisibility(ProgressBar.VISIBLE);
+        mCircularProgressBar = (CircularProgressBar) v.findViewById(R.id.progress_bar);
         mSeekBar = (SeekBar) v.findViewById(R.id.seekBar);
         mTextViewLikes = (TextView) v.findViewById(R.id.textViewLike);
         mTextViewDislikes = (TextView) v.findViewById(R.id.textViewDislike);
@@ -201,11 +208,26 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
     }
 
     public void showProgress(){
-        mProgressBar.setVisibility(View.VISIBLE);
+        mProgressDialog = getProgressDialog();
+        mProgressDialog.show();
     }
 
     public void hideProgress(){
-        mProgressBar.setVisibility(View.INVISIBLE);
+        mProgressDialog.hide();
+    }
+
+    public void setProgress(int progress) {
+        mCircularProgressBar.setProgress(progress);
+        mTextViewProgress.setText(String.valueOf(progress));
+    }
+
+    private Dialog getProgressDialog(){
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.download_dialog);
+        dialog.setTitle("Downloading...");
+        mCircularProgressBar = (CircularProgressBar) dialog.findViewById(R.id.progress_bar);
+        mTextViewProgress = (TextView) dialog.findViewById(R.id.textViewProgress);
+        return dialog;
     }
 
     @Override

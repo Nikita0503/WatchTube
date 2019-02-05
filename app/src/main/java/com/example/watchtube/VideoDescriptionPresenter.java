@@ -19,6 +19,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
@@ -37,13 +38,17 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
     public VideoDescriptionPresenter(VideoDescriptionFragment fragment){
         mFragment = fragment;
         mYouTubeAPIUtils = new YouTubeAPIUtils(fragment.getContext(), this);
-        mYouTubeMP3Downloader = new YouTubeMP3DownloaderRxJava();
+        mYouTubeMP3Downloader = new YouTubeMP3DownloaderRxJava(this);
     }
 
     public void setupCredential(GoogleAccountCredential credential){
         mCredential = credential;
         mYouTubeAPIUtils.setupCredential(mCredential);
         //Log.d("COMMENTSS", mCredential.getSelectedAccountName());
+    }
+
+    public void setProgress(int progress){
+        mFragment.setProgress(progress);
     }
 
     public void setupVideoId(String videoId){
@@ -74,22 +79,47 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
     }
 
     public void fetchMP3FileData(String videoId){
-        mFragment.showProgress();
+
         mYouTubeMP3Downloader.setVideoId(videoId);
-        Disposable disposable = mYouTubeMP3Downloader.startDownloadRx.subscribeOn(Schedulers.io())
+        /*Disposable disposable = mYouTubeMP3Downloader.startDownloadRx.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableCompletableObserver() {
 
                     @Override
                     public void onComplete() {
-                        Toast.makeText(mFragment.getContext(), "created", Toast.LENGTH_SHORT).show();
-                        mFragment.hideProgress();
+                        Toast.makeText(mFragment.getContext(), "Downloaded", Toast.LENGTH_SHORT).show();
+                        mFragment.hideProgressSuccess();
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
+                        Toast.makeText(mFragment.getContext(), "Error", Toast.LENGTH_SHORT).show();
+                        mFragment.hideProgressError();
+                    }
+                });*/
+        Disposable disposable = mYouTubeMP3Downloader.startDownloadRx2.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<Integer>() {
+                    @Override
+                    public void onStart() {
+                        mFragment.showProgress();
+                        Toast.makeText(mFragment.getContext(), "Loading started...", Toast.LENGTH_SHORT).show();
+                    }
+                    @Override
+                    public void onNext(Integer progress) {
+                        mFragment.setProgress(progress);
+                    }
+                    @Override
+                    public void onError(Throwable t) {
                         mFragment.hideProgress();
+                        Toast.makeText(mFragment.getContext(), "Error", Toast.LENGTH_SHORT).show();
+                        t.printStackTrace();
+                    }
+                    @Override
+                    public void onComplete() {
+                        mFragment.hideProgress();
+                        Toast.makeText(mFragment.getContext(), "Downloaded!", Toast.LENGTH_SHORT).show();
                     }
                 });
         mDisposable.add(disposable);

@@ -28,6 +28,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
 }
 
 dependencies {
@@ -60,4 +64,5 @@ dependencies {
     implementation "com.android.support:design:27.0.2"
     compile 'com.squareup.okhttp3:okhttp:3.12.1'
     compile 'com.ajts.androidmads.youtubemp3:youtubemp3:1.0.0'
+    implementation 'com.budiyev.android:circular-progress-bar:1.2.2'
 }
