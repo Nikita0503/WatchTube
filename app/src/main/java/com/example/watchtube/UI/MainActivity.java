@@ -253,6 +253,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                             transaction.replace(R.id.container, fragment);
                             transaction.addToBackStack(null);
                             transaction.commit();*/
+                        }else{
+                            MusicListFragment fragment = new MusicListFragment();
+                            FragmentManager manager = getSupportFragmentManager();
+                            FragmentTransaction transaction = manager.beginTransaction();
+                            transaction.replace(R.id.container, fragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();
                         }
                         Log.d("POSITION", position-1+"");
                     }

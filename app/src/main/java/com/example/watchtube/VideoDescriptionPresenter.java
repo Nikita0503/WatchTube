@@ -98,7 +98,7 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
                         mFragment.hideProgressError();
                     }
                 });*/
-        Disposable disposable = mYouTubeMP3Downloader.startDownloadRx2.subscribeOn(Schedulers.io())
+        Disposable disposable = mYouTubeMP3Downloader.startDownload.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableObserver<Integer>() {
                     @Override

@@ -48,7 +48,7 @@ public class YouTubeMP3DownloaderRxJava {
         mVideoId = videoId;
     }
 
-    public Observable<Integer> startDownloadRx2 = Observable.create(e -> {
+    public Observable<Integer> startDownload = Observable.create(e -> {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url("https://www.convertmp3.io/fetch/?format=JSON&video=https://www.youtube.com/watch?v="+mVideoId)
@@ -119,7 +119,7 @@ public class YouTubeMP3DownloaderRxJava {
         e.onComplete();
     });
 
-    public Completable startDownloadRx = Completable.create(new CompletableOnSubscribe() {
+    /*public Completable startDownloadRx = Completable.create(new CompletableOnSubscribe() {
         @Override
         public void subscribe(CompletableEmitter e) throws Exception {
             OkHttpClient client = new OkHttpClient();
@@ -132,7 +132,7 @@ public class YouTubeMP3DownloaderRxJava {
             String downloadLink = jsonObject.getString("link");
             String downloadTitle = jsonObject.getString("title");
 
-            /*
+
             OkHttpClient client2 = new OkHttpClient();
             Request request2 = new Request.Builder()
                     .url(downloadLink)
@@ -156,7 +156,7 @@ public class YouTubeMP3DownloaderRxJava {
                 e.onComplete();
             } catch (Exception error) {
                 e.onError(error);
-            }*/
+            }
             int count;
             URL url = new URL(downloadLink);
             URLConnection conection = url.openConnection();
@@ -190,7 +190,7 @@ public class YouTubeMP3DownloaderRxJava {
             }
             e.onComplete();
         }
-    });
+    });*/
 
     /*public Single<String> saveMP3 = Single.create(new SingleOnSubscribe<String>() {
 
