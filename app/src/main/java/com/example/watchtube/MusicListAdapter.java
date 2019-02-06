@@ -1,5 +1,6 @@
 package com.example.watchtube;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -21,9 +22,11 @@ import java.util.ArrayList;
 public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.SongViewHolder> {
 
     private ArrayList<SongData> mSongList;
+    private MusicListFragment mFragment;
 
-    public MusicListAdapter( ) {
+    public MusicListAdapter(MusicListFragment fragment) {
         mSongList = new ArrayList<SongData>();
+        mFragment = fragment;
     }
 
     @NonNull
@@ -39,7 +42,16 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Song
     public void onBindViewHolder(@NonNull SongViewHolder holder, int position) {
         holder.imageViewSong.setImageDrawable(mSongList.get(position).songImage);
         holder.textViewSongTitle.setText(mSongList.get(position).songTitle);
-        holder.textViewSinger.setText(mSongList.get(position).singer);
+        holder.textViewSongDuration.setText(mSongList.get(position).songDuration);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFragment.playSong(ContentUris
+                        .withAppendedId(
+                                android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                                mSongList.get(position).songId), mSongList.get(position).songTitle);
+            }
+        });
     }
 
 
@@ -58,13 +70,13 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.Song
 
         public ImageView imageViewSong;
         public TextView textViewSongTitle;
-        public TextView textViewSinger;
+        public TextView textViewSongDuration;
 
         public SongViewHolder(View itemView) {
             super(itemView);
             imageViewSong = (ImageView) itemView.findViewById(R.id.imageViewSongImage);
             textViewSongTitle = (TextView) itemView.findViewById(R.id.textViewSongTitle);
-            textViewSinger = (TextView) itemView.findViewById(R.id.textViewSinger);
+            textViewSongDuration = (TextView) itemView.findViewById(R.id.textViewDuration);
         }
     }
 }

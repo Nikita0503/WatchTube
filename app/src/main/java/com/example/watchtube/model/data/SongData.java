@@ -7,11 +7,15 @@ import android.graphics.drawable.Drawable;
  */
 
 public class SongData {
+    public long songId;
+    public String songDuration;
     public String songTitle;
     public String singer;
     public Drawable songImage;
 
-    public SongData(String songTitle, String singer, Drawable songImage) {
+    public SongData(long songId, String songDuration, String songTitle, String singer, Drawable songImage) {
+        this.songId = songId;
+        this.songDuration = songDuration;
         this.songTitle = songTitle;
         this.singer = singer;
         this.songImage = songImage;
