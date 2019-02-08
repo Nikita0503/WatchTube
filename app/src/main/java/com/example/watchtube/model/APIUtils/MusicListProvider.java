@@ -12,6 +12,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.example.watchtube.MusicListPresenter;
 import com.example.watchtube.R;

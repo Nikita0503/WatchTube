@@ -14,6 +14,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import android.app.Dialog;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -32,6 +33,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private Drawer.Result drawerResult;
     public TextView mOutputText;
     private Toolbar mToolbar;
+    private FloatingActionButton mFab;
     //private ViewPager mViewPager;
     public ProgressDialog mProgress;
     //private TabLayout mTabLayout;
@@ -103,10 +106,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     protected void onCreate(Bundle savedInstanceState) { //NEXT PAGE TOKEN (Subscriptions)
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         mEditTextSearch = true;
         mBottomLayout = (View) findViewById(R.id.bottom_fragment);
         BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(mBottomLayout);
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -125,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                                 break;
                         }
                     }
+
                 }catch (Exception c){
                     c.printStackTrace();
                 }
@@ -132,9 +138,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
+                Log.d("SLIDE", slideOffset+"");
+                if(slideOffset>=0) {
+                    mFab.animate().scaleX(1 - slideOffset).scaleY(1 - slideOffset).setDuration(0).start();
+                    mButtonSearch.animate().scaleX(1 - slideOffset).scaleY(1 - slideOffset).setDuration(0).start();
+                }
             }
         });
+
         mTextViewVideoTitleBottom = (TextView) findViewById(R.id.panel);
         //mVideoView = (YouTubePlayerSupportFragment) mBottomLayout(R.id.youtube_fragment);
         /*ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -156,6 +167,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             setSupportActionBar(mToolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "123", Toast.LENGTH_SHORT).show();
+            }
+        });
         mTextViewAppTitle = (TextView) mToolbar.findViewById(R.id.textViewAppTitle);
         mButtonSearch = (Button) mToolbar.findViewById(R.id.search_button);
         mEditTextSearchStrip = (EditText) mToolbar.findViewById(R.id.search_edit_text);
@@ -234,6 +252,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
                         if(position>1){
+
                             //Toast.makeText(getApplicationContext(), String.valueOf(position-1), Toast.LENGTH_SHORT).show();
                             /*ChannelDescriptionFragment fragment = new ChannelDescriptionFragment();
                             fragment.setCredential(mPresenter.getCredential());
@@ -278,7 +297,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                             transaction.replace(R.id.container, fragment);
                             transaction.addToBackStack(null);
                             transaction.commit();
-
                             /*VideoFragment fragment = new VideoFragment();
                             fragment.setVideoId("mmDj8b6u9G0");
                             FragmentManager manager = getSupportFragmentManager();
@@ -292,6 +310,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                                 FragmentManager manager = getSupportFragmentManager();
                                 FragmentTransaction transaction = manager.beginTransaction();
                                 transaction.replace(R.id.container, fragment);
+                                transaction.addToBackStack(null);
                                 transaction.commit();
                             }
                             if(position==1) {
@@ -299,6 +318,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                                 FragmentManager manager = getSupportFragmentManager();
                                 FragmentTransaction transaction = manager.beginTransaction();
                                 transaction.replace(R.id.container, fragment);
+                                transaction.addToBackStack(null);
                                 transaction.commit();
                             }
                         }
