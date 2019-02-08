@@ -66,4 +66,5 @@ dependencies {
     compile 'com.ajts.androidmads.youtubemp3:youtubemp3:1.0.0'
     implementation 'com.budiyev.android:circular-progress-bar:1.2.2'
     compile 'com.chibde:audiovisualizer:2.1.0'
+    implementation 'com.github.bumptech.glide:glide:4.0.0'
 }

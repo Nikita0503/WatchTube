@@ -105,8 +105,37 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         setContentView(R.layout.activity_main);
         mEditTextSearch = true;
         mBottomLayout = (View) findViewById(R.id.bottom_fragment);
-        mTextViewVideoTitleBottom = (TextView) findViewById(R.id.panel);
+        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(mBottomLayout);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                try {
+                    if (mVideoFragment != null) {
+                        Log.d("BOTTOM1", newState + "");
+                        switch (newState) {
+                            case BottomSheetBehavior.STATE_COLLAPSED:
+                                mVideoFragment.stopVideo();
+                                break;
+                            case BottomSheetBehavior.STATE_EXPANDED:
+                                mVideoFragment.playVideo();
+                                break;
+                            case BottomSheetBehavior.STATE_HIDDEN:
+                                mVideoFragment.dropVideo();
+                                break;
+                        }
+                    }
+                }catch (Exception c){
+                    c.printStackTrace();
+                }
+            }
 
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+        mTextViewVideoTitleBottom = (TextView) findViewById(R.id.panel);
         //mVideoView = (YouTubePlayerSupportFragment) mBottomLayout(R.id.youtube_fragment);
         /*ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         fragment = new VideoDescriptionFragment();
@@ -196,11 +225,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                                 .withName("Home")
                                 .withIcon(R.drawable.home)
                                 .withIdentifier(1),
+                        new PrimaryDrawerItem()
+                                .withName("Music")
+                                .withIcon(R.drawable.music)
+                                .withIdentifier(2),
                         new DividerDrawerItem())
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
-                        if(position!=0){
+                        if(position>1){
                             //Toast.makeText(getApplicationContext(), String.valueOf(position-1), Toast.LENGTH_SHORT).show();
                             /*ChannelDescriptionFragment fragment = new ChannelDescriptionFragment();
                             fragment.setCredential(mPresenter.getCredential());
@@ -239,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                             transaction.commit();*/
                             ChannelFragment fragment = new ChannelFragment();
                             fragment.setCredential(mPresenter.getCredential());
-                            fragment.setChannelId(mPresenter.getSubscriptions().get(position-1).channelId);
+                            fragment.setChannelId(mPresenter.getSubscriptions().get(position-2).channelId);
                             FragmentManager manager = getSupportFragmentManager();
                             FragmentTransaction transaction = manager.beginTransaction();
                             transaction.replace(R.id.container, fragment);
@@ -254,12 +287,20 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                             transaction.addToBackStack(null);
                             transaction.commit();*/
                         }else{
-                            MusicListFragment fragment = new MusicListFragment();
-                            FragmentManager manager = getSupportFragmentManager();
-                            FragmentTransaction transaction = manager.beginTransaction();
-                            transaction.replace(R.id.container, fragment);
-                            transaction.addToBackStack(null);
-                            transaction.commit();
+                            if(position==0) {
+                                TwoFragment fragment = new TwoFragment();
+                                FragmentManager manager = getSupportFragmentManager();
+                                FragmentTransaction transaction = manager.beginTransaction();
+                                transaction.replace(R.id.container, fragment);
+                                transaction.commit();
+                            }
+                            if(position==1) {
+                                MusicListFragment fragment = new MusicListFragment();
+                                FragmentManager manager = getSupportFragmentManager();
+                                FragmentTransaction transaction = manager.beginTransaction();
+                                transaction.replace(R.id.container, fragment);
+                                transaction.commit();
+                            }
                         }
                         Log.d("POSITION", position-1+"");
                     }

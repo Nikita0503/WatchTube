@@ -34,6 +34,7 @@ public class VideoFragment extends Fragment {
     private String mVideoId;
     private GoogleAccountCredential mCredential;
     private YouTubePlayerSupportFragment mVideoView;
+    private YouTubePlayer mYouTubePlayer;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
     //RecyclerView mRecyclerView;
@@ -120,21 +121,39 @@ public class VideoFragment extends Fragment {
                     @Override
                     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
                         //youTubePlayer.setShowFullscreenButton(false);
-                        youTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION);
-                        youTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE);
-                        youTubePlayer.loadVideo(mVideoId);
-                        youTubePlayer.play();
-                        Log.d("ERROR", "2");
+                        mYouTubePlayer = youTubePlayer;
+                        mYouTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_ORIENTATION);
+                        mYouTubePlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE);
+                        mYouTubePlayer.loadVideo(mVideoId);
+                        mYouTubePlayer.play();
+                        youTubePlayer = mYouTubePlayer;
+                        Log.d("INIT", "2");
                     }
+
 
                     @Override
                     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
                         Log.d("ERROR", "123");
                     }
+
                 }
         );
         return v;
     }
+
+
+    public void stopVideo(){
+        mYouTubePlayer.pause();
+    }
+
+    public void playVideo(){
+        mYouTubePlayer.play();
+    }
+
+    public void dropVideo(){
+        mVideoView = null;
+    }
+
 
     /*public void fetchVideoComments(){
         mPresenter.fetchVideoComments();

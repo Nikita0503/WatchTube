@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.ajts.androidmads.youtubemp3.YTubeMp3Service;
 import com.budiyev.android.circularprogressbar.CircularProgressBar;
+import com.bumptech.glide.Glide;
 import com.example.watchtube.Contract;
 import com.example.watchtube.R;
 import com.example.watchtube.VideoDescriptionPresenter;
@@ -172,14 +173,22 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
                 if(seekBar.getProgress()>20 && seekBar.getProgress()<80){
                     seekBar.setProgress(50);
                     Toast.makeText(getContext(), "neutral", Toast.LENGTH_SHORT).show();
+                    mImageViewLike.setImageDrawable(getResources().getDrawable(R.drawable.like));
+                    mImageViewDislike.setImageDrawable(getResources().getDrawable(R.drawable.dislike));
+                    //Glide.with(getContext()).load(R.drawable.like_gif3).into(mImageViewLike);
                 }
                 if(seekBar.getProgress()<20){
                     seekBar.setProgress(0);
                     Toast.makeText(getContext(), "disliked", Toast.LENGTH_SHORT).show();
+                    mImageViewLike.setImageDrawable(getResources().getDrawable(R.drawable.like));
+                    mImageViewDislike.setImageDrawable(getResources().getDrawable(R.drawable.dislike));
+                   // Glide.with(getContext()).load(R.drawable.like_gif3).into(mImageViewLike);
                 }
                 if(seekBar.getProgress()>80){
                     seekBar.setProgress(100);
                     Toast.makeText(getContext(), "liked", Toast.LENGTH_SHORT).show();
+                    Glide.with(getContext()).load(R.drawable.like_gif3).into(mImageViewLike);
+                    mImageViewDislike.setImageDrawable(getResources().getDrawable(R.drawable.dislike));
                 }
             }
         });
