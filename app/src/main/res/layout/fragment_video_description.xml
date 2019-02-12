@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgroundColorVideo"
-    >
+    android:background="@color/backgroundColorVideo">
 
     <com.github.ybq.android.spinkit.SpinKitView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/spin_kit"
@@ -13,36 +12,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         app:SpinKit_Color="@color/colorPrimary"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-
-
-    <ImageView
-        android:id="@+id/imageViewLike"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/imageViewDownload"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3"
-        app:srcCompat="@drawable/like" />
-
-    <ImageView
-        android:id="@+id/imageViewDislike"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.varunest.sparkbutton.SparkButton
+        android:id="@+id/spark_button_like"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView3"
-        app:srcCompat="@drawable/dislike" />
+
+        app:sparkbutton_activeImage="@drawable/active_like"
+        app:sparkbutton_iconSize="40dp"
+        app:sparkbutton_inActiveImage="@drawable/no_active_like"
+        app:sparkbutton_primaryColor="@color/colorPrimary"
+        app:sparkbutton_secondaryColor="@color/colorAccent">
+
+    </com.varunest.sparkbutton.SparkButton>
 
     <TextView
         android:id="@+id/textViewLike"
@@ -52,21 +46,18 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:text="@string/like"
-        app:layout_constraintEnd_toEndOf="@+id/imageViewLike"
-        app:layout_constraintStart_toStartOf="@+id/imageViewLike"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewLike" />
+        app:layout_constraintEnd_toEndOf="@+id/spark_button_like"
+        app:layout_constraintStart_toStartOf="@+id/spark_button_like"
+        app:layout_constraintTop_toBottomOf="@+id/spark_button_like" />
 
     <TextView
         android:id="@+id/textViewDislike"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
         android:text="@string/dislike"
-        app:layout_constraintEnd_toEndOf="@+id/imageViewDislike"
-        app:layout_constraintStart_toStartOf="@+id/imageViewDislike"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewDislike" />
+        app:layout_constraintEnd_toEndOf="@+id/spark_button_dislike"
+        app:layout_constraintStart_toStartOf="@+id/spark_button_dislike"
+        app:layout_constraintTop_toBottomOf="@+id/spark_button_dislike" />
 
     <TextView
         android:id="@+id/textViewVideoTitle"
@@ -83,8 +74,8 @@
         android:id="@+id/imageViewAuthor"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView4"
         app:srcCompat="@drawable/googleg_standard_color_18" />
@@ -93,37 +84,18 @@
         android:id="@+id/textViewAuthorName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
         android:text="AuthorName"
         app:layout_constraintEnd_toStartOf="@+id/imageViewAuthor"
         app:layout_constraintTop_toBottomOf="@+id/imageView4" />
-
-    <SeekBar
-        android:id="@+id/seekBar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:progress="50"
-        android:progressBackgroundTint="@android:color/holo_red_light"
-        android:progressTint="@color/colorPrimary"
-        android:thumbTint="@color/colorPrimaryDark"
-        app:layout_constraintBottom_toTopOf="@+id/textViewDescription"
-        app:layout_constraintEnd_toStartOf="@+id/imageViewLike"
-        app:layout_constraintHorizontal_bias="0.125"
-        app:layout_constraintStart_toEndOf="@+id/imageViewDislike"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
     <TextView
         android:id="@+id/textViewPublishedAt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginBottom="4dp"
+        android:layout_marginStart="16dp"
         android:text="PublishedAt"
         android:textSize="12dp"
         app:layout_constraintBottom_toTopOf="@+id/imageView3"
@@ -138,9 +110,9 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:scrollbars = "vertical"
-        android:maxLines="50"
         android:ellipsize="end"
+        android:maxLines="50"
+        android:scrollbars="vertical"
         android:singleLine="false"
         android:text="description\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\ndescription\n"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -152,9 +124,9 @@
         android:id="@+id/imageView2"
         android:layout_width="0dp"
         android:layout_height="2dp"
+        android:layout_marginBottom="2dp"
         android:layout_marginEnd="0dp"
         android:layout_marginStart="0dp"
-        android:layout_marginBottom="2dp"
         app:layout_constraintBottom_toTopOf="@+id/textViewDescription"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -197,16 +169,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/line_comment" />
 
-    <ImageView
-        android:id="@+id/imageViewDownload"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3"
-        app:srcCompat="@drawable/download" />
-
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
@@ -218,6 +180,33 @@
         app:layout_constraintStart_toStartOf="@+id/imageViewDownload"
         app:layout_constraintTop_toBottomOf="@+id/imageViewDownload" />
 
+    <com.varunest.sparkbutton.SparkButton
+        android:id="@+id/spark_button_dislike"
+        android:layout_width="100dp"
+        android:layout_height="102dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+
+        app:sparkbutton_activeImage="@drawable/active_dislike"
+        app:sparkbutton_iconSize="40dp"
+        app:sparkbutton_inActiveImage="@drawable/no_active_dislike"
+        app:sparkbutton_primaryColor="@color/colorPrimary"
+        app:sparkbutton_secondaryColor="@color/colorAccent" />
+
+    <ImageView
+        android:id="@+id/imageViewDownload"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/imageView2"
+        app:layout_constraintEnd_toStartOf="@+id/spark_button_like"
+        app:layout_constraintStart_toEndOf="@+id/spark_button_dislike"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+        app:srcCompat="@drawable/download" />
 
 
 </android.support.constraint.ConstraintLayout>

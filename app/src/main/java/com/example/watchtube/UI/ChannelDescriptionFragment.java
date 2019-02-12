@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+
 import com.example.watchtube.Contract;
 import com.example.watchtube.R;
 import com.example.watchtube.model.data.ChannelData;
@@ -64,6 +65,9 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
         mImageViewIcon = v.findViewById(R.id.imageViewIcon);
         mLayout = v.findViewById(R.id.constraintLayoutChannelDescription);
         mProgressBar = (ProgressBar) v.findViewById(R.id.spin_kit);
+
+
+
 
         Sprite cubeGrid = new CubeGrid();
         mProgressBar.setIndeterminateDrawable(cubeGrid);

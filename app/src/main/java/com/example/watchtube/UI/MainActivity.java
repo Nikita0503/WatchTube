@@ -50,23 +50,23 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public static final String PREF_ACCOUNT_NAME = "accountName";
     public static final String[] SCOPES = { YouTubeScopes.YOUTUBE_READONLY };
     private boolean mEditTextSearch;
+    private boolean isFABOpen;
     public MainPresenter mPresenter;
     public CompositeDisposable disposables;
-    private Drawer.Result drawerResult;
-    public TextView mOutputText;
     private Toolbar mToolbar;
-    private FloatingActionButton mFab;
-    //private ViewPager mViewPager;
     public ProgressDialog mProgress;
-    //private TabLayout mTabLayout;
     private FragmentTransaction mTrans;
-    private VideoFragment mVideoFragment;
     private View mBottomLayout;
+    private Drawer.Result drawerResult;
     private TextView mTextViewVideoTitleBottom;
-
+    public TextView mOutputText;
     private TextView mTextViewAppTitle;
     private EditText mEditTextSearchStrip;
     private Button mButtonSearch;
+    private FloatingActionButton mFab;
+    private FloatingActionButton mFab1;
+    private FloatingActionButton mFab2;
+    private VideoFragment mVideoFragment;
 
     public void setBottom(final String videoId, String videoTitle){
         mTextViewVideoTitleBottom.setText(videoTitle);
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        isFABOpen = false;
         mEditTextSearch = true;
         mBottomLayout = (View) findViewById(R.id.bottom_fragment);
         BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(mBottomLayout);
@@ -136,11 +136,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 }
             }
 
+
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                 Log.d("SLIDE", slideOffset+"");
                 if(slideOffset>=0) {
-                    mFab.animate().scaleX(1 - slideOffset).scaleY(1 - slideOffset).setDuration(0).start();
+                    //mFab.animate().scaleX(1 - slideOffset).scaleY(1 - slideOffset).setDuration(0).start();
+                    //mFab1.animate().scaleX(1 - slideOffset).scaleY(1 - slideOffset).setDuration(0).start();
+                    //mFab2.animate().scaleX(1 - slideOffset).scaleY(1 - slideOffset).setDuration(0).start();
                     mButtonSearch.animate().scaleX(1 - slideOffset).scaleY(1 - slideOffset).setDuration(0).start();
                 }
             }
@@ -171,9 +174,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "123", Toast.LENGTH_SHORT).show();
+                if(!isFABOpen){
+                    showFABMenu();
+                }else{
+                    closeFABMenu();
+                }
             }
         });
+        mFab1 = (FloatingActionButton) findViewById(R.id.fab1);
+        mFab2 = (FloatingActionButton) findViewById(R.id.fab2);
+
         mTextViewAppTitle = (TextView) mToolbar.findViewById(R.id.textViewAppTitle);
         mButtonSearch = (Button) mToolbar.findViewById(R.id.search_button);
         mEditTextSearchStrip = (EditText) mToolbar.findViewById(R.id.search_edit_text);
@@ -337,6 +347,18 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         mPresenter.onStart();
         checkDemands();
         //mPresenter.makePagerAdapter();
+    }
+
+    private void showFABMenu(){
+        isFABOpen=true;
+        mFab1.animate().translationY(-200);
+        mFab2.animate().translationY(-400);
+    }
+
+    private void closeFABMenu(){
+        isFABOpen=false;
+        mFab1.animate().translationY(0);
+        mFab2.animate().translationY(0);
     }
 
     @Override

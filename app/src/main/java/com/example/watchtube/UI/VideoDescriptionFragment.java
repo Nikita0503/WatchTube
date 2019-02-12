@@ -29,6 +29,8 @@ import com.example.watchtube.model.data.search.SearchChannelData;
 import com.github.ybq.android.spinkit.sprite.Sprite;
 import com.github.ybq.android.spinkit.style.CubeGrid;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.varunest.sparkbutton.SparkButton;
+import com.varunest.sparkbutton.SparkEventListener;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,12 +56,11 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
     private TextView mTextViewProgress;
     private ImageView mImageViewAuthor;
     private ImageView mImageViewDownload;
-    private ImageView mImageViewLike;
-    private ImageView mImageViewDislike;
-    private SeekBar mSeekBar;
     private ProgressBar mProgressBar;
     private CircularProgressBar mCircularProgressBar;
     private Dialog mProgressDialog;
+    private SparkButton mSparkButtonLike;
+    private SparkButton mSparkButtonDislike;
 
     public void setCredential(GoogleAccountCredential credential){
         mCredential = credential;
@@ -99,7 +100,6 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         mProgressBar.setIndeterminateDrawable(cubeGrid);
         mProgressBar.setVisibility(ProgressBar.VISIBLE);
         mCircularProgressBar = (CircularProgressBar) v.findViewById(R.id.progress_bar);
-        mSeekBar = (SeekBar) v.findViewById(R.id.seekBar);
         mTextViewLikes = (TextView) v.findViewById(R.id.textViewLike);
         mTextViewDislikes = (TextView) v.findViewById(R.id.textViewDislike);
         mTextViewVideoTitle = (TextView) v.findViewById(R.id.textViewVideoTitle);
@@ -153,45 +153,54 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
                 activity.hideBottom();
             }
         });
-        mImageViewLike = (ImageView) v.findViewById(R.id.imageViewLike);
-        mImageViewDislike = (ImageView) v.findViewById(R.id.imageViewDislike);
-        mTextViewDescription.setMovementMethod(new ScrollingMovementMethod());
-        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mSparkButtonLike = (SparkButton) v.findViewById(R.id.spark_button_like);
+        mSparkButtonLike.setEventListener(new SparkEventListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onEvent(ImageView button, boolean buttonState) {
+                if(buttonState){
+                    mSparkButtonDislike.setChecked(false);
+                    Log.d("SPARK_BUTTON_L", 1+"");
+                }else{
+                    Log.d("SPARK_BUTTON_L", 0+"");
+                }
+            }
+
+            @Override
+            public void onEventAnimationEnd(ImageView button, boolean buttonState) {
 
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onEventAnimationStart(ImageView button, boolean buttonState) {
 
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-                if(seekBar.getProgress()>20 && seekBar.getProgress()<80){
-                    seekBar.setProgress(50);
-                    Toast.makeText(getContext(), "neutral", Toast.LENGTH_SHORT).show();
-                    mImageViewLike.setImageDrawable(getResources().getDrawable(R.drawable.like));
-                    mImageViewDislike.setImageDrawable(getResources().getDrawable(R.drawable.dislike));
-                    //Glide.with(getContext()).load(R.drawable.like_gif3).into(mImageViewLike);
-                }
-                if(seekBar.getProgress()<20){
-                    seekBar.setProgress(0);
-                    Toast.makeText(getContext(), "disliked", Toast.LENGTH_SHORT).show();
-                    mImageViewLike.setImageDrawable(getResources().getDrawable(R.drawable.like));
-                    mImageViewDislike.setImageDrawable(getResources().getDrawable(R.drawable.dislike));
-                   // Glide.with(getContext()).load(R.drawable.like_gif3).into(mImageViewLike);
-                }
-                if(seekBar.getProgress()>80){
-                    seekBar.setProgress(100);
-                    Toast.makeText(getContext(), "liked", Toast.LENGTH_SHORT).show();
-                    Glide.with(getContext()).load(R.drawable.like_gif3).into(mImageViewLike);
-                    mImageViewDislike.setImageDrawable(getResources().getDrawable(R.drawable.dislike));
-                }
             }
         });
+
+        mSparkButtonDislike = (SparkButton) v.findViewById(R.id.spark_button_dislike);
+        mSparkButtonDislike.setEventListener(new SparkEventListener() {
+            @Override
+            public void onEvent(ImageView button, boolean buttonState) {
+                if(buttonState){
+                    mSparkButtonLike.setChecked(false);
+                    Log.d("SPARK_BUTTON_D", 1+"");
+                }else{
+                    Log.d("SPARK_BUTTON_D", 0+"");
+                }
+            }
+
+            @Override
+            public void onEventAnimationEnd(ImageView button, boolean buttonState) {
+
+            }
+
+            @Override
+            public void onEventAnimationStart(ImageView button, boolean buttonState) {
+
+            }
+        });
+
+        //mImageViewLike = (ImageView) v.findViewById(R.id.imageViewLike);
+        mTextViewDescription.setMovementMethod(new ScrollingMovementMethod());
         fetchVideoDescription();
         return v;
     }
