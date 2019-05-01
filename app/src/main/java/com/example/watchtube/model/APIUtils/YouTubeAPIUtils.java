@@ -30,6 +30,7 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
+import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Channel;
 import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.Comment;
@@ -40,10 +41,12 @@ import com.google.api.services.youtube.model.Playlist;
 import com.google.api.services.youtube.model.PlaylistItem;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.PlaylistListResponse;
+import com.google.api.services.youtube.model.ResourceId;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
+import com.google.api.services.youtube.model.SubscriptionSnippet;
 import com.google.api.services.youtube.model.VideoListResponse;
 import com.squareup.picasso.Picasso;
 
@@ -62,6 +65,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import io.reactivex.Completable;
+import io.reactivex.CompletableEmitter;
+import io.reactivex.CompletableOnSubscribe;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
@@ -609,7 +615,49 @@ public class YouTubeAPIUtils {
             e.onSuccess(channelData);
         }
     });
-    
+
+    public Single<Boolean> isSubscribed = Single.create(new SingleOnSubscribe<Boolean>() {
+        @Override
+        public void subscribe(SingleEmitter<Boolean> e) throws Exception {
+            HttpTransport transport = AndroidHttp.newCompatibleTransport();
+            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+            com.google.api.services.youtube.YouTube mService = new com.google.api.services.youtube.YouTube.Builder(
+                    transport, jsonFactory, mCredential)
+                    .setApplicationName("WatchTube")
+                    .build();
+            SubscriptionListResponse result = mService.subscriptions().list("snippet,contentDetails")
+                    .setMine(true).setForChannelId(mChannelId).execute();
+            if(result.getItems().size() == 0){
+                e.onSuccess(false);
+            }else{
+                e.onSuccess(true);
+            }
+        }
+    });
+
+    public Completable subscribe(){
+        return Completable.create(new CompletableOnSubscribe() {
+            @Override
+            public void subscribe(CompletableEmitter e) throws Exception {
+                HttpTransport transport = AndroidHttp.newCompatibleTransport();
+                JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+                com.google.api.services.youtube.YouTube mService = new com.google.api.services.youtube.YouTube.Builder(
+                        transport, jsonFactory, mCredential)
+                        .setApplicationName("WatchTube")
+                        .build();
+                Subscription subscription = new Subscription();
+                SubscriptionSnippet snippet = new SubscriptionSnippet();
+                ResourceId resourceId = new ResourceId();
+                resourceId.setChannelId(mChannelId);
+                resourceId.setKind("youtube#channel");
+                snippet.setResourceId(resourceId);
+                subscription.setSnippet(snippet);
+                YouTube.Subscriptions.Insert request = mService.subscriptions()
+                        .insert("snippet", subscription);
+                Subscription response = request.execute();
+            }
+        });
+    }
 
     /*public Single<ArrayList<VideoPreviewData>> getVideoPreviewData = Single.create(new SingleOnSubscribe<ArrayList<VideoPreviewData>>() {
         @Override

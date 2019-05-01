@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -31,6 +32,7 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
     private TextView mTextViewKind;
     private TextView mTextViewSubCount;
     private TextView mTextViewDescription;
+    private Button mButtonSubscribe;
     private ImageView mImageViewBanner;
     private ImageView mImageViewIcon;
     private ConstraintLayout mLayout;
@@ -61,13 +63,17 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
         mTextViewSubCount = v.findViewById(R.id.textViewSubCount);
         mTextViewDescription = v.findViewById(R.id.textViewDescription);
         mTextViewDescription.setMovementMethod(new ScrollingMovementMethod());
+        mButtonSubscribe = v.findViewById(R.id.buttonSubscribe);
+        mButtonSubscribe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO:
+            }
+        });
         mImageViewBanner = v.findViewById(R.id.imageViewBanner);
         mImageViewIcon = v.findViewById(R.id.imageViewIcon);
         mLayout = v.findViewById(R.id.constraintLayoutChannelDescription);
         mProgressBar = (ProgressBar) v.findViewById(R.id.spin_kit);
-
-
-
 
         Sprite cubeGrid = new CubeGrid();
         mProgressBar.setIndeterminateDrawable(cubeGrid);
@@ -82,6 +88,15 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
         mPresenter.setupCredential(mCredential);
         mPresenter.setupChannelId(mChannelId);
         mPresenter.fetchChannelData();
+        mPresenter.isSubscribed();
+    }
+
+    public void setSubStatus(boolean isSubscribed){
+        if(isSubscribed) {
+            mButtonSubscribe.setText("Unsubscribe");
+        }else{
+            mButtonSubscribe.setText("Subscribe!");
+        }
     }
 
     public void showChannelData(ChannelData channelData){

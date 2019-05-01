@@ -106,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     protected void onCreate(Bundle savedInstanceState) { //NEXT PAGE TOKEN (Subscriptions)
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         isFABOpen = false;
         mEditTextSearch = true;
         mBottomLayout = (View) findViewById(R.id.bottom_fragment);
@@ -183,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         });
         mFab1 = (FloatingActionButton) findViewById(R.id.fab1);
         mFab2 = (FloatingActionButton) findViewById(R.id.fab2);
+
 
         mTextViewAppTitle = (TextView) mToolbar.findViewById(R.id.textViewAppTitle);
         mButtonSearch = (Button) mToolbar.findViewById(R.id.search_button);
