@@ -81,7 +81,7 @@ public class MainPresenter implements Contract.Presenter {
         }
     }
 
-    private void fetchSubscribesList() {
+    public void fetchSubscribesList() {
         //setText("");
         Disposable disposable = mYouTubeAPIUtils.getSubscriptionsInfo.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

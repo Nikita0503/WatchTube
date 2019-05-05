@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
     public static final String BUTTON_TEXT = "Call YouTube Data API";
     public static final String PREF_ACCOUNT_NAME = "accountName";
-    public static final String[] SCOPES = { YouTubeScopes.YOUTUBE_READONLY };
+    public static final String[] SCOPES = { YouTubeScopes.YOUTUBE_READONLY};
     private boolean mEditTextSearch;
     private boolean isFABOpen;
     public MainPresenter mPresenter;
@@ -368,7 +368,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
 
-
     @Override
     protected void onActivityResult(
             int requestCode, int resultCode, Intent data) {
@@ -412,6 +411,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         transaction.replace(R.id.container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    public void updateSubscriptions(){
+        mPresenter.fetchSubscribesList();
     }
 
     /*public void setupTabIcons() {

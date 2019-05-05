@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -53,11 +54,11 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
     private TextView mTextViewAuthorName;
     private TextView mTextViewDescription;
     private TextView mTextViewPublishedAt;
-    private TextView mTextViewProgress;
+    //private TextView mTextViewProgress;
     private ImageView mImageViewAuthor;
     private ImageView mImageViewDownload;
     private ProgressBar mProgressBar;
-    private CircularProgressBar mCircularProgressBar;
+    //private CircularProgressBar mCircularProgressBar;
     private Dialog mProgressDialog;
     private SparkButton mSparkButtonLike;
     private SparkButton mSparkButtonDislike;
@@ -99,7 +100,7 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         Sprite cubeGrid = new CubeGrid();
         mProgressBar.setIndeterminateDrawable(cubeGrid);
         mProgressBar.setVisibility(ProgressBar.VISIBLE);
-        mCircularProgressBar = (CircularProgressBar) v.findViewById(R.id.progress_bar);
+        //mCircularProgressBar = (CircularProgressBar) v.findViewById(R.id.progress_bar);
         mTextViewLikes = (TextView) v.findViewById(R.id.textViewLike);
         mTextViewDislikes = (TextView) v.findViewById(R.id.textViewDislike);
         mTextViewVideoTitle = (TextView) v.findViewById(R.id.textViewVideoTitle);
@@ -225,8 +226,8 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         mProgressBar.setVisibility(View.INVISIBLE);
     }
 
-    public void showProgress(){
-        mProgressDialog = getProgressDialog();
+    public void showProgress(String url){
+        //mProgressDialog = getProgressDialog(url);
         mProgressDialog.show();
     }
 
@@ -235,18 +236,11 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
     }
 
     public void setProgress(int progress) {
-        mCircularProgressBar.setProgress(progress);
-        mTextViewProgress.setText(String.valueOf(progress));
+        //mCircularProgressBar.setProgress(progress);
+        //mTextViewProgress.setText(String.valueOf(progress));
     }
 
-    private Dialog getProgressDialog(){
-        final Dialog dialog = new Dialog(getContext());
-        dialog.setContentView(R.layout.download_dialog);
-        dialog.setTitle("Downloading...");
-        mCircularProgressBar = (CircularProgressBar) dialog.findViewById(R.id.progress_bar);
-        mTextViewProgress = (TextView) dialog.findViewById(R.id.textViewProgress);
-        return dialog;
-    }
+
 
     @Override
     public void onDestroy(){

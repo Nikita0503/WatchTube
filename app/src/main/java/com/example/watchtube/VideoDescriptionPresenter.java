@@ -1,6 +1,10 @@
 package com.example.watchtube;
 
+import android.app.Dialog;
 import android.util.Log;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.example.watchtube.UI.VideoDescriptionFragment;
@@ -38,7 +42,7 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
     public VideoDescriptionPresenter(VideoDescriptionFragment fragment){
         mFragment = fragment;
         mYouTubeAPIUtils = new YouTubeAPIUtils(fragment.getContext(), this);
-        mYouTubeMP3Downloader = new YouTubeMP3DownloaderRxJava(this);
+        mYouTubeMP3Downloader = new YouTubeMP3DownloaderRxJava(mFragment.getContext(), this);
     }
 
     public void setupCredential(GoogleAccountCredential credential){
@@ -100,32 +104,47 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
                 });*/
         Disposable disposable = mYouTubeMP3Downloader.startDownload.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableObserver<Integer>() {
+                .subscribeWith(new DisposableCompletableObserver() {
                     @Override
                     public void onStart() {
-                        mFragment.showProgress();
+                        //mFragment.showProgress();
                         Toast.makeText(mFragment.getContext(), "Loading started...", Toast.LENGTH_SHORT).show();
                     }
                     @Override
-                    public void onNext(Integer progress) {
-                        mFragment.setProgress(progress);
-                    }
-                    @Override
                     public void onError(Throwable t) {
-                        mFragment.hideProgress();
+                        //mFragment.showProgress();
                         Toast.makeText(mFragment.getContext(), "Error", Toast.LENGTH_SHORT).show();
+                        Dialog dialog = getProgressDialog("https://www.convertmp3.io/fetch/?format=JSON&video=https://www.youtube.com/watch?v="+mVideoId);
+                        dialog.show();
                         t.printStackTrace();
                     }
                     @Override
                     public void onComplete() {
-                        mFragment.hideProgress();
+                        //mFragment.hideProgress();
                         Toast.makeText(mFragment.getContext(), "Downloaded!", Toast.LENGTH_SHORT).show();
                     }
                 });
         mDisposable.add(disposable);
     }
 
-
+    private Dialog getProgressDialog(String url){
+        final Dialog dialog = new Dialog(mFragment.getContext());
+        dialog.setContentView(R.layout.webview_dialog);
+        dialog.setTitle("Downloading...");
+        WebView webView = (WebView) dialog.findViewById(R.id.webView);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return false;
+            }
+        });
+        webView.loadUrl(url);
+        //mCircularProgressBar = (CircularProgressBar) dialog.findViewById(R.id.progress_bar);
+        //mTextViewProgress = (TextView) dialog.findViewById(R.id.textViewProgress);
+        return dialog;
+    }
 
     @Override
     public void onStop() {

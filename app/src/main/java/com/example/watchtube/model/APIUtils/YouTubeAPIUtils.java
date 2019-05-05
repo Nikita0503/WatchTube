@@ -1,5 +1,6 @@
 package com.example.watchtube.model.APIUtils;
 
+import android.accounts.Account;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -13,6 +14,7 @@ import com.example.watchtube.MainPresenter;
 import com.example.watchtube.R;
 import com.example.watchtube.SearchItemType;
 import com.example.watchtube.SearchPresenter;
+import com.example.watchtube.UI.MainActivity;
 import com.example.watchtube.VideoCommentsPresenter;
 import com.example.watchtube.VideoDescriptionPresenter;
 import com.example.watchtube.model.data.ChannelData;
@@ -30,7 +32,9 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
+import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.YouTubeScopes;
 import com.google.api.services.youtube.model.Channel;
 import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.Comment;
@@ -61,6 +65,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -635,6 +640,8 @@ public class YouTubeAPIUtils {
         }
     });
 
+
+
     public Completable subscribe(){
         return Completable.create(new CompletableOnSubscribe() {
             @Override
@@ -645,13 +652,20 @@ public class YouTubeAPIUtils {
                         transport, jsonFactory, mCredential)
                         .setApplicationName("WatchTube")
                         .build();
+
+                // Define the Subscription object, which will be uploaded as the request body.
                 Subscription subscription = new Subscription();
+
+                // Add the snippet object property to the Subscription object.
                 SubscriptionSnippet snippet = new SubscriptionSnippet();
                 ResourceId resourceId = new ResourceId();
                 resourceId.setChannelId(mChannelId);
                 resourceId.setKind("youtube#channel");
                 snippet.setResourceId(resourceId);
                 subscription.setSnippet(snippet);
+                Log.d("subscribe_channel", mChannelId);
+                Log.d("subscribe_channel", mCredential.getSelectedAccountName());
+                // Define and execute the API request
                 YouTube.Subscriptions.Insert request = mService.subscriptions()
                         .insert("snippet", subscription);
                 Subscription response = request.execute();

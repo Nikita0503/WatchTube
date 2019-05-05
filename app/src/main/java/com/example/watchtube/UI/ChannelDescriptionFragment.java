@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.example.watchtube.Contract;
@@ -67,7 +68,7 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
         mButtonSubscribe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO:
+                mPresenter.subscribeToChannel();
             }
         });
         mImageViewBanner = v.findViewById(R.id.imageViewBanner);
@@ -110,6 +111,12 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
         mImageViewIcon.setImageDrawable(channelData.imageIcon);
         Log.d("CHANNEL", "SHOW");
         mProgressBar.setVisibility(ProgressBar.INVISIBLE);
+    }
+
+    public void showMessage(String message){
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        MainActivity activity = (MainActivity) getActivity();
+        activity.updateSubscriptions();
     }
 
     @Override
