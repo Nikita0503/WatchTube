@@ -111,7 +111,7 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         mImageViewDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.fetchMP3FileData(mVideoId);
+                mPresenter.fetchMP3FileData(mVideoId, mTextViewVideoTitle.getText().toString());
                 /*Toast.makeText(getContext(), "Download...", Toast.LENGTH_SHORT).show();
                 new YouTubeMP3Downloader.Builder(getActivity())
                         .setDownloadUrl(mVideoId)

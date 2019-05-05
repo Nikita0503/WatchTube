@@ -1,7 +1,11 @@
 package com.example.watchtube;
 
 import android.app.Dialog;
+import android.app.DownloadManager;
+import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
+import android.webkit.DownloadListener;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -27,6 +31,8 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
+import static android.content.Context.DOWNLOAD_SERVICE;
+
 /**
  * Created by Nikita on 14.01.2019.
  */
@@ -39,6 +45,7 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
     private GoogleAccountCredential mCredential;
     private YouTubeAPIUtils mYouTubeAPIUtils;
     private YouTubeMP3DownloaderRxJava mYouTubeMP3Downloader;
+
     public VideoDescriptionPresenter(VideoDescriptionFragment fragment){
         mFragment = fragment;
         mYouTubeAPIUtils = new YouTubeAPIUtils(fragment.getContext(), this);
@@ -82,7 +89,7 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
         mDisposable.add(disposable);
     }
 
-    public void fetchMP3FileData(String videoId){
+    public void fetchMP3FileData(String videoId, String videoName){
 
         mYouTubeMP3Downloader.setVideoId(videoId);
         /*Disposable disposable = mYouTubeMP3Downloader.startDownloadRx.subscribeOn(Schedulers.io())
@@ -114,7 +121,8 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
                     public void onError(Throwable t) {
                         //mFragment.showProgress();
                         Toast.makeText(mFragment.getContext(), "Error", Toast.LENGTH_SHORT).show();
-                        Dialog dialog = getProgressDialog("https://www.convertmp3.io/fetch/?format=JSON&video=https://www.youtube.com/watch?v="+mVideoId);
+                        Dialog dialog = getProgressDialog("https://www.convertmp3.io/fetch/?format=JSON&video=https://www.youtube.com/watch?v="+mVideoId, videoName);
+                        //dialog.setCancelable(false);
                         dialog.show();
                         t.printStackTrace();
                     }
@@ -127,13 +135,12 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
         mDisposable.add(disposable);
     }
 
-    private Dialog getProgressDialog(String url){
+    private Dialog getProgressDialog(String url, String videoName){
         final Dialog dialog = new Dialog(mFragment.getContext());
         dialog.setContentView(R.layout.webview_dialog);
         dialog.setTitle("Downloading...");
         WebView webView = (WebView) dialog.findViewById(R.id.webView);
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
+        webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -141,6 +148,16 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
             }
         });
         webView.loadUrl(url);
+        webView.setDownloadListener(new DownloadListener() {
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+                DownloadManager.Request request = new DownloadManager.Request( Uri.parse(url));
+                request.allowScanningByMediaScanner();
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, videoName);
+                DownloadManager dm = (DownloadManager) mFragment.getContext().getSystemService(DOWNLOAD_SERVICE);
+                dm.enqueue(request);
+            }
+        });
         //mCircularProgressBar = (CircularProgressBar) dialog.findViewById(R.id.progress_bar);
         //mTextViewProgress = (TextView) dialog.findViewById(R.id.textViewProgress);
         return dialog;
