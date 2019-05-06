@@ -4,6 +4,7 @@ import com.example.watchtube.Contract;
 import com.example.watchtube.MainPresenter;
 import com.example.watchtube.R;
 import com.example.watchtube.model.data.SubscriptionData;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.api.services.youtube.YouTubeScopes;
 
 import com.mikepenz.materialdrawer.Drawer;
@@ -63,9 +64,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private TextView mTextViewAppTitle;
     private EditText mEditTextSearchStrip;
     private Button mButtonSearch;
-    private FloatingActionButton mFab;
-    private FloatingActionButton mFab1;
-    private FloatingActionButton mFab2;
+    private com.github.clans.fab.FloatingActionMenu materialDesignFAM;
+    private com.github.clans.fab.FloatingActionButton floatingActionButton1, floatingActionButton2, floatingActionButton3;
     private VideoFragment mVideoFragment;
 
     public void setBottom(final String videoId, String videoTitle){
@@ -106,6 +106,29 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     protected void onCreate(Bundle savedInstanceState) { //NEXT PAGE TOKEN (Subscriptions)
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        materialDesignFAM = (com.github.clans.fab.FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
+        floatingActionButton1 = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item1);
+        floatingActionButton2 = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item2);
+        floatingActionButton3 = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item3);
+        floatingActionButton1.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //TODO something when floating action menu first item clicked
+
+            }
+        });
+        floatingActionButton2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //TODO something when floating action menu second item clicked
+
+            }
+        });
+        floatingActionButton3.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //TODO something when floating action menu third item clicked
+            }
+        });
+
         isFABOpen = false;
         mEditTextSearch = true;
         mBottomLayout = (View) findViewById(R.id.bottom_fragment);
@@ -169,19 +192,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             setSupportActionBar(mToolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!isFABOpen){
-                    showFABMenu();
-                }else{
-                    closeFABMenu();
-                }
-            }
-        });
-        mFab1 = (FloatingActionButton) findViewById(R.id.fab1);
-        mFab2 = (FloatingActionButton) findViewById(R.id.fab2);
+
 
 
         mTextViewAppTitle = (TextView) mToolbar.findViewById(R.id.textViewAppTitle);
@@ -351,14 +362,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private void showFABMenu(){
         isFABOpen=true;
-        mFab1.animate().translationY(-200);
-        mFab2.animate().translationY(-400);
+
     }
 
     private void closeFABMenu(){
         isFABOpen=false;
-        mFab1.animate().translationY(0);
-        mFab2.animate().translationY(0);
+
     }
 
     @Override
