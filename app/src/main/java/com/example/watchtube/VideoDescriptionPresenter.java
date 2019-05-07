@@ -90,9 +90,21 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
         mDisposable.add(disposable);
     }
 
-    public void fetchMP3FileData(String videoId, String videoName){
+    private Dialog getSetTimeDialog(String videoName, int duration){
+        final Dialog dialog = new Dialog(mFragment.getContext());
+        dialog.setContentView(R.layout.set_time_dialog);
+        dialog.setTitle("Downloading...");
+
+        //mCircularProgressBar = (CircularProgressBar) dialog.findViewById(R.id.progress_bar);
+        //mTextViewProgress = (TextView) dialog.findViewById(R.id.textViewProgress);
+        return dialog;
+    }
+
+    public void fetchMP3FileData(String videoId, String videoName, int duration){
 
         mYouTubeMP3Downloader.setVideoId(videoId);
+        Dialog dialog = getSetTimeDialog(videoName, duration);
+        dialog.show();
         /*Disposable disposable = mYouTubeMP3Downloader.startDownloadRx.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableCompletableObserver() {
@@ -110,30 +122,31 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
                         mFragment.hideProgressError();
                     }
                 });*/
-        Disposable disposable = mYouTubeMP3Downloader.startDownload.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableCompletableObserver() {
-                    @Override
-                    public void onStart() {
-                        //mFragment.showProgress();
-                        Toast.makeText(mFragment.getContext(), "Loading started...", Toast.LENGTH_SHORT).show();
-                    }
-                    @Override
-                    public void onError(Throwable t) {
-                        //mFragment.showProgress();
-                        Toast.makeText(mFragment.getContext(), "Error", Toast.LENGTH_SHORT).show();
-                        Dialog dialog = getProgressDialog("https://www.convertmp3.io/fetch/?format=JSON&video=https://www.youtube.com/watch?v="+mVideoId, videoName);
-                        //dialog.setCancelable(false);
-                        dialog.show();
-                        t.printStackTrace();
-                    }
-                    @Override
-                    public void onComplete() {
-                        //mFragment.hideProgress();
-                        Toast.makeText(mFragment.getContext(), "Downloaded!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-        mDisposable.add(disposable);
+
+        //Disposable disposable = mYouTubeMP3Downloader.startDownload.subscribeOn(Schedulers.io())
+        //        .observeOn(AndroidSchedulers.mainThread())
+        //        .subscribeWith(new DisposableCompletableObserver() {
+        //            @Override
+        //            public void onStart() {
+        //                //mFragment.showProgress();
+        //                Toast.makeText(mFragment.getContext(), "Loading started...", Toast.LENGTH_SHORT).show();
+        //            }
+        //            @Override
+        //            public void onError(Throwable t) {
+        //                //mFragment.showProgress();
+        //                Toast.makeText(mFragment.getContext(), "Error", Toast.LENGTH_SHORT).show();
+        //                Dialog dialog = getProgressDialog("https://www.convertmp3.io/fetch/?format=JSON&video=https://www.youtube.com/watch?v="+mVideoId, videoName);
+        //                //dialog.setCancelable(false);
+        //                dialog.show();
+        //                t.printStackTrace();
+        //            }
+        //            @Override
+        //            public void onComplete() {
+        //                //mFragment.hideProgress();
+        //                Toast.makeText(mFragment.getContext(), "Downloaded!", Toast.LENGTH_SHORT).show();
+        //            }
+        //        });
+        //mDisposable.add(disposable);
     }
 
     private Dialog getProgressDialog(String url, String videoName){

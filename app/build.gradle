@@ -70,4 +70,5 @@ dependencies {
     implementation 'com.github.varunest:sparkbutton:1.0.6'
     implementation 'com.github.StevenDXC:DxLoadingButton:2.2'
     implementation 'com.github.clans:fab:1.6.2'
+    implementation 'com.crystal:crystalrangeseekbar:1.1.3'
 }

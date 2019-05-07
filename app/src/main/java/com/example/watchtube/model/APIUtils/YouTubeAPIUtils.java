@@ -457,13 +457,16 @@ public class YouTubeAPIUtils {
             VideoListResponse result = mService.videos().list("snippet,contentDetails,statistics")
                     .setId(mVideoId)
                     .execute();
+
             BigInteger countLikes;
             BigInteger countDislikes;
             String videoTitle;
             String authorName;
             String description;
             String publishedAt;
+            String duration;
             Drawable authorImage;
+            duration = result.getItems().get(0).getContentDetails().getDuration();
             countLikes = result.getItems().get(0).getStatistics().getLikeCount();
             countDislikes = result.getItems().get(0).getStatistics().getDislikeCount();
             videoTitle = result.getItems().get(0).getSnippet().getTitle();
@@ -485,7 +488,7 @@ public class YouTubeAPIUtils {
                     .load(resultImage.getItems().get(0).getSnippet().getThumbnails().getDefault().getUrl())
                     .transform(new CircleTransform(25, 0))
                     .get());
-            videoDescription = new VideoDescription(countLikes, countDislikes, videoTitle, authorName, description, publishedAt, channelId, authorImage);
+            videoDescription = new VideoDescription(countLikes, countDislikes, videoTitle, authorName, description, publishedAt, channelId, getDurationInSeconds(duration), authorImage);
             e.onSuccess(videoDescription);
         }
     });
@@ -747,7 +750,12 @@ public class YouTubeAPIUtils {
         }
     });*/
 
-
+    public int getDurationInSeconds(String oldTime) {
+        PeriodFormatter formatter = ISOPeriodFormat.standard();
+        Period p = formatter.parsePeriod(oldTime);
+        Seconds s = p.toStandardSeconds();
+        return s.getSeconds();
+    }
 
     public String getDuration(String oldTime) {
         PeriodFormatter formatter = ISOPeriodFormat.standard();

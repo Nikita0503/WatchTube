@@ -44,6 +44,7 @@ import java.util.ArrayList;
 
 public class VideoDescriptionFragment extends Fragment implements Contract.View{
 
+    private int mVideoDuration;
     private String mVideoId;
     private String mChannelId;
     private VideoDescriptionPresenter mPresenter;
@@ -111,7 +112,7 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         mImageViewDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.fetchMP3FileData(mVideoId, mTextViewVideoTitle.getText().toString());
+                mPresenter.fetchMP3FileData(mVideoId, mTextViewVideoTitle.getText().toString(), mVideoDuration);
                 /*Toast.makeText(getContext(), "Download...", Toast.LENGTH_SHORT).show();
                 new YouTubeMP3Downloader.Builder(getActivity())
                         .setDownloadUrl(mVideoId)
@@ -224,6 +225,7 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         mTextViewPublishedAt.setText(videoDescriptionData.publishedAt);
         mImageViewAuthor.setImageDrawable(videoDescriptionData.authorImage);
         mProgressBar.setVisibility(View.INVISIBLE);
+        mVideoDuration = mVideoDuration = videoDescriptionData.duration;
     }
 
     public void showProgress(String url){

@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private EditText mEditTextSearchStrip;
     private Button mButtonSearch;
     private com.github.clans.fab.FloatingActionMenu materialDesignFAM;
-    private com.github.clans.fab.FloatingActionButton floatingActionButton1, floatingActionButton2, floatingActionButton3;
+    private com.github.clans.fab.FloatingActionButton floatingActionButton1, floatingActionButton2;
     private VideoFragment mVideoFragment;
 
     public void setBottom(final String videoId, String videoTitle){
@@ -110,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         materialDesignFAM = (com.github.clans.fab.FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
         floatingActionButton1 = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item1);
         floatingActionButton2 = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item2);
-        floatingActionButton3 = (com.github.clans.fab.FloatingActionButton) findViewById(R.id.material_design_floating_action_menu_item3);
         floatingActionButton1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //TODO something when floating action menu first item clicked
@@ -123,11 +122,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
             }
         });
-        floatingActionButton3.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //TODO something when floating action menu third item clicked
-            }
-        });
+
 
         isFABOpen = false;
         mEditTextSearch = true;
