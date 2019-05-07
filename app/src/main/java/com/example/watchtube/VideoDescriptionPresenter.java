@@ -2,6 +2,7 @@ package com.example.watchtube;
 
 import android.app.Dialog;
 import android.app.DownloadManager;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
@@ -150,12 +151,22 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
         webView.loadUrl(url);
         webView.setDownloadListener(new DownloadListener() {
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
-                DownloadManager.Request request = new DownloadManager.Request( Uri.parse(url));
-                request.allowScanningByMediaScanner();
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, videoName);
-                DownloadManager dm = (DownloadManager) mFragment.getContext().getSystemService(DOWNLOAD_SERVICE);
-                dm.enqueue(request);
+                //DownloadManager.Request request = new DownloadManager.Request( Uri.parse(url));
+                //request.allowScanningByMediaScanner();
+                //request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                //request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, videoName);
+                //DownloadManager dm = (DownloadManager) mFragment.getContext().getSystemService(DOWNLOAD_SERVICE);
+                //dm.enqueue(request);
+                DownloadManager downloadmanager = (DownloadManager) mFragment.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
+                Uri uri = Uri.parse(url);
+                DownloadManager.Request requestDownload = new DownloadManager.Request(uri);
+                requestDownload.setTitle(videoName);
+                requestDownload.setDescription("Downloading");
+                requestDownload.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                requestDownload.setDestinationUri(Uri.parse(("file://" + Environment
+                        .getExternalStorageDirectory().toString()
+                        + "/PUDGE/" + videoName + ".mp3")));
+                downloadmanager.enqueue(requestDownload);
             }
         });
         //mCircularProgressBar = (CircularProgressBar) dialog.findViewById(R.id.progress_bar);
