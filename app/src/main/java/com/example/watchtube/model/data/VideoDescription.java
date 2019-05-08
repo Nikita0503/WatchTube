@@ -27,6 +27,7 @@ public class VideoDescription {
         this.authorName = authorName;
         this.videoDescription = videoDescription;
         this.publishedAt = publishedAt;
+        this.duration = duration;
         this.authorId = authorId;
         this.authorImage = authorImage;
     }

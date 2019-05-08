@@ -112,6 +112,7 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         mImageViewDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("durationD", mVideoDuration+"");
                 mPresenter.fetchMP3FileData(mVideoId, mTextViewVideoTitle.getText().toString(), mVideoDuration);
                 /*Toast.makeText(getContext(), "Download...", Toast.LENGTH_SHORT).show();
                 new YouTubeMP3Downloader.Builder(getActivity())
@@ -225,7 +226,10 @@ public class VideoDescriptionFragment extends Fragment implements Contract.View{
         mTextViewPublishedAt.setText(videoDescriptionData.publishedAt);
         mImageViewAuthor.setImageDrawable(videoDescriptionData.authorImage);
         mProgressBar.setVisibility(View.INVISIBLE);
-        mVideoDuration = mVideoDuration = videoDescriptionData.duration;
+    }
+
+    public void setVideoDuration(int duration){
+        mVideoDuration = duration;
     }
 
     public void showProgress(String url){

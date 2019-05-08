@@ -467,6 +467,7 @@ public class YouTubeAPIUtils {
             String duration;
             Drawable authorImage;
             duration = result.getItems().get(0).getContentDetails().getDuration();
+            Log.d("durationD", duration);
             countLikes = result.getItems().get(0).getStatistics().getLikeCount();
             countDislikes = result.getItems().get(0).getStatistics().getDislikeCount();
             videoTitle = result.getItems().get(0).getSnippet().getTitle();
@@ -488,7 +489,9 @@ public class YouTubeAPIUtils {
                     .load(resultImage.getItems().get(0).getSnippet().getThumbnails().getDefault().getUrl())
                     .transform(new CircleTransform(25, 0))
                     .get());
-            videoDescription = new VideoDescription(countLikes, countDislikes, videoTitle, authorName, description, publishedAt, channelId, getDurationInSeconds(duration), authorImage);
+            int durationInt = getDurationInSeconds(duration);
+            Log.d("durationD", durationInt+"");
+            videoDescription = new VideoDescription(countLikes, countDislikes, videoTitle, authorName, description, publishedAt, channelId, durationInt, authorImage);
             e.onSuccess(videoDescription);
         }
     });

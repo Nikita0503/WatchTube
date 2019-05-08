@@ -6,12 +6,20 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
+import android.view.View;
 import android.webkit.DownloadListener;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
+import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.example.watchtube.UI.VideoDescriptionFragment;
 import com.example.watchtube.model.APIUtils.YouTubeAPIUtils;
 import com.example.watchtube.model.APIUtils.YouTubeMP3Downloader;
@@ -40,6 +48,9 @@ import static android.content.Context.DOWNLOAD_SERVICE;
 
 public class VideoDescriptionPresenter implements Contract.Presenter {
 
+    private int mStart;
+    private int mEnd;
+    private String mTimings;
     private String mVideoId;
     private VideoDescriptionFragment mFragment;
     private CompositeDisposable mDisposable;
@@ -81,6 +92,8 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
                     public void onSuccess(VideoDescription videoDescriptionData) {
                         mFragment.setVideoDescription(videoDescriptionData);
                         mFragment.setChannelId(videoDescriptionData.authorId);
+                        Log.d("durationD1", videoDescriptionData.duration+"");
+                        mFragment.setVideoDuration(videoDescriptionData.duration);
                     }
                     @Override
                     public void onError(Throwable e) {
@@ -90,63 +103,149 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
         mDisposable.add(disposable);
     }
 
+
+
+    public void fetchMP3FileData(String videoId, String videoName, int duration){
+        mYouTubeMP3Downloader.setVideoId(videoId);
+        Log.d("durationD", duration+"");
+        Dialog dialog = getSetTimeDialog(videoName, duration);
+        dialog.show();
+    }
+
     private Dialog getSetTimeDialog(String videoName, int duration){
+        mStart = 0;
+        mEnd = duration;
+        mTimings = "";
+        Log.d("durationD", duration+"");
         final Dialog dialog = new Dialog(mFragment.getContext());
         dialog.setContentView(R.layout.set_time_dialog);
         dialog.setTitle("Downloading...");
-
+        TextView textViewTitle = (TextView) dialog.findViewById(R.id.textViewTitle);
+        CheckBox checkBoxFullTrack = (CheckBox) dialog.findViewById(R.id.checkBoxFullTrack);
+        EditText editTextFrom = (EditText) dialog.findViewById(R.id.editTextFrom);
+        EditText editTextTo = (EditText) dialog.findViewById(R.id.editTextTo);
+        CrystalRangeSeekbar crystalRangeSeekbar = (CrystalRangeSeekbar) dialog.findViewById(R.id.rangeSeekbar);
+        Button buttonDownload = (Button) dialog.findViewById(R.id.buttonDownload);
+        textViewTitle.setText(videoName);
+        checkBoxFullTrack.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    editTextFrom.setText("");
+                    editTextFrom.setEnabled(false);
+                    editTextTo.setText("");
+                    editTextTo.setEnabled(false);
+                }else{
+                    editTextFrom.setEnabled(true);
+                    editTextFrom.setText(makeReadable(mStart));
+                    editTextTo.setEnabled(true);
+                    editTextTo.setText(makeReadable(mEnd));
+                }
+            }
+        });
+        crystalRangeSeekbar.setMaxValue(duration);
+        crystalRangeSeekbar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
+            @Override
+            public void valueChanged(Number minValue, Number maxValue) {
+                if(checkBoxFullTrack.isChecked()) {
+                    editTextFrom.setText("");
+                    editTextTo.setText("");
+                }else {
+                    editTextFrom.setText(makeReadable(minValue.intValue()));
+                    editTextTo.setText(makeReadable(maxValue.intValue()));
+                    mStart = minValue.intValue();
+                    mEnd = maxValue.intValue();
+                }
+            }
+        });
+        checkBoxFullTrack.setChecked(true);
+        buttonDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!checkBoxFullTrack.isChecked()){
+                    mStart = getTimeInSeconds(editTextFrom.getText().toString());
+                    mEnd = getTimeInSeconds(editTextTo.getText().toString());
+                    mTimings = "&start=" + mStart + "&end=" + mEnd;
+                }else{
+                    mTimings = "";
+                }
+                mYouTubeMP3Downloader.setTimings(mTimings);
+                Disposable disposable = mYouTubeMP3Downloader.startDownload.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableCompletableObserver() {
+                            @Override
+                            public void onStart() {
+                                //mFragment.showProgress();
+                                Toast.makeText(mFragment.getContext(), "Loading started...", Toast.LENGTH_SHORT).show();
+                            }
+                            @Override
+                            public void onError(Throwable t) {
+                                //mFragment.showProgress();
+                                Toast.makeText(mFragment.getContext(), "Error", Toast.LENGTH_SHORT).show();
+                                Dialog dialog = getProgressDialog("https://www.convertmp3.io/fetch/?format=JSON&video=https://www.youtube.com/watch?v="+mVideoId+mTimings, videoName);
+                                //dialog.setCancelable(false);
+                                dialog.show();
+                                t.printStackTrace();
+                            }
+                            @Override
+                            public void onComplete() {
+                                //mFragment.hideProgress();
+                                Toast.makeText(mFragment.getContext(), "Downloaded!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                mDisposable.add(disposable);
+            }
+        });
         //mCircularProgressBar = (CircularProgressBar) dialog.findViewById(R.id.progress_bar);
         //mTextViewProgress = (TextView) dialog.findViewById(R.id.textViewProgress);
         return dialog;
     }
 
-    public void fetchMP3FileData(String videoId, String videoName, int duration){
+    private int getTimeInSeconds(String time){
+        int inSeconds = 0;
+        int hours = 0;
+        int minutes = 0;
+        int seconds = 0;
+        int twoDotsCount = twoDotsCount(time,':');
+        String[] timeInStr = time.split(":");
+        if(twoDotsCount == 1){
+            minutes = Integer.parseInt(timeInStr[0]);
+            seconds = Integer.parseInt(timeInStr[1]);
+            inSeconds = minutes*60 + seconds;
+        }else{
+            hours = Integer.parseInt(timeInStr[0]);
+            minutes = Integer.parseInt(timeInStr[1]);
+            seconds = Integer.parseInt(timeInStr[2]);
+            inSeconds = hours*60*60 + minutes*60 + seconds;
+        }
+        return inSeconds;
+    }
 
-        mYouTubeMP3Downloader.setVideoId(videoId);
-        Dialog dialog = getSetTimeDialog(videoName, duration);
-        dialog.show();
-        /*Disposable disposable = mYouTubeMP3Downloader.startDownloadRx.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableCompletableObserver() {
+    public int twoDotsCount(String str, char c)
+    {
+        int count = 0;
 
-                    @Override
-                    public void onComplete() {
-                        Toast.makeText(mFragment.getContext(), "Downloaded", Toast.LENGTH_SHORT).show();
-                        mFragment.hideProgressSuccess();
-                    }
+        for(int i=0; i < str.length(); i++)
+        {    if(str.charAt(i) == c)
+            count++;
+        }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        Toast.makeText(mFragment.getContext(), "Error", Toast.LENGTH_SHORT).show();
-                        mFragment.hideProgressError();
-                    }
-                });*/
+        return count;
+    }
 
-        //Disposable disposable = mYouTubeMP3Downloader.startDownload.subscribeOn(Schedulers.io())
-        //        .observeOn(AndroidSchedulers.mainThread())
-        //        .subscribeWith(new DisposableCompletableObserver() {
-        //            @Override
-        //            public void onStart() {
-        //                //mFragment.showProgress();
-        //                Toast.makeText(mFragment.getContext(), "Loading started...", Toast.LENGTH_SHORT).show();
-        //            }
-        //            @Override
-        //            public void onError(Throwable t) {
-        //                //mFragment.showProgress();
-        //                Toast.makeText(mFragment.getContext(), "Error", Toast.LENGTH_SHORT).show();
-        //                Dialog dialog = getProgressDialog("https://www.convertmp3.io/fetch/?format=JSON&video=https://www.youtube.com/watch?v="+mVideoId, videoName);
-        //                //dialog.setCancelable(false);
-        //                dialog.show();
-        //                t.printStackTrace();
-        //            }
-        //            @Override
-        //            public void onComplete() {
-        //                //mFragment.hideProgress();
-        //                Toast.makeText(mFragment.getContext(), "Downloaded!", Toast.LENGTH_SHORT).show();
-        //            }
-        //        });
-        //mDisposable.add(disposable);
+    private String makeReadable(int seconds) {
+        int SS = 0; int MM = 0; int HH = 0;
+        String response = "";
+        HH = seconds / 3600;
+        MM = (seconds - HH * 3600) / 60;
+        SS = seconds - HH * 3600 - MM * 60;
+
+        if(HH>0){
+            response += HH+":";
+        }
+        response += MM+":";
+        response += SS;
+        return response;
     }
 
     private Dialog getProgressDialog(String url, String videoName){

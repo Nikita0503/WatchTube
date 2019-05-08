@@ -45,6 +45,7 @@ import okio.Okio;
 public class YouTubeMP3DownloaderRxJava {
 
     private String mVideoId;
+    private String mTimings;
     private VideoDescriptionPresenter mPresenter;
     private Context mContext;
 
@@ -57,10 +58,15 @@ public class YouTubeMP3DownloaderRxJava {
         mVideoId = videoId;
     }
 
+    public void setTimings(String timings){
+        mTimings = timings;
+    }
+
     public Completable startDownload = Completable.create(e -> {
         OkHttpClient client = new OkHttpClient();
+        Log.d("timings", "https://www.convertmp3.io/fetch/?format=JSON&video=https://www.youtube.com/watch?v="+mVideoId+mTimings);
         Request request = new Request.Builder()
-                .url("https://www.convertmp3.io/fetch/?format=JSON&video=https://www.youtube.com/watch?v="+mVideoId)
+                .url("https://www.convertmp3.io/fetch/?format=JSON&video=https://www.youtube.com/watch?v="+mVideoId+mTimings)
                 .build();
         Response response = client.newCall(request).execute();
         String stringResponse = response.body().string();
