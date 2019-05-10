@@ -2,13 +2,17 @@ package com.example.watchtube.model.APIUtils;
 
 import android.app.Dialog;
 import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 import com.example.watchtube.R;
 import com.example.watchtube.VideoDescriptionPresenter;
@@ -97,17 +101,36 @@ public class YouTubeMP3DownloaderRxJava {
         requestDownload.setDestinationUri(Uri.parse(("file://" + Environment
                 .getExternalStorageDirectory().toString()
                 + "/PUDGE/" + downloadTitle + ".mp3")));
-        DownloadManager.Query q = new DownloadManager.Query();
         long id = downloadmanager.enqueue(requestDownload);
-        Thread.sleep(1000);
-        q.setFilterById(id);
+        BroadcastReceiver onComplete = new BroadcastReceiver() {
+            public void onReceive(Context ctxt, Intent intent) {
+                DownloadManager.Query q = new DownloadManager.Query();
+                q.setFilterById(id);
+                Cursor cursor = downloadmanager.query(q);
+                cursor.moveToFirst();
+                mContext.unregisterReceiver(this);
+                try {
+                    int bytes_total = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+                    Log.d("downloadingInfo", bytes_total + " bytes");
+                    if(bytes_total<80000){
+                        mPresenter.startDownload(downloadTitle);
+                    }
+                }catch (Exception c){
+                    c.printStackTrace();
+                }
 
-        final Cursor cursor = downloadmanager.query(q);
-        cursor.moveToFirst();
 
-
-        int bytes_total = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
-        Log.d("downloadingInfo", bytes_total + " bytes");
+            }
+        };
+        mContext.registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        //DownloadManager.Query q = new DownloadManager.Query();
+        //long id = downloadmanager.enqueue(requestDownload);
+        //Thread.sleep(1000);
+        //q.setFilterById(id);
+        //final Cursor cursor = downloadmanager.query(q);
+        //cursor.moveToFirst();
+        //int bytes_total = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+        //Log.d("downloadingInfo", bytes_total + " bytes");
     }
 
 

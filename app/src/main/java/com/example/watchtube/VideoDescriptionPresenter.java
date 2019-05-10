@@ -178,7 +178,7 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
         return dialog;
     }
 
-    private void startDownload(String videoName){
+    public void startDownload(String videoName){
         Disposable disposable = mYouTubeMP3Downloader.startDownload.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableCompletableObserver() {
