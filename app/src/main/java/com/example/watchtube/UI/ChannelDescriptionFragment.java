@@ -33,7 +33,7 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
     private TextView mTextViewKind;
     private TextView mTextViewSubCount;
     private TextView mTextViewDescription;
-    private Button mButtonSubscribe;
+    //private Button mButtonSubscribe;
     private ImageView mImageViewBanner;
     private ImageView mImageViewIcon;
     private ConstraintLayout mLayout;
@@ -64,13 +64,13 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
         mTextViewSubCount = v.findViewById(R.id.textViewSubCount);
         mTextViewDescription = v.findViewById(R.id.textViewDescription);
         mTextViewDescription.setMovementMethod(new ScrollingMovementMethod());
-        mButtonSubscribe = v.findViewById(R.id.buttonSubscribe);
-        mButtonSubscribe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.subscribeToChannel();
-            }
-        });
+        //mButtonSubscribe = v.findViewById(R.id.buttonSubscribe);
+        //mButtonSubscribe.setOnClickListener(new View.OnClickListener() {
+        //    @Override
+        //    public void onClick(View v) {
+        //        mPresenter.subscribeToChannel();
+        //    }
+        //});
         mImageViewBanner = v.findViewById(R.id.imageViewBanner);
         mImageViewIcon = v.findViewById(R.id.imageViewIcon);
         mLayout = v.findViewById(R.id.constraintLayoutChannelDescription);
@@ -89,16 +89,16 @@ public class ChannelDescriptionFragment extends Fragment implements Contract.Vie
         mPresenter.setupCredential(mCredential);
         mPresenter.setupChannelId(mChannelId);
         mPresenter.fetchChannelData();
-        mPresenter.isSubscribed();
+        //mPresenter.isSubscribed();
     }
 
-    public void setSubStatus(boolean isSubscribed){
-        if(isSubscribed) {
-            mButtonSubscribe.setText("Unsubscribe");
-        }else{
-            mButtonSubscribe.setText("Subscribe!");
-        }
-    }
+    //public void setSubStatus(boolean isSubscribed){
+    //    if(isSubscribed) {
+    //        mButtonSubscribe.setText("Unsubscribe");
+    //    }else{
+    //        mButtonSubscribe.setText("Subscribe!");
+    //    }
+    //}
 
     public void showChannelData(ChannelData channelData){
 

@@ -648,36 +648,36 @@ public class YouTubeAPIUtils {
 
 
 
-    public Completable subscribe(){
-        return Completable.create(new CompletableOnSubscribe() {
-            @Override
-            public void subscribe(CompletableEmitter e) throws Exception {
-                HttpTransport transport = AndroidHttp.newCompatibleTransport();
-                JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-                com.google.api.services.youtube.YouTube mService = new com.google.api.services.youtube.YouTube.Builder(
-                        transport, jsonFactory, mCredential)
-                        .setApplicationName("WatchTube")
-                        .build();
-
-                // Define the Subscription object, which will be uploaded as the request body.
-                Subscription subscription = new Subscription();
-
-                // Add the snippet object property to the Subscription object.
-                SubscriptionSnippet snippet = new SubscriptionSnippet();
-                ResourceId resourceId = new ResourceId();
-                resourceId.setChannelId(mChannelId);
-                resourceId.setKind("youtube#channel");
-                snippet.setResourceId(resourceId);
-                subscription.setSnippet(snippet);
-                Log.d("subscribe_channel", mChannelId);
-                Log.d("subscribe_channel", mCredential.getSelectedAccountName());
-                // Define and execute the API request
-                YouTube.Subscriptions.Insert request = mService.subscriptions()
-                        .insert("snippet", subscription);
-                Subscription response = request.execute();
-            }
-        });
-    }
+    //public Completable subscribe(){
+    //    return Completable.create(new CompletableOnSubscribe() {
+    //        @Override
+    //        public void subscribe(CompletableEmitter e) throws Exception {
+    //            HttpTransport transport = AndroidHttp.newCompatibleTransport();
+    //            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+    //            com.google.api.services.youtube.YouTube mService = new com.google.api.services.youtube.YouTube.Builder(
+    //                    transport, jsonFactory, mCredential)
+    //                    .setApplicationName("WatchTube")
+    //                    .build();
+//
+    //            // Define the Subscription object, which will be uploaded as the request body.
+    //            Subscription subscription = new Subscription();
+//
+    //            // Add the snippet object property to the Subscription object.
+    //            SubscriptionSnippet snippet = new SubscriptionSnippet();
+    //            ResourceId resourceId = new ResourceId();
+    //            resourceId.setChannelId(mChannelId);
+    //            resourceId.setKind("youtube#channel");
+    //            snippet.setResourceId(resourceId);
+    //            subscription.setSnippet(snippet);
+    //            Log.d("subscribe_channel", mChannelId);
+    //            Log.d("subscribe_channel", mCredential.getSelectedAccountName());
+    //            // Define and execute the API request
+    //            YouTube.Subscriptions.Insert request = mService.subscriptions()
+    //                    .insert("snippet", subscription);
+    //            Subscription response = request.execute();
+    //        }
+    //    });
+    //}
 
     /*public Single<ArrayList<VideoPreviewData>> getVideoPreviewData = Single.create(new SingleOnSubscribe<ArrayList<VideoPreviewData>>() {
         @Override

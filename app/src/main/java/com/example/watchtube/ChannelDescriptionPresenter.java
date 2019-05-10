@@ -66,39 +66,39 @@ public class ChannelDescriptionPresenter implements Contract.Presenter {
         //mYouTubeAPIUtils...(channelId);
     }
 
-    public void isSubscribed(){
-        Disposable disposable = mYouTubeAPIUtils.isSubscribed.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<Boolean>() {
-                    @Override
-                    public void onSuccess(Boolean value) {
-                        mFragment.setSubStatus(value);
-                    }
+   /// public void isSubscribed(){
+   ///     Disposable disposable = mYouTubeAPIUtils.isSubscribed.subscribeOn(Schedulers.io())
+   ///             .observeOn(AndroidSchedulers.mainThread())
+   ///             .subscribeWith(new DisposableSingleObserver<Boolean>() {
+   ///                 @Override
+   ///                 public void onSuccess(Boolean value) {
+   ///                     mFragment.setSubStatus(value);
+   ///                 }
+///
+   ///                 @Override
+   ///                 public void onError(Throwable e) {
+   ///                     e.printStackTrace();
+   ///                 }
+   ///             });
+   /// }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
-                });
-    }
-
-    public void subscribeToChannel(){
-        Disposable disposable = mYouTubeAPIUtils.subscribe().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableCompletableObserver() {
-                    @Override
-                    public void onComplete() {
-                        mFragment.showMessage("Successful subscription!");
-                        isSubscribed();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
-                });
-        mDisposables.add(disposable);
-    }
+    //public void subscribeToChannel(){
+    //    Disposable disposable = mYouTubeAPIUtils.subscribe().subscribeOn(Schedulers.io())
+    //            .observeOn(AndroidSchedulers.mainThread())
+    //            .subscribeWith(new DisposableCompletableObserver() {
+    //                @Override
+    //                public void onComplete() {
+    //                    mFragment.showMessage("Successful subscription!");
+    //                    isSubscribed();
+    //                }
+//
+    //                @Override
+    //                public void onError(Throwable e) {
+    //                    e.printStackTrace();
+    //                }
+    //            });
+    //    mDisposables.add(disposable);
+    //}
 
     @Override
     public void onStop() {

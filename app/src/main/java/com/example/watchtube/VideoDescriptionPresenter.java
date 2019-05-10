@@ -170,35 +170,39 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
                     mTimings = "";
                 }
                 mYouTubeMP3Downloader.setTimings(mTimings);
-                Disposable disposable = mYouTubeMP3Downloader.startDownload.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableCompletableObserver() {
-                            @Override
-                            public void onStart() {
-                                //mFragment.showProgress();
-                                Toast.makeText(mFragment.getContext(), "Loading started...", Toast.LENGTH_SHORT).show();
-                            }
-                            @Override
-                            public void onError(Throwable t) {
-                                //mFragment.showProgress();
-                                Toast.makeText(mFragment.getContext(), "Error", Toast.LENGTH_SHORT).show();
-                                Dialog dialog = getProgressDialog("https://www.convertmp3.io/fetch/?format=JSON&video=https://www.youtube.com/watch?v="+mVideoId+mTimings, videoName);
-                                //dialog.setCancelable(false);
-                                dialog.show();
-                                t.printStackTrace();
-                            }
-                            @Override
-                            public void onComplete() {
-                                //mFragment.hideProgress();
-                                Toast.makeText(mFragment.getContext(), "Downloaded!", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                mDisposable.add(disposable);
+                startDownload(videoName);
             }
         });
         //mCircularProgressBar = (CircularProgressBar) dialog.findViewById(R.id.progress_bar);
         //mTextViewProgress = (TextView) dialog.findViewById(R.id.textViewProgress);
         return dialog;
+    }
+
+    private void startDownload(String videoName){
+        Disposable disposable = mYouTubeMP3Downloader.startDownload.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableCompletableObserver() {
+                    @Override
+                    public void onStart() {
+                        //mFragment.showProgress();
+                        Toast.makeText(mFragment.getContext(), "Loading started...", Toast.LENGTH_SHORT).show();
+                    }
+                    @Override
+                    public void onError(Throwable t) {
+                        //mFragment.showProgress();
+                        Toast.makeText(mFragment.getContext(), "Error", Toast.LENGTH_SHORT).show();
+                        Dialog dialog = getProgressDialog("https://www.convertmp3.io/fetch/?format=JSON&video=https://www.youtube.com/watch?v="+mVideoId+mTimings, videoName);
+                        //dialog.setCancelable(false);
+                        dialog.show();
+                        t.printStackTrace();
+                    }
+                    @Override
+                    public void onComplete() {
+                        //mFragment.hideProgress();
+                        Toast.makeText(mFragment.getContext(), "Downloaded!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        mDisposable.add(disposable);
     }
 
     private int getTimeInSeconds(String time){
@@ -269,16 +273,21 @@ public class VideoDescriptionPresenter implements Contract.Presenter {
                 //request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, videoName);
                 //DownloadManager dm = (DownloadManager) mFragment.getContext().getSystemService(DOWNLOAD_SERVICE);
                 //dm.enqueue(request);
-                DownloadManager downloadmanager = (DownloadManager) mFragment.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
-                Uri uri = Uri.parse(url);
-                DownloadManager.Request requestDownload = new DownloadManager.Request(uri);
-                requestDownload.setTitle(videoName);
-                requestDownload.setDescription("Downloading");
-                requestDownload.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                requestDownload.setDestinationUri(Uri.parse(("file://" + Environment
-                        .getExternalStorageDirectory().toString()
-                        + "/PUDGE/" + videoName + ".mp3")));
-                downloadmanager.enqueue(requestDownload);
+
+
+                //DownloadManager downloadmanager = (DownloadManager) mFragment.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
+                //Uri uri = Uri.parse(url);
+                //DownloadManager.Request requestDownload = new DownloadManager.Request(uri);
+                //requestDownload.setTitle(videoName);
+                //requestDownload.setDescription("Downloading");
+                //requestDownload.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                //requestDownload.setDestinationUri(Uri.parse(("file://" + Environment
+                //        .getExternalStorageDirectory().toString()
+                //        + "/PUDGE/" + videoName + ".mp3")));
+                //
+                //downloadmanager.enqueue(requestDownload);
+                dialog.cancel();
+                startDownload(videoName);
             }
         });
         //mCircularProgressBar = (CircularProgressBar) dialog.findViewById(R.id.progress_bar);
