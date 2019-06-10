@@ -24,6 +24,7 @@ import com.example.watchtube.model.data.CommentData;
 import com.example.watchtube.model.data.SubscriptionData;
 import com.example.watchtube.model.CircleTransform;
 import com.example.watchtube.model.data.VideoDescription;
+import com.example.watchtube.model.data.VideoPreviewData;
 import com.example.watchtube.model.data.search.SearchChannelData;
 import com.example.watchtube.model.data.search.SearchVideoData;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -646,6 +647,19 @@ public class YouTubeAPIUtils {
         }
     });
 
+
+    public Single<VideoPreviewData> getPopularVideos = Single.create(new SingleOnSubscribe<VideoPreviewData>() {
+        @Override
+        public void subscribe(SingleEmitter<VideoPreviewData> e) throws Exception {
+            HttpTransport transport = AndroidHttp.newCompatibleTransport();
+            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+            com.google.api.services.youtube.YouTube mService = new com.google.api.services.youtube.YouTube.Builder(
+                    transport, jsonFactory, mCredential)
+                    .setApplicationName("WatchTube")
+                    .build();
+            mService.
+        }
+    });
 
 
     //public Completable subscribe(){

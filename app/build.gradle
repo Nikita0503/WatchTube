@@ -4,9 +4,9 @@ android {
     signingConfigs {
         WatchTube {
             keyAlias 'key0'
-            keyPassword 'si51na61'
-            storeFile file('D:/AndroidKeys/watchtubekey.jks')
-            storePassword 'si51na61'
+            keyPassword 'CalendarApp1339'
+            storeFile file('/home/bogdan/Рабочий стол/calendarAppKeyStore.jks')
+            storePassword 'CalendarApp1339'
         }
     }
     compileSdkVersion 26
