@@ -10,7 +10,7 @@
         android:id="@+id/sliding_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark"
+        android:background="#EB8B27"
         app:tabMode="fixed"
         />
 
