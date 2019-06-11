@@ -9,6 +9,7 @@ import com.example.watchtube.model.APIUtils.YouTubeAPIUtils;
 import com.example.watchtube.UI.MainActivity;
 import com.example.watchtube.model.DemandsChecker;
 import com.example.watchtube.model.data.SubscriptionData;
+import com.example.watchtube.model.data.VideoPreviewData;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.util.ExponentialBackOff;
@@ -104,6 +105,7 @@ public class MainPresenter implements Contract.Presenter {
                 });
         mDisposables.add(disposable);
     }
+
 
     /*public void fetchSelectedChannelData(int position){
         mChannelFragment.setCredential(mCredential);

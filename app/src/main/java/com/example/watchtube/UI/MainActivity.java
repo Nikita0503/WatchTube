@@ -322,12 +322,21 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                             transaction.commit();*/
                         }else{
                             if(position==0) {
-                                TwoFragment fragment = new TwoFragment();
+
+                                PopularVideosListFragment fragment = new PopularVideosListFragment();
+                                fragment.setCredential(mPresenter.getCredential());
                                 FragmentManager manager = getSupportFragmentManager();
                                 FragmentTransaction transaction = manager.beginTransaction();
                                 transaction.replace(R.id.container, fragment);
                                 transaction.addToBackStack(null);
                                 transaction.commit();
+
+                                //TwoFragment fragment = new TwoFragment();
+                                //FragmentManager manager = getSupportFragmentManager();
+                                //FragmentTransaction transaction = manager.beginTransaction();
+                                //transaction.replace(R.id.container, fragment);
+                                //transaction.addToBackStack(null);
+                                //transaction.commit();
                             }
                             if(position==1) {
                                 MusicListFragment fragment = new MusicListFragment();
@@ -353,6 +362,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         mPresenter.onStart();
         checkDemands();
         //mPresenter.makePagerAdapter();
+        drawerResult.setSelection(0);
     }
 
     private void showFABMenu(){

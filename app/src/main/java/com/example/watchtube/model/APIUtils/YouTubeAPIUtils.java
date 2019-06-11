@@ -11,6 +11,7 @@ import com.example.watchtube.ChannelPlaylistListPresenter;
 import com.example.watchtube.ChannelVideoListOfPlaylistPresenter;
 import com.example.watchtube.ChannelVideoListPresenter;
 import com.example.watchtube.MainPresenter;
+import com.example.watchtube.PopularVideosListPresenter;
 import com.example.watchtube.R;
 import com.example.watchtube.SearchItemType;
 import com.example.watchtube.SearchPresenter;
@@ -52,6 +53,7 @@ import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
 import com.google.api.services.youtube.model.SubscriptionSnippet;
+import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 import com.squareup.picasso.Picasso;
 
@@ -70,6 +72,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableEmitter;
@@ -100,6 +103,7 @@ public class YouTubeAPIUtils {
     private VideoCommentsPresenter mVideoCommentsPresenter;
     private VideoDescriptionPresenter mVideoDescriptionPresenter;
     private SearchPresenter mSearchPresenter;
+    private PopularVideosListPresenter mPopularVideosListPresenter;
     //private VideoFragmentPresenter mVideoFragmentPresenter;
     private GoogleAccountCredential mCredential;
     private Context mContext;
@@ -147,6 +151,11 @@ public class YouTubeAPIUtils {
     public YouTubeAPIUtils(Context context, SearchPresenter searchPresenter){
         mContext = context;
         mSearchPresenter = searchPresenter;
+    }
+
+    public YouTubeAPIUtils(Context context, PopularVideosListPresenter popularVideosListPresenter){
+        mContext = context;
+        mPopularVideosListPresenter = popularVideosListPresenter;
     }
 
     /*public YouTubeAPIUtils(Context context, VideoFragmentPresenter videoFragmentPresenter){
@@ -648,19 +657,6 @@ public class YouTubeAPIUtils {
     });
 
 
-    public Single<VideoPreviewData> getPopularVideos = Single.create(new SingleOnSubscribe<VideoPreviewData>() {
-        @Override
-        public void subscribe(SingleEmitter<VideoPreviewData> e) throws Exception {
-            HttpTransport transport = AndroidHttp.newCompatibleTransport();
-            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-            com.google.api.services.youtube.YouTube mService = new com.google.api.services.youtube.YouTube.Builder(
-                    transport, jsonFactory, mCredential)
-                    .setApplicationName("WatchTube")
-                    .build();
-            mService.
-        }
-    });
-
 
     //public Completable subscribe(){
     //    return Completable.create(new CompletableOnSubscribe() {
@@ -693,7 +689,7 @@ public class YouTubeAPIUtils {
     //    });
     //}
 
-    /*public Single<ArrayList<VideoPreviewData>> getVideoPreviewData = Single.create(new SingleOnSubscribe<ArrayList<VideoPreviewData>>() {
+    public Single<ArrayList<VideoPreviewData>> getPopularVideos = Single.create(new SingleOnSubscribe<ArrayList<VideoPreviewData>>() {
         @Override
         public void subscribe(SingleEmitter<ArrayList<VideoPreviewData>> e) throws Exception {
             HttpTransport transport = AndroidHttp.newCompatibleTransport();
@@ -708,7 +704,7 @@ public class YouTubeAPIUtils {
             if(pageToken != null){
                 result =  mService.videos()
                         .list("snippet,contentDetails,statistics")
-                        .setChart("mostPopular").setPageToken(pageToken).setRegionCode(regionCode) // поменять тут
+                        .setChart("mostPopular").setPageToken(pageToken).setRegionCode("UA") // поменять тут
                         .setMaxResults(10L)
                         .setFields("items(statistics(viewCount),contentDetails/duration,id,snippet" +
                                 "(channelId,channelTitle,publishedAt,thumbnails/high,title))," +
@@ -718,7 +714,7 @@ public class YouTubeAPIUtils {
                 result =  mService.videos()
                         .list("snippet,contentDetails,statistics")
                         .setChart("mostPopular")
-                        .setRegionCode(regionCode)
+                        .setRegionCode("UA")
                         .setMaxResults(10L)
                         .setFields("items(statistics(viewCount),contentDetails/duration,id,snippet" +
                                 "(channelId,channelTitle,publishedAt,thumbnails/high,title))," +
@@ -765,7 +761,7 @@ public class YouTubeAPIUtils {
             }
             e.onSuccess(videoPreviewData);
         }
-    });*/
+    });
 
     public int getDurationInSeconds(String oldTime) {
         PeriodFormatter formatter = ISOPeriodFormat.standard();
