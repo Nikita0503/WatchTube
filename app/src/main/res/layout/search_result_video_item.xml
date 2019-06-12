@@ -54,4 +54,13 @@
         app:layout_constraintStart_toStartOf="@+id/textViewVideoTitle"
         app:layout_constraintTop_toBottomOf="@+id/textViewChannelTitle" />
 
+    <ImageView
+        android:id="@+id/imageViewLine"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/line_comment" />
+
 </android.support.constraint.ConstraintLayout>

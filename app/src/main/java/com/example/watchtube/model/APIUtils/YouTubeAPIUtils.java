@@ -707,7 +707,7 @@ public class YouTubeAPIUtils {
                         .setChart("mostPopular").setPageToken(pageToken).setRegionCode("UA") // поменять тут
                         .setMaxResults(10L)
                         .setFields("items(statistics(viewCount),contentDetails/duration,id,snippet" +
-                                "(channelId,channelTitle,publishedAt,thumbnails/high,title))," +
+                                "(channelId,channelTitle,publishedAt,thumbnails/medium,title))," +
                                 "nextPageToken,tokenPagination")
                         .execute();
             }else{
@@ -717,12 +717,12 @@ public class YouTubeAPIUtils {
                         .setRegionCode("UA")
                         .setMaxResults(10L)
                         .setFields("items(statistics(viewCount),contentDetails/duration,id,snippet" +
-                                "(channelId,channelTitle,publishedAt,thumbnails/high,title))," +
+                                "(channelId,channelTitle,publishedAt,thumbnails/medium,title))," +
                                 "nextPageToken,tokenPagination")
                         .execute();
             }
             if(result.getNextPageToken() != null){
-                pageToken = result.getNextPageToken();
+                //pageToken = result.getNextPageToken();
             }else {
                 pageToken = null;
             }
@@ -748,13 +748,14 @@ public class YouTubeAPIUtils {
                 publishedAt =  getTimeDifference(video.getSnippet().getPublishedAt());
                 duration = String.valueOf(getDuration(video.getContentDetails().getDuration()));
                 videoImage = new BitmapDrawable(mContext.getResources(), Picasso.with(mContext)
-                        .load(video.getSnippet().getThumbnails().getHigh().getUrl())
+                        .load(video.getSnippet().getThumbnails().getMedium().getUrl())
+                        .transform(new CircleTransform(5, 0))
                         .get());
                 ChannelListResponse channelListResponse = mService.channels().list("snippet,contentDetails,brandingSettings").setId(channelId).setFields("items/snippet/thumbnails/default").execute();
                 Channel channel = channelListResponse.getItems().get(0);
                 channelImage = new BitmapDrawable(mContext.getResources(), Picasso.with(mContext)
                         .load(channel.getSnippet().getThumbnails().getDefault().getUrl())
-                        .transform(new CircleTransform(15, 0))
+                        .transform(new CircleTransform(45, 0))
                         .get());
 
                 videoPreviewData.add(new VideoPreviewData(videoId, videoTitle, viewCount, videoImage, channelId, channelTitle, channelImage, publishedAt, duration));

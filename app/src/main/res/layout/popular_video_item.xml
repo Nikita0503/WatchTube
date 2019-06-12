@@ -1,40 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/background_popular_video"
     android:layout_margin="4dp"
-    android:elevation="4dp">
-
-<android.support.constraint.ConstraintLayout
-    android:layout_marginStart="4dp"
-    android:layout_marginEnd="4dp"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:elevation="5dp">
 
 
-        <ImageView
-            android:id="@+id/imageViewPicture"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@drawable/bg" />
+    <ImageView
+        android:id="@+id/imageViewPicture"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_margin="4dp"
 
-        <ImageView
-            android:id="@+id/imageViewChannelPicture"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/imageViewPicture"
-            card_view:srcCompat="@drawable/active_like" />
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@drawable/bg" />
+
+    <ImageView
+        android:id="@+id/imageViewChannelPicture"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewPicture"
+        app:srcCompat="@drawable/active_like" />
 
     <TextView
         android:id="@+id/textViewTitle"
@@ -45,10 +42,10 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="Title"
-        card_view:layout_constraintBottom_toBottomOf="parent"
-        card_view:layout_constraintEnd_toEndOf="parent"
-        card_view:layout_constraintStart_toEndOf="@+id/imageViewChannelPicture"
-        card_view:layout_constraintTop_toBottomOf="@+id/imageViewPicture" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageViewChannelPicture"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewPicture" />
 
     <TextView
         android:id="@+id/textViewDuration"
@@ -59,9 +56,9 @@
         android:text="012345"
         android:padding="2dp"
         android:background="@android:color/background_dark"
-        card_view:layout_constraintBottom_toBottomOf="@+id/imageViewPicture"
-        card_view:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewPicture"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>
-</android.support.v7.widget.CardView>
+
